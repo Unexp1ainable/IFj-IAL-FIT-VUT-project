@@ -41,6 +41,9 @@ list *scann() {
 }
 
 list *word2token(char *word, list *current) {
+    if (strcmp(word, "") == 0)
+        return NULL;
+
     token_type_t t;
     /* recognize toke */
     // works with hash table
