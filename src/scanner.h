@@ -21,12 +21,16 @@ enum token_type_t {
     eol,
     eof,
     number,
-    less,
-    more,
-    assing,
-    plus,
-    minus,
-    multip,
+    less,               //  <
+    more,               //  >
+    assing,             //  =
+    plus,               //  +
+    minus,              //  -
+    multip,             //  *
+    divide,             //  /
+    l_bracket,          //  (
+    r_bracket,          //  ) 
+    colon               //  :
 
 }typedef token_type_t;
 

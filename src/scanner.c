@@ -14,10 +14,12 @@ list *scann() {
     int i = 0; // index in the word
     do {
         c = getchar();
+        if(isdigit(c)){
+
+        }
         
         if (isalpha(c)){
             //set string for words
-            int hovno;
             char *wordstring;
             wordstring = (char*)malloc(MAXLEN * (sizeof(char)));
             if(!wordstring){
@@ -58,9 +60,10 @@ list *scann() {
                     return NULL;
                 }
             }
+        } else {
 
-        } 
-        //else if ()
+
+        }
         // TODO
 
     } while (c != EOF);
