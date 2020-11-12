@@ -14,6 +14,33 @@ list *scann() {
     int i = 0; // index in the word
     do {
         c = getchar();
+        
+        if (isalpha(c)){
+            //set string for words
+            int hovno;
+            char *wordstring;
+            wordstring = (char*)malloc(MAXLEN * (sizeof(char)));
+            if(!wordstring){
+                return 99;
+            }
+            memset(wordstring, 0, MAXLEN*(sizeof(char)));       //set 0 to our string
+            int wordlenght = 0;                                 
+            int multiplier = 2;                                    //for growing sizeof malloc
+            while(isalpha(c) || isdigit(c) || c == '_'){
+                wordstring[wordlenght] = c;
+                if(MAXLEN % wordlenght  == 0){                      //if the string is full
+                    char *wordstring = realloc(wordstring, multiplier*MAXLEN*sizeof(char));
+                    if(!wordstring){
+                        return 99;
+                    }
+                    multiplier++;
+                }
+                c = gechar();
+                wordlenght++;
+            }
+                Word2Token(wordstring,current);
+                free(wordstring);
+      }
 
         if (c == ' ' || c == '\n' || c == EOF) {
             word[i] = '\0';
@@ -32,7 +59,8 @@ list *scann() {
                 }
             }
 
-        } //else if ()
+        } 
+        //else if ()
         // TODO
 
     } while (c != EOF);
@@ -45,6 +73,11 @@ list *word2token(char *word, list *current) {
         return NULL;
 
     token_type_t t;
+    if(CheckKeyword(word, current) == true){
+        t=keyword;
+    }
+    //else if()
+
     /* recognize toke */
     // works with hash table
     // TODD - create hahs table
@@ -87,3 +120,38 @@ void freeList(list *start) {
         start = current;
     }
 }
+//NUTNO DODĚLAT PRO KAŽDÝ KEYWORD  
+bool CheckKeyword(char *word, list *current){
+    if(strcmp(word, 'if')){
+        current->token_p->Keyword_type=WORD_IF;
+        return true;
+    }
+    else if(strcmp(word, 'else')){
+        current->token_p->Keyword_type=WORD_ELSE;
+        return true;
+    }
+    else if(strcmp(word, 'func')){
+        current->token_p->Keyword_type=WORD_FUNC;
+        return true;
+    }
+    else if(strcmp(word, 'float64')){
+        current->token_p->Keyword_type=WORD_FLOAT64;
+        return true;
+    }
+    else if(strcmp(word, 'int')){
+        current->token_p->Keyword_type=WORD_INT;
+        return true;
+    }
+    else if(strcmp(word, 'return')){
+        current->token_p->Keyword_type=WORD_RETURN;
+        return true;
+    }
+    else if(strcmp(word, 'print')){
+        current->token_p->Keyword_type=WORD_PRINT;
+        return true;
+    }
+    else return false;
+
+
+}
+

@@ -4,10 +4,34 @@
 
 #define MAXLEN 64 // maximal lenght of indentificator
 
-enum token_type_t {operator_, identificator, keyword, eol}
-        typedef token_type_t;
+typedef enum{
+    WORD_IF,
+    WORD_RETURN,
+    WORD_ELSE,
+    WORD_PRINT,
+    WORD_INT,
+    WORD_FLOAT64,
+    WORD_FUNC
+}keyword_type;
+
+enum token_type_t {
+    operator_,
+    identificator,
+    keyword,
+    eol,
+    eof,
+    number,
+    less,
+    more,
+    assing,
+    plus,
+    minus,
+    multip,
+
+}typedef token_type_t;
 
 struct token {
+    keyword_type Keyword_type;
     enum token_type_t type;
     int id;
 } token;
@@ -33,3 +57,5 @@ list *add2list(list *current);
 
 
 void freeList(list *start);
+
+bool CheckKeyword(char *word, list *current);
