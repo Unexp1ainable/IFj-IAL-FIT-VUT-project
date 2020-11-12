@@ -63,3 +63,5 @@ list *add2list(list *current);
 void freeList(list *start);
 
 bool CheckKeyword(char *word, list *current);
+
+bool DigitOnly(char *word, list* current);

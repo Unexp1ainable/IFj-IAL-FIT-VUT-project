@@ -15,7 +15,30 @@ list *scann() {
     do {
         c = getchar();
         if(isdigit(c)){
-
+            char*digitword;
+            digitword = (char*)malloc(MAXLEN * (sizeof(char)));
+            if(!digitword){
+                return 99;
+            }
+            int lenght = 0;
+            int multiplierdig;
+            while(isdigit(c)){
+                digitword[lenght] = c;
+                if(MAXLEN % lenght  == 0){                
+                    char *digitword = realloc(digitword, multiplierdig*MAXLEN*sizeof(char));
+                    if(!digitword){
+                        return 99;
+                    }
+                    multiplierdig++;
+                }
+                c=getchar();
+                if(isalpha(c)){             //if it starts with number it cant continue with letter
+                    return 51;          
+                }
+                lenght++;
+            }
+                Word2Token(digitword,current);
+                free(digitword);
         }
         
         if (isalpha(c)){
@@ -62,7 +85,6 @@ list *scann() {
             }
         } else {
 
-
         }
         // TODO
 
@@ -79,7 +101,7 @@ list *word2token(char *word, list *current) {
     if(CheckKeyword(word, current) == true){
         t=keyword;
     }
-    //else if()
+    //check if digits only
 
     /* recognize toke */
     // works with hash table
@@ -158,3 +180,6 @@ bool CheckKeyword(char *word, list *current){
 
 }
 
+bool DigitOnly(char *word, list* current){
+
+}
