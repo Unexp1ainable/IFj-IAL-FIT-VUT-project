@@ -21,7 +21,7 @@ list *scann() {
                 return 99;
             }
             int lenght = 0;
-            int multiplierdig;
+            int multiplierdig = 2;
             while(isdigit(c)){
                 digitword[lenght] = c;
                 if(MAXLEN % lenght  == 0){                
@@ -101,6 +101,9 @@ list *word2token(char *word, list *current) {
     if(CheckKeyword(word, current) == true){
         t=keyword;
     }
+    else if (DigitOnly(word, current)){
+        t=number;
+    }
     //check if digits only
 
     /* recognize toke */
@@ -176,10 +179,13 @@ bool CheckKeyword(char *word, list *current){
         return true;
     }
     else return false;
-
-
 }
 
 bool DigitOnly(char *word, list* current){
-
+        while(*word){
+            if(isdigit(*word++) == NULL) return false;
+        }
+        return true;
 }
+
+
