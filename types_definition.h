@@ -1,16 +1,47 @@
 //
 // Created by jb on 12.11.20.
 //
+#include<stdbool.h>
 
 #ifndef IFJPROJ_TYPES_DEFINITION_H
 #define IFJPROJ_TYPES_DEFINITION_H
 // this file contains types definition, data structrs and funinctions needet to work with it
 
-enum token_type_t {operator_, identificator, keyword, eol};
+typedef enum{
+    WORD_IF,
+    WORD_RETURN,
+    WORD_ELSE,
+    WORD_PRINT,
+    WORD_INT,
+    WORD_FLOAT64,
+    WORD_FUNC
+}keyword_type;
+
+
+enum token_type_t {
+    operator_,
+    identificator,
+    keyword,
+    eol,
+    eof,
+    number,
+    less,               //  <
+    more,               //  >
+    assing,             //  =
+    plus,               //  +
+    minus,              //  -
+    multip,             //  *
+    divide,             //  /
+    l_bracket,          //  (
+    r_bracket,          //  ) 
+    colon               //  :
+
+}typedef token_type_t;
 
 
 /********!!! id is id in table of symbols !!!********/
 struct token {
+    keyword_type Keyword_type;
     enum token_type_t type;
     int id;
 } typedef token_t;
@@ -47,5 +78,9 @@ int ll_add(list_t *lp, token_t *tp);
 token_t *ll_read(list_t *lp);
 
 void ll_free(list_t *lp);
+
+bool CheckKeyword(char *word, element_t *current);
+
+bool DigitOnly(char *word);
 
 #endif //IFJPROJ_TYPES_DEFINITION_H

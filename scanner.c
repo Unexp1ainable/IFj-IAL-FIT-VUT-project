@@ -63,3 +63,42 @@ token_t *word2token(char *word) {
 
     return new_token(type, id++);
 }
+
+bool CheckKeyword(char *word, element_t *current){
+    if(strcmp(word, 'if')){
+        current->token_p->Keyword_type=WORD_IF;
+        return true;
+    }
+    else if(strcmp(word, 'else')){
+        current->token_p->Keyword_type=WORD_ELSE;
+        return true;
+    }
+    else if(strcmp(word, 'func')){
+        current->token_p->Keyword_type=WORD_FUNC;
+        return true;
+    }
+    else if(strcmp(word, 'float64')){
+        current->token_p->Keyword_type=WORD_FLOAT64;
+        return true;
+    }
+    else if(strcmp(word, 'int')){
+        current->token_p->Keyword_type=WORD_INT;
+        return true;
+    }
+    else if(strcmp(word, 'return')){
+        current->token_p->Keyword_type=WORD_RETURN;
+        return true;
+    }
+    else if(strcmp(word, 'print')){
+        current->token_p->Keyword_type=WORD_PRINT;
+        return true;
+    }
+    else return false;
+}
+
+bool DigitOnly(char *word){
+        while(*word){
+            if(isdigit(*word++) == NULL) return false;
+        }
+        return true;
+}
