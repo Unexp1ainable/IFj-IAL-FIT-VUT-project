@@ -9,12 +9,36 @@ list *scann() {
         return NULL;
     list *current = retval;
 
-    int c; // scanned char's asci code (or EOF constant)
+    char c; // scanned char's asci code (or EOF constant)
     char word[64]; // scanned word containing series of scaned c
     int i = 0; // index in the word
+    c = getchar();                      //no more in dowhile loop, it was deleting last used char from the end of loop
     do {
-        c = getchar();
-        if(isdigit(c)){
+        if(!(isalpha(c)) || !(isdigit(c)) || c != ' ' || c != '\n' || c != EOF) {
+            char *charstring;
+            charstring = (char*)malloc(MAXLEN* (sizeof(char))); 
+            if(!charstring){
+                return 99;
+            }
+            memset(charstring, 0, MAXLEN*(sizeof(char)));       //set 0 to our string
+            int charlenght = 0;                                 
+            int multiplier = 2;                                    //for growing sizeof malloc
+            while(!(isalpha(c)) || !(isdigit(c)) || c != ' ' || c != '\n' || c != EOF){
+                charstring[charlenght] = c;
+                if(MAXLEN % charlenght  == 0){                      //if the string is full
+                    char *charstring = realloc(charstring, multiplier*MAXLEN*sizeof(char));
+                    if(!charstring){
+                        return 99;
+                    }
+                    multiplier++;
+                }
+                c = gechar();
+                charlenght++;
+            }
+                Word2Token(charstring,current);
+                free(charstring);
+        }
+        if(isdigit(c)){ 
             char*digitword;
             digitword = (char*)malloc(MAXLEN * (sizeof(char)));
             if(!digitword){
@@ -83,10 +107,8 @@ list *scann() {
                     return NULL;
                 }
             }
-        } else {
-
+        c = getchar();                         //every recognizing part returns getchar, whitch cant be lost, so it ends with getchar, and the getchar from start of dowhile was moved out of it
         }
-        // TODO
 
     } while (c != EOF);
 
@@ -103,6 +125,11 @@ list *word2token(char *word, list *current) {
     }
     else if (DigitOnly(word, current)){
         t=number;
+    }
+    else{
+        if( RecToken(word, current) == false){
+            return 51;
+        }
     }
     //check if digits only
 
@@ -187,5 +214,68 @@ bool DigitOnly(char *word, list* current){
         }
         return true;
 }
+
+bool RecToken(char *word, list* current){
+    if(strcmp(word, '(')){
+        current->token_p->type = l_bracket;
+        return true;
+    }
+    else if(strcmp(word, ')')){
+        current->token_p->type = r_bracket;
+        return true;
+    }
+    else if(strcmp(word, '<')){
+        current->token_p->type = less;
+        return true;
+    }
+    else if(strcmp(word, '>')){
+        current->token_p->type = more;
+        return true;
+    }
+    else if(strcmp(word, '=')){
+        current->token_p->type = assing;
+        return true;
+    }
+    else if(strcmp(word, '+')){
+        current->token_p->type = plus;
+        return true;
+    }
+    else if(strcmp(word, '-')){
+        current->token_p->type = minus;
+        return true;
+    }
+    else if(strcmp(word, '/')){
+        current->token_p->type = divide;
+        return true;
+    }
+    else if(strcmp(word, '*')){
+        current->token_p->type = multip;
+        return true;
+    }
+    else if(strcmp(word, '==')){
+        current->token_p->type = eq;
+        return true;
+    }
+    else if(strcmp(word, '!=')){
+        current->token_p->type = not_eq;
+        return true;
+    }
+    else if(strcmp(word, '<=')){
+        current->token_p->type = less_eq;
+        return true;
+    }
+    else if(strcmp(word, '>=')){
+        current->token_p->type = more_eq;
+        return true;
+    }
+    else if(strcmp(word, ':')){
+        current->token_p->type = colon;
+        return true;
+    }
+
+    else return false;
+}
+
+
 
 

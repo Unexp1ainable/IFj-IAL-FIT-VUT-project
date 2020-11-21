@@ -57,7 +57,7 @@ int ll_add(list_t *lp, token_t *tp) {
 
 // reads token from the read_index and stores it to variable tp
 // returns 1 afrer reading the last element 0 otherways
-int ll_read(list_t *lp, token_t *tp) {
+token_t *ll_read(list_t *lp, token_t *tp) {
     element_t *ep = lp->read_index;
     *tp = *(ep->token_p);
 

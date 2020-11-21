@@ -40,7 +40,7 @@
 
     // reads token from the read_index and stores it to variable tp
     // returns 1 afrer reading the last element 0 otherways
-    token_t *ll_read(list_t *lp);
+    token_t *ll_read(list_t *lp,token_t *tp);
 
     void ll_free(list_t *lp);
 
