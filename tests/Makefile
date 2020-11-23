@@ -1,0 +1,57 @@
+## makefile used for testing only!!!!
+##
+##
+##@author Timotej Kamensky xkamen24 +421 944 687 328 
+##@brief makefile for unit testing symbol hash table
+##@date 22.11.2020
+##@note to work, has to me placed in main folder, possible conflict with the actual makefile!
+##TODO make it work from the testing folder
+##all basically copypasted from the internet: https://www.ccs.neu.edu/home/skotthe/classes/cs5600/fall/2015/labs/intro-check.html
+
+CC = gcc
+CFLAGS = -c -Wall
+PROFILE_FLAGS = -fprofile-arcs -ftest-coverage 
+TST_LIBS = -lcheck -lm -lpthread -lrt -lsubunit
+COV_LIBS = -lgcov -coverage
+SRC_DIR= src
+TST_DIR= tests
+SRC_FILES = $(addprefix $(SRC_DIR)/, *.c) 
+TST_FILES = $(addprefix $(TST_DIR)/, *.c)
+GCOV = gcovr 
+GCONV_FLAGS = -r . --html --html-details -g
+
+
+all: coverage_report.html
+
+symtable.o:  src/symtable.c src/symtable.h
+	$(CC) $(CFLAGS) -c src/symtable.c
+
+symtable_tests.o: tests/symtable_test.c
+	$(CC) $(CFLAGS) -c tests/symtable_test.c
+
+symtable_valgrind.o: tests/symtable_valgrind.c
+	$(CC) $(CFLAGS) -c tests/symtable_valgrind.c
+
+check_symtable_tests: symtable.o symtable_tests.o
+	$(CC) symtable.o symtable_test.o $(TST_LIBS) $(COV_LIBS) -o check_symtable_tests
+
+check_symtable_memory_tests: symtable.o symtable_valgrind.o
+	$(CC) symtable.o symtable_valgrind.o -o check_symtable_memory_tests
+
+testcases: clean check_symtable_tests
+	 ./check_symtable_tests 
+
+testmemory: clean check_symtable_memory_tests
+	valgrind --leak-check=full  ./check_symtable_memory_tests
+
+coverage_report.html: test
+	$(GCOV) $(GCONV_FLAGS) -o coverage_report.html
+
+.PHONY: clean all
+#should hide "no files to delete" error..a bit unconventional, i know
+clean:
+	rm *.o    2> /dev/null || echo > /dev/null
+	rm *.html 2> /dev/null || echo > /dev/null
+	rm *.gcda 2> /dev/null || echo > /dev/null
+	rm *.gcno 2> /dev/null || echo > /dev/null
+	rm check_symtable_tests 2> /dev/null || echo > /dev/null

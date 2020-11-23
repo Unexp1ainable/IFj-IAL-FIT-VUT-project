@@ -10,9 +10,9 @@
  * 
  * @date 2020-11-20
  */
-
-#ifndef _SYMTABLE_H
-#define _SYMTABLE_H
+#include <stdbool.h>
+#ifndef SYMTABLE_H
+#define SYMTABLE_H
 
 #define MAX_SIZE_OF_SYM_TABLE 52937 //random prime number
 
@@ -23,7 +23,7 @@
  * @param str keyword to be hashed
  * @return hash
  */
-unsigned long hash(const char * str);
+unsigned long hash(char * str);
 
 typedef struct ItemData{
     //TODO INSERT DATA HERE!!!!!!!!!!!!!!!!!!!
