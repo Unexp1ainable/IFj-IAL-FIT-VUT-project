@@ -233,7 +233,7 @@ bool RecToken(char *word, list* current){
         return true;
     }
     else if(strcmp(word, '=')){
-        current->token_p->type = assing;
+        current->token_p->type = assign;
         return true;
     }
     else if(strcmp(word, '+')){
@@ -249,7 +249,7 @@ bool RecToken(char *word, list* current){
         return true;
     }
     else if(strcmp(word, '*')){
-        current->token_p->type = multip;
+        current->token_p->type = multiply;
         return true;
     }
     else if(strcmp(word, '==')){

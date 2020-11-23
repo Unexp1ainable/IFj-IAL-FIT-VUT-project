@@ -23,10 +23,10 @@ enum token_type_t {
     number,
     less,               //  <
     more,               //  >
-    assing,             //  =
+    assign,             //  =
     plus,               //  +
     minus,              //  -
-    multip,             //  *
+    multiply,             //  *
     divide,             //  /
     l_bracket,          //  (
     r_bracket,          //  ) 
