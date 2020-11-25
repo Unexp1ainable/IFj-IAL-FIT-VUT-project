@@ -18,24 +18,29 @@
 
 bool stackInit(SymtableStack *symtablestack){
     //alloc the array proper
+    printf("started stackinit.\n");
     if (symtablestack == NULL)
     {
+        printf("returned false for input variables.\n");
         return false;
     }
+    bool alloc = false;
+    symtablestack->table = malloc(sizeof(Symtable *) *DEFAULT_STACK_SIZE);
     if (symtablestack->table == NULL)
     {
-        symtablestack->table = malloc(sizeof(Symtable)*DEFAULT_STACK_SIZE);
-        if (symtablestack->table == NULL)
-        {
-            return false;
-        }
-        symtablestack->size = MAX_SIZE_OF_SYM_TABLE;
+        printf("malloc failed.\n");
+        return false;
     }
+    printf("after malloc.\n");
+    alloc = true;
+    symtablestack->size = DEFAULT_STACK_SIZE;
     symtablestack->top = -1;//-1 == empty
     for (int i = 0;i<symtablestack->size;i++)
     {
-        *symtablestack->table[i]=NULL;
+        symtablestack->table[i]=NULL;
     }
+    printf("malloc operation has: %d\n",alloc);
+    return true;
 }
 
 
@@ -84,7 +89,7 @@ bool stackPush(SymtableStack * symtablestack, Symtable * table)
             return false;
         }
     }
-    *symtablestack->table[symtablestack->top+1] = table;
+    symtablestack->table[symtablestack->top+1] = table;
     symtablestack->top++;
     return true;
 }

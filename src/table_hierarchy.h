@@ -18,7 +18,7 @@
 #define TABLE_HIERARCHY_H
 #define DEFAULT_STACK_SIZE 50
 typedef struct {
-    Symtable * table;
+    Symtable ** table;
     int top;
     int size;
 }SymtableStack;
