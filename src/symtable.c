@@ -143,7 +143,7 @@ void symtable_free(Symtable *table)
         current = (*table)[i];
         while (current != NULL)
         {
-            next = current->next;
+            next = current->next; 
             free(current->key);
             free(current);
             current = next;
