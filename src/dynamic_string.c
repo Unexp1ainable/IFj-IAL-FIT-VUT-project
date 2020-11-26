@@ -60,6 +60,12 @@ bool dynamic_string_free(Dynamic_string *dynamicstring)
     dynamicstring->allocated_size = 0;
     dynamicstring->actual_size = -1;
 }
+void dynamic_string_delete(Dynamic_string * dynamicstring){
+    for (int i = 0; i < dynamicstring->allocated_size;i++){
+        dynamicstring->string[i] = '\0';
+    }
+    dynamicstring->actual_size = -1;
+}
 bool dynamic_string_full(Dynamic_string *dynamicstring)
 {
     if (dynamicstring->allocated_size == dynamicstring->actual_size + 1)

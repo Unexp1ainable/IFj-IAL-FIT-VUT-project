@@ -43,6 +43,8 @@ typedef enum{
     TOKEN_TYPE_GREATER_THAN,
     TOKEN_TYPE_LOWER_EQUAL,
     TOKEN_TYPE_GREATER_EQUAL,
+    TOKEN_TYPE_SUB1,
+    TOKEN_TYPE_ADD1,
     //Others
     TOKEN_TYPE_OPENING_CLASSIC_BRACKET,
     TOKEN_TYPE_CLOSING_CLASSIC_BRACKET,
@@ -55,9 +57,12 @@ typedef enum{
     TOKEN_TYPE_STRING,
     TOKEN_TYPE_INTEGER,
     TOKEN_TYPE_FLOAT64,
+
     TOKEN_TYPE_RESERVED_KEYWORD,
     TOKEN_TYPE_DEFINE_AND_ASSIGN,
     TOKEN_TYPE_MAIN,
+    //TODO add more
+
 }TOKEN_TYPES;
 
 
@@ -79,6 +84,18 @@ typedef struct {
  * @enum states of the scanner
  * */
 typedef enum{
+//TODO pridavat postupne pocas prace v newscanner.c
+FSM_START,                  //state used at the beginning of the scan
+FSM_SLASH,                  // there has been a backslash, expect * or another backslash
+FSM_LINE_COMMENT_PROPER,    // ignore all till EOL
+FSM_BLOCK_COMMENT_PROPER,   //ignore all till *backslash
+FSM_BLOCK_COMMENT_END,      //block comment, got *, expect backslash
+FSM_STRING,                 //there has been ", reading the whole string till another "
+FSM_FIRST_EQUAL,
+FSM_FIRST_PLUS,
+FSM_FIRST_MINUS,
+FSM_COLON,
+FSM_ID,
 }FSM_STATES;
 
 /*
@@ -86,8 +103,8 @@ typedef enum{
 ###########################   Function headers   ###################################################################################
 ####################################################################################################################
 */
-
-
+void set_fsm_state(FSM_STATES input);
+int maketoken();//TODO
 
 
 
