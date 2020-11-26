@@ -8,15 +8,14 @@
  */
 #include <stdio.h>
 #include <stdbool.h>
-#include "scanner.h"
-#include "types_definition.h"
+#include "newscanner.h"
 
 
-// ############################# helper functions
+// ############################# helper functions ###########################
 
-token_t get_token(){
-    static token_t buffer = {eol, -1};
-
+TOKEN get_token(){
+    static TOKEN buffer = {.tokentype = TOKEN_TYPE_EMPTY};
+    buffer.integer = 1;
 }
 
 // ############################# STATES ##################################
