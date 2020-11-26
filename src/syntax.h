@@ -11,6 +11,15 @@
 #include "scanner.h"
 #include "types_definition.h"
 
+
+// ############################# helper functions
+
+token_t get_token(){
+    static token_t buffer = {eol, -1};
+
+}
+
+// ############################# STATES ##################################
 /**
  * @brief Beginning of the program
  * 
@@ -273,3 +282,5 @@ int s_param_list_n();
  * @return int 
  */
 int s_eols();
+
+// ############################# STATES END ###############################
