@@ -9,13 +9,24 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "newscanner.h"
-
+#include "mocks.c"
 
 // ############################# helper functions ###########################
 
-TOKEN get_token(){
+int get_token(TOKEN *token)
+{
     static TOKEN buffer = {.tokentype = TOKEN_TYPE_EMPTY};
-    buffer.integer = 1;
+
+    if (buffer.tokentype == TOKEN_TYPE_EMPTY)
+    {
+        return get_next_token(token);
+    }
+    else
+    {
+        memcpy(token, &buffer, sizeof(buffer));
+        buffer.tokentype = TOKEN_TYPE_EMPTY;
+        return 0;
+    }
 }
 
 // ############################# STATES ##################################
