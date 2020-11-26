@@ -43,16 +43,22 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == "\"")             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_STRING;}}
                 else if (isalpha(c) || c == '_'){if(eol_value == 2){return WTF;}else{fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}}
                 else if (c == '=')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_FIRST_EQUAL;}}
-                else if (c == '+')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_FIRST_PLUS;}}
+                else if (c == '+')              {if(eol_value == 2){return WTF;}else{maketoken();/*+*/}}
                 else if (c == ':')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_COLON;}}
-                else if (c == '-')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_FIRST_MINUS;}}
+                else if (c == ';')              {if(eol_value == 2){return WTF;}else{maketoken();}}
+                else if (c == '-')              {if(eol_value == 2){return WTF;}else{maketoken();}}
+                else if (c == '*')              {if(eol_value == 2){return WTF;}else{maketoken();}}
                 else if (c == '(')              {if(eol_value == 2){return WTF;}else{return maketoken();/*opening bracket*/}}
                 else if (c == ')')              {if(eol_value == 2){return WTF;}else{return maketoken();/*closing bracket*/}}
                 else if (c == '{')              {if(eol_value == 2){return WTF;}else{eol_value = 2; return maketoken();}}
                 else if (c == '}')              {if(eol_value == 2){return WTF;}else{               return maketoken();}}
                 else if (c == '!')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_EXCLAMATION;}}
                 else if (isdigit(c))            {if(eol_value == 2){return WTF;}else{fsm_state = FSM_NUMBER;dynamic_string_add_char(&stringbuffer,c);}}
-                else                            {if(eol_value == 2){return WTF;}else{return WTF;}}
+                else if (c == '<')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_SMALLERTHAN;}}
+                else if (c == '>')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_GREATERTHAN;}}
+                else if (c == ',')              {if(eol_value == 2){return WTF;}else{maketoken();}}
+                else if (c == EOF)              {if(eol_value == 2){return WTF;}else{maketoken();}}
+                else                            {if(eol_value == 2){return WTF;}else{return WTF ;}}
 
                 break;
 
@@ -65,32 +71,30 @@ int get_next_token(TOKEN * tokenptr){
                     else{
                         buffedchar = c;
                         isbuff = true;
-                        return maketoken();/*TODO division token*/
+                        maketoken();/*TODO division token*/
+                        return exitus;
                     }
                 }
                 break;
             case FSM_LINE_COMMENT_PROPER:
-                if (c == '\n'){fsm_state = FSM_START;}
-                else if (c == EOF){
-                    buffedchar = EOF;//TODO? naozaj vratit newline token aj ked je komentar na konci riadku?
+                if (c == EOF || c == '\n'){
+                    buffedchar = c;//TODO? naozaj vratit newline token aj ked je komentar na konci riadku?
                     isbuff = true;
                     fsm_state = FSM_START;
-                }
-                else{
-                    continue;
                 }
                 break;
             case FSM_BLOCK_COMMENT_PROPER:
                 if (c == '*'){
                     fsm_state = FSM_BLOCK_COMMENT_END;
                 }
+                if ()
                 break;
             case FSM_BLOCK_COMMENT_END:
                 if (c == '/'){
                     fsm_state = FSM_START;
                 }
                 else{
-                    fsm_state = FSM_BLOCK_COMMENT_PROPER
+                    fsm_state = FSM_BLOCK_COMMENT_PROPER;
                 }
                 break;
 
@@ -104,7 +108,7 @@ int get_next_token(TOKEN * tokenptr){
                     isbuff = true;
                     buffedchar = c;
                     int tmp = maketoken();//id
-                    dynamic_string_delete();
+                    dynamic_string_delete(&stringbuffer);
                     return tmp; 
                 }
                 break;
