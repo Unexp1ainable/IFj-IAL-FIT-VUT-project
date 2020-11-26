@@ -72,13 +72,13 @@ typedef struct
 {
     TOKEN_TYPES tokentype;
 
-    union Data
+    union
     {
         Dynamic_string *string;
         int64_t integer;
         double floater;
         RESERVED_KEYWORDS keyword;
-    }
+    };
 } TOKEN;
 
 /**
