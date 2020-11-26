@@ -3,10 +3,12 @@
  * @brief header file for scanner. IFJ project 2020
  * 
  * @author Timotej Kamensky, xkamen24,+421 944 687 328
+ * @date 25.11.2020
  * */
 
 #ifndef _NEWSCANNER_H
 #define _NEWSCANNER_H
+#include "dynamic_string.h"
 /**
  * @enum enumeration of reserved keywords by golang
  * @note zadanie, strana 3
@@ -21,6 +23,7 @@ typedef enum{
     KEYWORD_PACKAGE,
     KEYWORD_RETURN,
     KEYWORD_STRING,
+    KEYWORD_NONE
 }RESERVED_KEYWORDS;
 
 
@@ -44,24 +47,38 @@ typedef enum{
     TOKEN_TYPE_OPENING_CLASSIC_BRACKET,
     TOKEN_TYPE_CLOSING_CLASSIC_BRACKET,
     TOKEN_TYPE_OPENING_CURVY_BRACKET,
-    TOKEN_TYPE_CLOSING_CURVY_BRACKET,//TODO possible boxy bracket
+    TOKEN_TYPE_CLOSING_CURVY_BRACKET,//TODO possible boxy bracket?
     TOKEN_TYPE_COMMA,
     TOKEN_TYPE_SEMICOLON,
-
     TOKEN_TYPE_EOF,
     TOKEN_TYPE_IDENTIFIER,
     TOKEN_TYPE_STRING,
     TOKEN_TYPE_INTEGER,
     TOKEN_TYPE_FLOAT64,
     TOKEN_TYPE_RESERVED_KEYWORD,
+    TOKEN_TYPE_DEFINE_AND_ASSIGN,
+    TOKEN_TYPE_MAIN,
 }TOKEN_TYPES;
+
+
+
+/**
+ * @brief single token representation
+ * */
+typedef struct {
+    TOKEN_TYPES tokentype;
+    Dynamic_string * string;
+    int64_t integer;
+    double floater;
+    RESERVED_KEYWORDS keyword;
+}TOKEN;
+
 
 
 /**
  * @enum states of the scanner
  * */
 typedef enum{
-
 }FSM_STATES;
 
 /*
