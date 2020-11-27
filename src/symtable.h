@@ -14,7 +14,7 @@
 #ifndef SYMTABLE_H
 #define SYMTABLE_H
 
-#define MAX_SIZE_OF_SYM_TABLE 52937 //random prime number
+#define MAX_SIZE_OF_SYM_TABLE 19 //random prime number
 
 /**
  * @brief hash function 

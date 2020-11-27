@@ -56,8 +56,8 @@ check_symtable_memory_tests: symtable.o symtable_valgrind.o
 	$(CC) symtable.o symtable_valgrind.o -o check_symtable_memory_tests
 
 
-
-
+#####################################################################################################################################################
+##############################   USE THESE DOWN  ######################################################################################################
 table_testcases: clean check_symtable_unit_tests
 	 ./check_symtable_tests 
 
@@ -70,7 +70,8 @@ table_hierarchy_unit_tests: clean check_table_hierarchy_unit_tests
 table_hierarchy_testmemory: clean check_table_hierarchy_memory_tests
 	valgrind --leak-check=full ./check_table_hierarchy_memory_tests
 
-
+#############################   USE THESE UP    #######################################################################################################
+#####################################################################################################################################################
 coverage_report.html: test
 	$(GCOV) $(GCONV_FLAGS) -o coverage_report.html
 
