@@ -15,7 +15,6 @@
 static int fsm_state;//state of the finite state machine
 static bool isbuff;//is letter in the buff?
 static int buffedchar;//what letter is in the buff?
-FILE * fileptr;//TODO assign stdin or something
 Dynamic_string stringbuffer;
 //line,nextline, loadedchar, line_pos?
 /****************************    variable end    ***********************************************************/
@@ -26,6 +25,7 @@ int get_next_token(TOKEN * tokenptr){
         return WTF;
     }
     dynamic_string_delete(&stringbuffer);//can be done on the start of the function, or at EVERY EXIT CONDITION
+    dynamic_string_init(&stringbuffer);
     //dokoncenie predosleho cyklu+podmienky
     //proper case
     while(1){
@@ -34,10 +34,12 @@ int get_next_token(TOKEN * tokenptr){
             c = buffedchar;
         }
         else{
-            c = fgetc(fileptr);
+            c = getchar();
         }
+        /*test*/ printf("c=%c\n", (char) c);
         switch(fsm_state){
             case FSM_START:
+                /*test*/ printf("hello from start\n");
                 if(isspace(c) && c != '\n')     {continue;}/*isspace covers a lot more*/
                 else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; return OK;}/*else ignore*/
                 else if (c == '/')              {fsm_state = FSM_SLASH;}
@@ -55,7 +57,7 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '{')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; return OK;}
                 else if (c == '}')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; return OK;}
                 else if (c == '!')              {fsm_state = FSM_EXCLAMATION;}
-                else if (isdigit(c))            {fsm_state = FSM_DECNUMBER;   dynamic_string_add_char(&stringbuffer,c);}
+                else if (isdigit(c))            {/*test*/ printf("hello from isdigit\n");fsm_state = FSM_DECNUMBER;   dynamic_string_add_char(&stringbuffer,(char)c); /*test*/ printf("hello from isdigit - all done\n");}
                 else if (c == '<')              {fsm_state = FSM_SMALLERTHAN;}
                 else if (c == '>')              {fsm_state = FSM_GREATERTHAN;}
                 else if (c == ',')              {tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}
@@ -239,17 +241,20 @@ int get_next_token(TOKEN * tokenptr){
 
                 
             case FSM_DECNUMBER://any other first number than zero
+                ///*test*/ printf("hello from decimal numbers\n");
                 if     (isdigit(c))     {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c=='E'||c=='e') {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXP_DEC;}
                 else                    {
-                    isbuff = true; buffedchar = c;
+                    /*number processing*/
+                    isbuff = true; buffedchar = (char) c;
                     tokenptr->tokentype = TOKEN_TYPE_INTEGER;
                     tokenptr->integer   = atol(stringbuffer.string);
                     /*test*/printf("test: %li/n", tokenptr->integer);
-                    //maketoken();/*number processing*/
+                    return  OK;
+                    //maketoken();
                 }
                 break;
 
