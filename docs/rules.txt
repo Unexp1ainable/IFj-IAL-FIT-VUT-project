@@ -8,7 +8,7 @@
 ----------------------------------
 6.	<f_init> -> (<param_def_list>) <ret_t_list>
 ----------------------------------
-7.	<body> -> {<stat_list>} <eol> <eols>
+7.	<body> -> {<eol> <eols> <stat_list>} <eol> <eols>
 ----------------------------------
 8.	<param_def_list> -> id <type> <param_def_list_n>
 9.	<param_def_list> -> e
@@ -22,24 +22,24 @@
 14.	<ret_t_list_n> -> , <type> <ret_t_list_n>
 15.	<ret_t_list_n> -> e
 ----------------------------------
-16.	<stat> -> if <if>
-17.	<stat> -> for <for>
-18.	<stat> -> return <return>
+16.	<stat> -> <if>
+17.	<stat> -> <for>
+18.	<stat> -> <return>
 19.	<stat> -> id <id_n>
 20.	<stat> -> e
-21.5<stat> -> _ <underscore>
+21. DELETED
 ----------------------------------
-22.	<stat_list> -> <eol> <eols> <stat> <stat_list>
+22.	<stat_list> -> <stat> <eol> <eols> <stat_list>
 23.	<stat_list> -> e
 ----------------------------------
-24.	<if> -> <expr><body><else>
+24.	<if> -> if <expr><body><else>
 ----------------------------------
 25.	<else> -> else <body>
 26.	<else> -> e
 ----------------------------------
-27.	<for> -> <id_def_v>; <expr>; <id_assign_v> <body>
+27.	<for> -> for <id_def_v>; <expr>; <id_assign_v> <body>
 ----------------------------------
-28.	<return> -> <expr_list>
+28.	<return> -> return <expr_list>
 ----------------------------------
 29.	<expr>
 ----------------------------------
@@ -69,12 +69,12 @@
 ----------------------------------
 46.	<f_call> -> <param_list>
 ----------------------------------
-47.	<param_list> -> <param> <param_list_n>
+47.	<param_list> -> <expr> <param_list_n>
 ----------------------------------
-48.	<param_list_n> -> <param>, <param_list_n>
+48.	<param_list_n> -> , <param_list_n>
 49.	<param_list_n> -> e
 ----------------------------------
-50.	<param> -> <expr>
+50.	DELETED
 ----------------------------------
 51.	<eols> -> eol <eols>
 52.	<eols> -> e

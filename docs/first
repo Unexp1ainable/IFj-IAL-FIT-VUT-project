@@ -1,7 +1,7 @@
 package
 ---
 func
-
+eof
 ---
 id
 main
@@ -11,16 +11,16 @@ main
 {
 ---
 id
-
+)
 ---
 ,
-
+)
 ---
 (
-
+{, eol
 ---
 ,
-
+)
 ---
 if
 for
@@ -44,10 +44,10 @@ return
 <expr>
 ---
 <expr>
-
+eol
 ---
 ,
-
+eol
 ---
 :-
 =
@@ -56,8 +56,8 @@ return
 ---
 :=
 ---
-:=
-
+id
+;
 ---
 =
 ,
@@ -65,19 +65,19 @@ return
 id
 ---
 ,
-
+=
 ---
 (
 ---
 (
 ---
 ,
-
+)
 ---
 
 ---
 eol
-
+{, , }, for, if, return, func, id, expr, ,, package
 ---
 int
 float64
