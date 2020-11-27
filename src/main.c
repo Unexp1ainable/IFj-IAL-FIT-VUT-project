@@ -59,13 +59,16 @@ int main(int argc, char *argv[])
         fileptr = stdin;
     }
 
+    dynamic_string_init(&stringbuffer);
+
     TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
     int r_code;
-    while (true)
+    while (!end)
     {
         r_code = get_next_token(&t);
         print_token(t, r_code);
     }
 
+    free(stringbuffer.string);
     return 0;
 }

@@ -17,18 +17,13 @@ static bool isbuff;    //is letter in the buff?
 static int buffedchar; //what letter is in the buff?
 FILE *fileptr;         //TODO assign stdin or something
 Dynamic_string stringbuffer;
+bool end = false;
 //line,nextline, loadedchar, line_pos?
 /****************************    variable end    ***********************************************************/
 int get_next_token(TOKEN *tokenptr)
 {
     int c = 0;
-    fsm_state = FSM_START;
-
-    if (tokenptr->tokentype == TOKEN_TYPE_STRING){
-        free(tokenptr->string);
-    }
-
-    dynamic_string_init(&stringbuffer);
+    fsm_state = FSM_START;    
 
     if (tokenptr == NULL)
     {
@@ -37,7 +32,7 @@ int get_next_token(TOKEN *tokenptr)
     dynamic_string_delete(&stringbuffer); //can be done on the start of the function, or at EVERY EXIT CONDITION
     //dokoncenie predosleho cyklu+podmienky
     //proper case
-    while(1){
+    while(!end){
         if (isbuff){
             isbuff = false;
             c = buffedchar;
@@ -52,7 +47,8 @@ int get_next_token(TOKEN *tokenptr)
                 if(isspace(c) && c != '\n')     {continue;}/*isspace covers a lot more*/
                 else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; return OK;}/*else ignore*/
                 else if (c == '/')              {fsm_state = FSM_SLASH;}
-                else if (c == '\"')             {fsm_state = FSM_STRING;}
+                else if (c == '\"')             
+                {fsm_state = FSM_STRING;}
                 else if (isalpha(c))            {fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}
                 else if (c == '_')              {fsm_state = FSM_UNDERLINE; }
                 else if (c == '=')              {fsm_state = FSM_EQUALSIGN;}
@@ -70,7 +66,8 @@ int get_next_token(TOKEN *tokenptr)
                 else if (c == '<')              {fsm_state = FSM_SMALLERTHAN;}
                 else if (c == '>')              {fsm_state = FSM_GREATERTHAN;}
                 else if (c == ',')              {tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}
-                else if (c == EOF)              {tokenptr->tokentype = TOKEN_TYPE_EOF; return OK;}
+                else if (c == EOF)              {tokenptr->tokentype = TOKEN_TYPE_EOF; end = true;  return OK;
+                }
                 else                            {return WTF;}
 
                 break;
@@ -174,7 +171,7 @@ int get_next_token(TOKEN *tokenptr)
                 }
                 else{
                     tokenptr->tokentype = TOKEN_TYPE_STRING;
-                    tokenptr->string    = &stringbuffer;
+                    dynamic_string_copy(tokenptr, &stringbuffer);
                     return OK;
                 }
                 break;

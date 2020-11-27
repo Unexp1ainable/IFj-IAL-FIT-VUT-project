@@ -136,5 +136,7 @@ int get_next_token(TOKEN *tokenptr);
 
 // variables
 extern FILE *fileptr;
+extern Dynamic_string stringbuffer;
+extern bool end;
 
 #endif
