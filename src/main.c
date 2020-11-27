@@ -2,9 +2,13 @@
 #include "dynamic_string.h"
 
 int main() {
-    list *l = scann();
+    TOKEN *tp;
+    int retval;
+    while ((retval = get_next_token()) != WTF)
+        printf("%i\n", tp->tokentype);
 
+    if (retval == WTF)
+        return WTF;
 
-    freeList(l);
     return 0;
 }
