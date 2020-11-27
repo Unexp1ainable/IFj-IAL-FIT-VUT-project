@@ -45,7 +45,8 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; return OK;}/*else ignore*/
                 else if (c == '/')              {fsm_state = FSM_SLASH;}
                 else if (c == '\"')             {fsm_state = FSM_STRING;}
-                else if (isalpha(c) || c == '_'){fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}
+                else if (isalpha(c))            {fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}
+                else if (c == '_')              {fsm_state = FSM_UNDERLINE; }
                 else if (c == '=')              {fsm_state = FSM_EQUALSIGN;}
                 else if (c == '+')              {tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}
                 else if (c == ':')              {fsm_state = FSM_COLON;}
@@ -61,7 +62,6 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '<')              {fsm_state = FSM_SMALLERTHAN;}
                 else if (c == '>')              {fsm_state = FSM_GREATERTHAN;}
                 else if (c == ',')              {tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}
-                else if (c == '_')              {tokenptr->tokentype = TOKEN_TYPE_UNDERSCORE;return OK;}
                 else if (c == EOF)              {tokenptr->tokentype = TOKEN_TYPE_EOF; return OK;}
                 else                            {return WTF;}
 
@@ -75,6 +75,20 @@ int get_next_token(TOKEN * tokenptr){
                     buffedchar = c;
                     isbuff = true;
                     tokenptr->tokentype = TOKEN_TYPE_DIVIDE;
+                    return OK;
+                }
+                break;
+
+
+            case FSM_UNDERLINE:
+                if (isalnum(c)){
+                    if(!dynamic_string_add_char(&stringbuffer, c)){return memoryerror;}
+                    fsm_state = FSM_ID;
+                }
+                else{
+                    isbuff = true;
+                    buffedchar = c;
+                    tokenptr->tokentype = TOKEN_TYPE_UNDERSCORE;
                     return OK;
                 }
                 break;

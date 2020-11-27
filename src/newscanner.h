@@ -95,6 +95,7 @@ FSM_BLOCK_COMMENT_END,      //block comment, got *, expect backslash
 FSM_STRING,                 //there has been ", reading the whole string till another "
 FSM_COLON,
 FSM_ID,
+FSM_UNDERLINE,
 FSM_EXCLAMATION,
 FSM_SMALLERTHAN,
 FSM_GREATERTHAN,
