@@ -25,6 +25,15 @@ void set_fsm_state(FSM_STATES input){
     fsm_state = input;
 }
 
+bool dynamic_string_copy(dynamic_string *dynamicstring, TOKEN *token) {
+    token->string = (char *) malloc(dynamicstring->actual_size + 1);
+    if (token->string == NULL)
+        return false;
+
+    strcpy(token->string, dynamicstring->string);
+    return true;
+}
+
 int get_next_token(TOKEN * tokenptr){
     int c = 0;
 
