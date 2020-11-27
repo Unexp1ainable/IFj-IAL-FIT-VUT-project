@@ -1,5 +1,8 @@
 /**TODO
  * */
+#ifndef DYNAMIC_STRING
+#define DYNAMIC_STRING
+
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -9,6 +12,7 @@ typedef struct{
     char * string;
     int actual_size;
     int allocated_size;
+    int error;
 }Dynamic_string;
 
 bool dynamic_string_init        (Dynamic_string * dynamicstring);
@@ -20,3 +24,5 @@ void dynamic_string_delete      (Dynamic_string * dynamicstring);
 bool dynamic_string_full        (Dynamic_string * dynamicstring);
 void dynamic_string_backspace   (Dynamic_string * dynamicstring);
 void dynamic_string_print(Dynamic_string dynamicstring);
+
+#endif
