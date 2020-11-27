@@ -86,20 +86,28 @@ typedef struct {
 typedef enum{
 //TODO pridavat postupne pocas prace v newscanner.c
 FSM_START,                  //state used at the beginning of the scan
+FSM_BACKSLASH,
 FSM_SLASH,                  // there has been a backslash, expect * or another backslash
 FSM_LINE_COMMENT_PROPER,    // ignore all till EOL
 FSM_BLOCK_COMMENT_PROPER,   //ignore all till *backslash
 FSM_BLOCK_COMMENT_END,      //block comment, got *, expect backslash
 FSM_STRING,                 //there has been ", reading the whole string till another "
-FSM_FIRST_EQUAL,
-FSM_FIRST_PLUS,
-FSM_FIRST_MINUS,
 FSM_COLON,
 FSM_ID,
 FSM_EXCLAMATION,
-FSM_NUMBER,
 FSM_SMALLERTHAN,
 FSM_GREATERTHAN,
+FSM_EQUALSIGN,
+FSM_DECNUMBER,
+FSM_DECNUMBER_ZERO,
+FSM_DECNUMBER_EXPONENT_OR_SIGN,
+FSM_DECNUMBER_EXPONENT_AND_SIGN,
+FSM_DECNUMBER_EXPONENT_NUMBER,
+FSM_DECNUMBER_FLOAT,
+FSM_DECNUMBER_EXP_DEC,
+FSM_HEXNUMBER_1,
+FSM_HEXNUMBER_2,
+
 }FSM_STATES;
 
 /*
