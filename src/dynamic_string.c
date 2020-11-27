@@ -12,8 +12,10 @@ bool dynamic_string_init(Dynamic_string *dynamicstring)
     {
         return false;
     }
-    dynamicstring->actual_size = -1;
+    dynamicstring->actual_size = 0;
+    dynamicstring->string[0]   = '\0';
     dynamicstring->allocated_size = DEFAULT_STRING_LENGTH;
+    dynamicstring->error = 0;
     return true;
 }
 bool dynamic_string_add_char(Dynamic_string *dynamicstring, char c)
@@ -26,12 +28,16 @@ bool dynamic_string_add_char(Dynamic_string *dynamicstring, char c)
             return false;
         }
     }
-    dynamicstring->string[dynamicstring->actual_size + 1] = c;
+
+    dynamicstring->string[dynamicstring->actual_size] = c;
+    dynamicstring->actual_size++;
+    dynamicstring->string[dynamicstring->actual_size] = '\0';
     return true;
 }
 bool dynamic_string_add_string(Dynamic_string *dynamicstring, char *word)
 {
-    while (strlen(dynamicstring->string) + strlen(word) + 1 > dynamicstring->allocated_size)
+    unsigned newlen = strlen(word);
+    while (strlen(dynamicstring->string) + newlen > dynamicstring->allocated_size)
     {
         bool tmpboolean = dynamic_string_double(dynamicstring);
         if (tmpboolean == false)
@@ -39,6 +45,10 @@ bool dynamic_string_add_string(Dynamic_string *dynamicstring, char *word)
             return false;
         }
     }
+
+    char *startnew = &(dynamicstring->string[dynamicstring->actual_size]);
+    strcpy(startnew, word);
+    dynamicstring->actual_size += newlen;
 }
 bool dynamic_string_double(Dynamic_string *dynamicstring)
 {
@@ -79,7 +89,11 @@ bool dynamic_string_full(Dynamic_string *dynamicstring)
 }
 void dynamic_string_backspace(Dynamic_string *dynamicstring)
 {
-    dynamicstring->string[dynamicstring->actual_size] = '\0';
     dynamicstring->actual_size--;
+    dynamicstring->string[dynamicstring->actual_size] = '\0';
     return;
+}
+
+void dynamic_string_print(Dynamic_string dynamicstring) {
+    printf("str:\n%s\n", dynamicstring.string);
 }

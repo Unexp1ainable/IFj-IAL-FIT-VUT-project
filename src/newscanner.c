@@ -6,6 +6,7 @@
  * */
 #include "newscanner.h"
 #include <stdio.h>
+#define OK  0
 #define WTF 69
 #define exitus 12
 #define memoryerror 42
@@ -49,23 +50,22 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '/')              {/*poss.comm. after curly bracket*/ {fsm_state = FSM_SLASH;}}
                 else if (c == "\"")             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_STRING;}}
                 else if (isalpha(c) || c == '_'){if(eol_value == 2){return WTF;}else{fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}}
-                else if (c == '=')              {if(eol_value == 2){return WTF;}else{maketoken();/*TODO after jirka*/}}
-                else if (c == '+')              {if(eol_value == 2){return WTF;}else{maketoken();/*+*/}}
+                else if (c == '=')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_FIRST_EQUAL;}}
+                else if (c == '+')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}}
                 else if (c == ':')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_COLON;}}
-                else if (c == ';')              {if(eol_value == 2){return WTF;}else{maketoken();}}
-                else if (c == '-')              {if(eol_value == 2){return WTF;}else{maketoken();}}
-                else if (c == '*')              {if(eol_value == 2){return WTF;}else{maketoken();}}
-                else if (c == '(')              {if(eol_value == 2){return WTF;}else{return maketoken();/*opening bracket*/}}
-                else if (c == ')')              {if(eol_value == 2){return WTF;}else{return maketoken();/*closing bracket*/}}
-                else if (c == '{')              {if(eol_value == 2){return WTF;}else{eol_value = 2; return maketoken();}}
-                else if (c == '}')              {if(eol_value == 2){return WTF;}else{               return maketoken();}}
+                else if (c == ';')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_SEMICOLON; return OK;}}
+                else if (c == '-')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_SUBTRACT; return OK;}}
+                else if (c == '*')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_MULTIPLY; return OK;}}
+                else if (c == '(')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_OPENING_CLASSIC_BRACKET; return OK;}}
+                else if (c == ')')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_CLOSING_CLASSIC_BRACKET; return OK;}}
+                else if (c == '{')              {if(eol_value == 2){return WTF;}else{eol_value = 2; tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; return OK;}}
+                else if (c == '}')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; return OK;}}
                 else if (c == '!')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_EXCLAMATION;}}
                 else if (isdigit(c))            {if(eol_value == 2){return WTF;}else{fsm_state = FSM_DECNUMBER;dynamic_string_add_char(&stringbuffer,c);}}
                 else if (c == '<')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_SMALLERTHAN;}}
                 else if (c == '>')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_GREATERTHAN;}}
-                else if (c == ',')              {if(eol_value == 2){return WTF;}else{maketoken();}}
-                else if (c == EOF)              {if(eol_value == 2){return WTF;}else{maketoken();}}
-                /*not needed*///else if (c == '\\')             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_BACKSLASH;}}
+                else if (c == ',')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}}
+                else if (c == EOF)              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_EOF; return OK;}}
                 else                            {if(eol_value == 2){return WTF;}else{return WTF ;}}
 
                 break;
@@ -79,7 +79,7 @@ int get_next_token(TOKEN * tokenptr){
                     else{
                         buffedchar = c;
                         isbuff = true;
-                        maketoken();/*TODO division token*/
+                        tokenptr->tokentype = TOKEN_TYPE_DIVIDE; // TODO exit status ???? (jirka)
                         return exitus;
                     }
                 }
@@ -144,14 +144,17 @@ int get_next_token(TOKEN * tokenptr){
                     dynamic_string_add_char(&stringbuffer,c);
                 }
                 else{
-                    return maketoken();//string
+                    tokenptr->tokentype = TOKEN_TYPE_STRING;
+                    tokenptr->string    = stringbuffer;
+                    return OK;
                 }
                 break;
 
 
             case FSM_COLON:
                 if (c == '='){
-                    return maketoken();//define and assign
+                    tokenptr->tokentype = TOKEN_TYPE_EQUAL;
+                    return OK;
                 }
                 else{
                     return WTF;
