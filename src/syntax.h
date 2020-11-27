@@ -26,12 +26,33 @@ extern TOKEN token_buffer;
  * 
  */
 extern TOKEN curr_token;
+
+/*
+ * Line number
+ * 
+ */
+extern unsigned long line;
+
+/*
+ * For checking if main was already defined.
+ *
+ */
+
+extern bool main_defined;
 // ################### end of global variables #################
 
 // ################### error codes #################
 typedef enum
 {
-    ERR_PROLOG      // prolog wrong or missing
+    ERR_PROLOG,      // prolog wrong or missing
+    ERR_EOL_EXPECTED, // required eol missing
+    ERR_EOF_EXPECTED,
+    ERR_FUNC_EXPECTED,
+    ERR_FUNC_ID_EXPECTED,
+    ERR_MULTIPLE_MAIN_FUNC,
+    ERR_F_PAR_L_BRACKET,
+    ERR_F_PAR_R_BRACKET
+
 } ERR_CODE_SYN;
 // ################### end of error codes #################
 
@@ -57,14 +78,19 @@ void return_token(TOKEN token);
  * param err Error code
  */
 void describe_error(ERR_CODE_SYN err);
-// ################### end of helper functions #################
 
+/*
+ * Check if next token is eol and increment line
+ * 
+ */
+bool eol_required());
+// ################### end of helper functions #################
 
 // ############################# STATES ##################################
 /*
  * Beginning of the program
  * 
- * <prolog> -> package main <eol> <f_list> <eols> <eof>
+ * <prolog> -> package main <eol> <eols> <f_list> <eols> <eof>
  * 
  * return int 
  */
@@ -73,7 +99,7 @@ int s_prolog();
 /*
  * List of functions
  * 
- * <f_list> -> <func> <f_list> ||
+ * <f_list> -> <eols> <func> <f_list>
  * <f_list> -> e
  * 
  * return int 
@@ -325,6 +351,5 @@ int s_param_list_n();
 int s_eols();
 
 // ############################# STATES END ###############################
-
 
 #endif /* SYNTAX_H */
