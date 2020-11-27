@@ -122,5 +122,7 @@ int maketoken();//TODO
 
 bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring);
 
+int get_next_token(TOKEN *tokenptr);
+
 
 #endif
