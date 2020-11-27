@@ -7,10 +7,7 @@
 #include "newscanner.h"
 #include <stdio.h>
 #include <ctype.h>
-#define OK  0
-#define WTF 69
-#define exitus 12
-#define memoryerror 42
+
 /***********************************************************************************************************
  * *********************************************************************************************************
  * *********    these variables are used globally inside the function get_next_token    ********************
@@ -247,7 +244,13 @@ int get_next_token(TOKEN * tokenptr){
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXP_DEC;}
-                else                    {isbuff = true; buffedchar = c;maketoken();/*number processing*/}
+                else                    {
+                    isbuff = true; buffedchar = c;
+                    tokenptr->tokentype = TOKEN_TYPE_INTEGER;
+                    tokenptr->integer   = atol(stringbuffer.string);
+                    /*test*/printf("test: %li/n", tokenptr->integer);
+                    //maketoken();/*number processing*/
+                }
                 break;
 
 
@@ -257,7 +260,7 @@ int get_next_token(TOKEN * tokenptr){
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXP_DEC;}
-                else                    {isbuff = true; buffedchar = c;maketoken();/*number processing*/}
+                else                    {isbuff = true; buffedchar = c;/*maketoken();/*number processing*/}
                 break;
 
 
@@ -281,14 +284,14 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
-                else                    {isbuff = true;buffedchar = c; maketoken();}
+                else                    {isbuff = true;buffedchar = c; /*maketoken();*/}
                 break;
 
             case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
-                else                    {isbuff = true;buffedchar = c; maketoken();}
+                else                    {isbuff = true;buffedchar = c; /*maketoken();*/}
                 break;
 
 
