@@ -49,7 +49,7 @@ typedef enum{
     TOKEN_TYPE_OPENING_CLASSIC_BRACKET,
     TOKEN_TYPE_CLOSING_CLASSIC_BRACKET,
     TOKEN_TYPE_OPENING_CURVY_BRACKET,
-    TOKEN_TYPE_CLOSING_CURVY_BRACKET,//TODO possible boxy bracket?
+    TOKEN_TYPE_CLOSING_CURVY_BRACKET,
     TOKEN_TYPE_COMMA,
     TOKEN_TYPE_SEMICOLON,
     TOKEN_TYPE_UNDERSCORE,
@@ -63,7 +63,6 @@ typedef enum{
     TOKEN_TYPE_RESERVED_KEYWORD,
     TOKEN_TYPE_DEFINE_AND_ASSIGN,
     TOKEN_TYPE_MAIN,
-    //TODO add more
 
 }TOKEN_TYPES;
 
@@ -86,7 +85,6 @@ typedef struct {
  * @enum states of the scanner
  * */
 typedef enum{
-//TODO pridavat postupne pocas prace v newscanner.c
 FSM_START,                  //state used at the beginning of the scan
 FSM_BACKSLASH,
 FSM_SLASH,                  // there has been a backslash, expect * or another backslash

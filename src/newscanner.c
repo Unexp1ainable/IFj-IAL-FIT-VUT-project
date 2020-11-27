@@ -6,6 +6,7 @@
  * */
 #include "newscanner.h"
 #include <stdio.h>
+#include <ctype.h>
 #define OK  0
 #define WTF 69
 #define exitus 12
@@ -45,7 +46,7 @@ int get_next_token(TOKEN * tokenptr){
                 if(isspace(c) && c != '\n')     {continue;}/*isspace covers a lot more*/
                 else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; return OK;}/*else ignore*/
                 else if (c == '/')              {fsm_state = FSM_SLASH;}
-                else if (c == "\"")             {fsm_state = FSM_STRING;}
+                else if (c == '\"')             {fsm_state = FSM_STRING;}
                 else if (isalpha(c) || c == '_'){fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}
                 else if (c == '=')              {fsm_state = FSM_EQUALSIGN;}
                 else if (c == '+')              {tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}
@@ -75,7 +76,7 @@ int get_next_token(TOKEN * tokenptr){
                 else{//did not go to any of the 
                     buffedchar = c;
                     isbuff = true;
-                    tokenptr->tokentype = TOKEN_TYPE_DIVIDE; // TODO exit status ???? (jirka)
+                    tokenptr->tokentype = TOKEN_TYPE_DIVIDE;
                     return OK;
                 }
                 break;
@@ -83,7 +84,7 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_LINE_COMMENT_PROPER:
                 if (c == EOF || c == '\n'){
-                    buffedchar = c;//TODO? naozaj vratit newline token aj ked je komentar na konci riadku?
+                    buffedchar = c;
                     isbuff = true;
                     fsm_state = FSM_START;
                 }
@@ -119,23 +120,36 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_ID:
                 if (isalnum(c) || c == '_'){
-                    if(!dynamic_string_add_char(&stringbuffer, c)){
-                        return WTF;//mem error
-                    }
+                    if(!dynamic_string_add_char(&stringbuffer, c)){return memoryerror;}
                 }
                 else{
                     isbuff = true;
                     buffedchar = c;
-                    //TODO discriminate ID or Keyword
-                    int tmp = maketoken();//id
+                    if      (!strcmp(stringbuffer.string,"else"))   {tokenptr->keyword = KEYWORD_ELSE;      tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"float64")){tokenptr->keyword = KEYWORD_FLOAT64;   tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"for"))    {tokenptr->keyword = KEYWORD_FOR;       tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"func"))   {tokenptr->keyword = KEYWORD_FUNC;      tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"if"))     {tokenptr->keyword = KEYWORD_IF;        tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"int"))    {tokenptr->keyword = KEYWORD_INT;       tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"package")){tokenptr->keyword = KEYWORD_PACKAGE;   tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"return")) {tokenptr->keyword = KEYWORD_RETURN;    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"string")) {tokenptr->keyword = KEYWORD_STRING;    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"main"))   {tokenptr->tokentype = TOKEN_TYPE_MAIN; tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else{
+                        tokenptr->tokentype =TOKEN_TYPE_IDENTIFIER;
+                        dynamic_string_copy(tokenptr->string,stringbuffer);
+                    }
                     dynamic_string_delete(&stringbuffer);
-                    return tmp; 
+                    return OK;
                 }
                 break;
 
 
             case FSM_STRING://TODO cely case, nieco chcel robit jirka, a toto je uplne ze nedokoncene
-                if (c != '\"'){
+                if (c == '\\'){
+                    fsm_state = FSM_BACKSLASH;
+                }
+                else if (c != '\"'){
                     dynamic_string_add_char(&stringbuffer,c);
                 }
                 else{
