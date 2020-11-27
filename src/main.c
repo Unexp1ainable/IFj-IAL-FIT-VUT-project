@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
     {
         r_code = get_next_token(&t);
         print_token(t, r_code);
-        fgetc(stdin);
     }
 
     return 0;

@@ -154,7 +154,7 @@ int get_next_token(TOKEN *tokenptr)
                     else if (!strcmp(stringbuffer.string,"package")){tokenptr->keyword = KEYWORD_PACKAGE;   tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
                     else if (!strcmp(stringbuffer.string,"return")) {tokenptr->keyword = KEYWORD_RETURN;    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
                     else if (!strcmp(stringbuffer.string,"string")) {tokenptr->keyword = KEYWORD_STRING;    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
-                    else if (!strcmp(stringbuffer.string,"main"))   {tokenptr->tokentype = TOKEN_TYPE_MAIN; tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
+                    else if (!strcmp(stringbuffer.string,"main"))   {tokenptr->keyword = TOKEN_TYPE_MAIN; tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
                     else{
                         tokenptr->tokentype =TOKEN_TYPE_IDENTIFIER;
                         dynamic_string_copy(tokenptr,&stringbuffer);
