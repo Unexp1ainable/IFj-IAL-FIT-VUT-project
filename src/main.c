@@ -1,10 +1,14 @@
-#include "scanner.h"
+#include "newscanner.h"
 #include "dynamic_string.h"
 
 int main() {
-    list *l = scann();
+    int retval;
+    TOKEN *tp;
+    while ((retval=get_next_token(tp)) != WTF)
+        printf("token: %i\n", (int) tp->tokentype);
 
+    if (retval == WTF)
+        return WTF;
 
-    freeList(l);
     return 0;
 }

@@ -8,7 +8,12 @@
 
 #ifndef _NEWSCANNER_H
 #define _NEWSCANNER_H
+
 #include "dynamic_string.h"
+#define OK  0
+#define WTF 69
+#define exitus 12
+#define memoryerror 42
 /**
  * @enum enumeration of reserved keywords by golang
  * @note zadanie, strana 3
@@ -117,6 +122,8 @@ FSM_HEXNUMBER_2,
 ###########################   Function headers   ###################################################################################
 ####################################################################################################################
 */
+int get_next_token(TOKEN * tokenptr);
+
 void set_fsm_state(FSM_STATES input);
 int maketoken();//TODO
 
