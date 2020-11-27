@@ -1,7 +1,10 @@
+
 #include "newscanner.h"
 
-int get_next_token(TOKEN *token){
-    token->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-    token->keyword = KEYWORD_STRING;
+int get_next_tokenm(TOKEN *token){
+    static int a = 0;
+    token->tokentype = TOKEN_TYPE_INTEGER;
+    token->integer = a;
+    a++;
     return 0;
 }
