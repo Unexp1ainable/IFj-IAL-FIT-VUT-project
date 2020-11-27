@@ -8,6 +8,7 @@
 #include <stdio.h>
 #define WTF 69
 #define exitus 12
+#define memoryerror 42
 /***********************************************************************************************************
  * *********************************************************************************************************
  * *********    these variables are used globally inside the function get_next_token    ********************
@@ -34,7 +35,13 @@ int get_next_token(TOKEN * tokenptr){
     //dokoncenie predosleho cyklu+podmienky
     //proper case
     while(1){
-        c = fgetc(fileptr);
+        if (isbuff){
+            isbuff = false;
+            c = buffedchar;
+        }
+        else{
+            c = fgetc(fileptr);
+        }
         switch(fsm_state){
             case FSM_START:
                 if(isspace(c) && c != '\n')                                         {continue;}/*isspace covers a lot more*/
@@ -42,7 +49,7 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '/')              {/*poss.comm. after curly bracket*/ {fsm_state = FSM_SLASH;}}
                 else if (c == "\"")             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_STRING;}}
                 else if (isalpha(c) || c == '_'){if(eol_value == 2){return WTF;}else{fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}}
-                else if (c == '=')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_FIRST_EQUAL;}}
+                else if (c == '=')              {if(eol_value == 2){return WTF;}else{maketoken();/*TODO after jirka*/}}
                 else if (c == '+')              {if(eol_value == 2){return WTF;}else{maketoken();/*+*/}}
                 else if (c == ':')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_COLON;}}
                 else if (c == ';')              {if(eol_value == 2){return WTF;}else{maketoken();}}
@@ -53,11 +60,12 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '{')              {if(eol_value == 2){return WTF;}else{eol_value = 2; return maketoken();}}
                 else if (c == '}')              {if(eol_value == 2){return WTF;}else{               return maketoken();}}
                 else if (c == '!')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_EXCLAMATION;}}
-                else if (isdigit(c))            {if(eol_value == 2){return WTF;}else{fsm_state = FSM_NUMBER;dynamic_string_add_char(&stringbuffer,c);}}
+                else if (isdigit(c))            {if(eol_value == 2){return WTF;}else{fsm_state = FSM_DECNUMBER;dynamic_string_add_char(&stringbuffer,c);}}
                 else if (c == '<')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_SMALLERTHAN;}}
                 else if (c == '>')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_GREATERTHAN;}}
                 else if (c == ',')              {if(eol_value == 2){return WTF;}else{maketoken();}}
                 else if (c == EOF)              {if(eol_value == 2){return WTF;}else{maketoken();}}
+                /*not needed*///else if (c == '\\')             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_BACKSLASH;}}
                 else                            {if(eol_value == 2){return WTF;}else{return WTF ;}}
 
                 break;
@@ -76,6 +84,8 @@ int get_next_token(TOKEN * tokenptr){
                     }
                 }
                 break;
+
+
             case FSM_LINE_COMMENT_PROPER:
                 if (c == EOF || c == '\n'){
                     buffedchar = c;//TODO? naozaj vratit newline token aj ked je komentar na konci riadku?
@@ -83,15 +93,27 @@ int get_next_token(TOKEN * tokenptr){
                     fsm_state = FSM_START;
                 }
                 break;
+
+
             case FSM_BLOCK_COMMENT_PROPER:
                 if (c == '*'){
                     fsm_state = FSM_BLOCK_COMMENT_END;
                 }
-                if ()
+                else if (c == EOF){
+                    return WTF;
+                }
                 break;
+
+
             case FSM_BLOCK_COMMENT_END:
                 if (c == '/'){
                     fsm_state = FSM_START;
+                }
+                else if (c == '*'){
+                    fsm_state = FSM_BLOCK_COMMENT_END;
+                }
+                else if (c == EOF){
+                    return WTF;
                 }
                 else{
                     fsm_state = FSM_BLOCK_COMMENT_PROPER;
@@ -102,18 +124,22 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_ID:
                 if (isalnum(c) || c == '_'){
-                    dynamic_string_add_char(&stringbuffer, c);
+                    if(!dynamic_string_add_char(&stringbuffer, c)){
+                        return WTF;//mem error
+                    }
                 }
                 else{
                     isbuff = true;
                     buffedchar = c;
+                    //TODO discriminate ID or Keyword
                     int tmp = maketoken();//id
                     dynamic_string_delete(&stringbuffer);
                     return tmp; 
                 }
                 break;
 
-            case FSM_STRING:
+
+            case FSM_STRING://TODO cely case, nieco chcel robit jirka, a toto je uplne ze nedokoncene
                 if (c != '\"'){
                     dynamic_string_add_char(&stringbuffer,c);
                 }
@@ -123,41 +149,152 @@ int get_next_token(TOKEN * tokenptr){
                 break;
 
 
-
-            case FSM_FIRST_EQUAL:
-                if (c == '='){
-                    return maketoken();//is equal
-                }
-                else{
-                    isbuff = true;
-                    buffedchar = c;
-                    fsm_state = FSM_START;
-                }
-                break;
-            case FSM_FIRST_MINUS:
-                if (c == '-'){
-                    return maketoken();//sub1
-                }
-                else{
-                    isbuff = true;
-                    buffedchar = c;
-                    fsm_state = FSM_START;
-                }
-                break;
-
-            case FSM_FIRST_PLUS:
-                if (c == '+'){
-                    return maketoken();//add1
-                }
-                else {
-                    isbuff = true;
-                    buffedchar = c;
-                    fsm_state = FSM_START;
-                }
-                break;
             case FSM_COLON:
                 if (c == '='){
                     return maketoken();//define and assign
+                }
+                else{
+                    return WTF;
+                }
+                break;
+
+
+            case FSM_EXCLAMATION:
+                if (c== '='){
+                    maketoken();
+                }
+                else{
+                    return WTF;
+                }
+                break;
+
+
+            case FSM_EQUALSIGN:
+                if (c == '='){
+                    maketoken();//maketoken
+                }
+                else{
+                    isbuff = true; buffedchar = c;
+                    maketoken(); //=
+                }
+                break;
+
+
+            case FSM_GREATERTHAN:
+                if (c == '='){
+                    maketoken();//>=
+                }
+                else{
+                    isbuff = true; buffedchar = c;
+                    maketoken();//>
+                }   
+                break;
+
+
+            case FSM_SMALLERTHAN:
+                if (c == '='){
+                    maketoken();//<=
+                }
+                else{
+                    isbuff = true;
+                    buffedchar = c;
+                    maketoken();//<
+                }
+                break;
+
+
+            case FSM_BACKSLASH://note:sorted by ascii
+                if      (c == 'a') {if(!dynamic_string_add_char(&stringbuffer,'\a')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 'b') {if(!dynamic_string_add_char(&stringbuffer,'\b')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 't') {if(!dynamic_string_add_char(&stringbuffer,'\t')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 'n') {if(!dynamic_string_add_char(&stringbuffer,'\n')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 'v') {if(!dynamic_string_add_char(&stringbuffer,'\v')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 'f') {if(!dynamic_string_add_char(&stringbuffer,'\f')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 'r') {if(!dynamic_string_add_char(&stringbuffer,'\r')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == '\\'){if(!dynamic_string_add_char(&stringbuffer,'\\')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == '\''){if(!dynamic_string_add_char(&stringbuffer,'\'')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == '\"'){if(!dynamic_string_add_char(&stringbuffer,'\"')){return memoryerror;}fsm_state = FSM_STRING;}
+                else if (c == 'x') {fsm_state = FSM_HEXNUMBER_1;}
+                else{return WTF;}
+                break;
+
+                
+            case FSM_DECNUMBER://any other first number than zero
+                if     (isdigit(c))     {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
+                else if(c=='E'||c=='e') {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
+                else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXP_DEC;}
+                else                    {isbuff = true; buffedchar = c;maketoken();/*number processing*/}
+                break;
+
+
+            case FSM_DECNUMBER_ZERO://only point or exponent after first zero allowed
+                if     (isdigit(c))     {return WTF;}
+                else if(c=='E'||c=='e') {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
+                else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXP_DEC;}
+                else                    {isbuff = true; buffedchar = c;maketoken();/*number processing*/}
+                break;
+
+
+            case FSM_DECNUMBER_EXPONENT_OR_SIGN://got letter E, can get +,-,nums
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_NUMBER;}
+                else if (c == '+')      {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_AND_SIGN;}
+                else if (c == '-')      {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_AND_SIGN;}
+                else                    {return WTF;}
+                break;
+
+
+            case FSM_DECNUMBER_EXPONENT_AND_SIGN://already got e, passed  where +- was possible, so number is required
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_NUMBER;}
+                else                    {return WTF;}
+                break;
+
+
+            case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                else                    {isbuff = true;buffedchar = c; maketoken();}
+                break;
+
+            case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
+                else                    {isbuff = true;buffedchar = c; maketoken();}
+                break;
+
+
+            case FSM_DECNUMBER_EXP_DEC://got point, need at least one number
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                                        fsm_state = FSM_DECNUMBER_FLOAT;}
+                else                    {return WTF;}
+                break;
+
+
+            case FSM_HEXNUMBER_1://got \x
+                if (isxdigit(c)){fsm_state = FSM_HEXNUMBER_2;}
+                buffedchar = c;//shouldnt bother the actual buffer cuz im not setting isbuff to true
+                break;
+
+
+            case FSM_HEXNUMBER_2:
+                if (isxdigit(c)){
+                    char hexnumber[4];hexnumber[0]='0';hexnumber[1] = 'x';hexnumber[2]=buffedchar;hexnumber[3] = c;
+                    char * endptr;
+                    long c = strtol(hexnumber,&endptr,16);
+                    if (*endptr){return WTF;/*fail*/}
+                    else{/*success*//*TODO is this correct format? ma to vyrobit token ci nie?*/
+                        {if(!dynamic_string_add_char(&stringbuffer,'0'          )){return memoryerror;}}
+                        {if(!dynamic_string_add_char(&stringbuffer,'x'          )){return memoryerror;}}
+                        {if(!dynamic_string_add_char(&stringbuffer,buffedchar   )){return memoryerror;}}
+                        {if(!dynamic_string_add_char(&stringbuffer,c            )){return memoryerror;}}
+                    }
                 }
                 else{
                     return WTF;
