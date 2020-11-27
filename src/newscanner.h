@@ -8,7 +8,12 @@
 
 #ifndef _NEWSCANNER_H
 #define _NEWSCANNER_H
+
 #include "dynamic_string.h"
+#define OK  0
+#define WTF 69
+#define exitus 12
+#define memoryerror 42
 /**
  * @enum enumeration of reserved keywords by golang
  * @note zadanie, strana 3
@@ -49,10 +54,12 @@ typedef enum{
     TOKEN_TYPE_OPENING_CLASSIC_BRACKET,
     TOKEN_TYPE_CLOSING_CLASSIC_BRACKET,
     TOKEN_TYPE_OPENING_CURVY_BRACKET,
-    TOKEN_TYPE_CLOSING_CURVY_BRACKET,//TODO possible boxy bracket?
+    TOKEN_TYPE_CLOSING_CURVY_BRACKET,
     TOKEN_TYPE_COMMA,
     TOKEN_TYPE_SEMICOLON,
+    TOKEN_TYPE_UNDERSCORE,
     TOKEN_TYPE_EOF,
+    TOKEN_TYPE_EOL,
     TOKEN_TYPE_IDENTIFIER,
     TOKEN_TYPE_STRING,
     TOKEN_TYPE_INTEGER,
@@ -60,23 +67,25 @@ typedef enum{
 
     TOKEN_TYPE_RESERVED_KEYWORD,
     TOKEN_TYPE_DEFINE_AND_ASSIGN,
+    TOKEN_TYPE_ASSIGN,
     TOKEN_TYPE_MAIN,
-    //TODO add more
 
 }TOKEN_TYPES;
 
 
 
-/**
- * @brief single token representation
- * */
-typedef struct {
+typedef struct
+{
     TOKEN_TYPES tokentype;
-    Dynamic_string * string;
-    int64_t integer;
-    double floater;
-    RESERVED_KEYWORDS keyword;
-}TOKEN;
+
+    union
+    {
+        Dynamic_string *string;
+        int64_t integer;
+        double floater;
+        RESERVED_KEYWORDS keyword;
+    };
+} TOKEN;
 
 
 
@@ -84,7 +93,6 @@ typedef struct {
  * @enum states of the scanner
  * */
 typedef enum{
-//TODO pridavat postupne pocas prace v newscanner.c
 FSM_START,                  //state used at the beginning of the scan
 FSM_BACKSLASH,
 FSM_SLASH,                  // there has been a backslash, expect * or another backslash
@@ -94,6 +102,7 @@ FSM_BLOCK_COMMENT_END,      //block comment, got *, expect backslash
 FSM_STRING,                 //there has been ", reading the whole string till another "
 FSM_COLON,
 FSM_ID,
+FSM_UNDERLINE,
 FSM_EXCLAMATION,
 FSM_SMALLERTHAN,
 FSM_GREATERTHAN,
@@ -115,9 +124,16 @@ FSM_HEXNUMBER_2,
 ###########################   Function headers   ###################################################################################
 ####################################################################################################################
 */
+int get_next_token(TOKEN * tokenptr);
+
 void set_fsm_state(FSM_STATES input);
 int maketoken();//TODO
 
+bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring);
 
+int get_next_token(TOKEN *tokenptr);
+
+// variables
+extern FILE *fileptr;
 
 #endif
