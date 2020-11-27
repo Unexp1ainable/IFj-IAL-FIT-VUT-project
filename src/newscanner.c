@@ -58,6 +58,7 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '{')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; return OK;}
                 else if (c == '}')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; return OK;}
                 else if (c == '!')              {fsm_state = FSM_EXCLAMATION;}
+                else if (c == '0')              {fsm_state = FSM_DECNUMBER_ZERO;}
                 else if (isdigit(c))            {fsm_state = FSM_DECNUMBER;   dynamic_string_add_char(&stringbuffer,c);}
                 else if (c == '<')              {fsm_state = FSM_SMALLERTHAN;}
                 else if (c == '>')              {fsm_state = FSM_GREATERTHAN;}
@@ -82,7 +83,8 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_UNDERLINE:
                 if (isalnum(c)){
-                    if(!dynamic_string_add_char(&stringbuffer, c)){return memoryerror;}
+                    if(!dynamic_string_add_char(&stringbuffer, '_')){return memoryerror;}
+                    if(!dynamic_string_add_char(&stringbuffer, c  )){return memoryerror;}
                     fsm_state = FSM_ID;
                 }
                 else{
@@ -244,9 +246,9 @@ int get_next_token(TOKEN * tokenptr){
             case FSM_DECNUMBER://any other first number than zero
                 if     (isdigit(c))     {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c=='E'||c=='e') {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
-                                        fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
+                                        fsm_state = FSM_DECNUMBER_GOTEXPONENT_POSSIBLE_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
-                                        fsm_state = FSM_DECNUMBER_EXP_DEC;}
+                                        fsm_state = FSM_DECNUMBER_EXPECT_DECIMAL;}
                 else                    {isbuff = true; buffedchar = c;maketoken();/*number processing*/}
                 break;
 
@@ -254,14 +256,14 @@ int get_next_token(TOKEN * tokenptr){
             case FSM_DECNUMBER_ZERO://only point or exponent after first zero allowed
                 if     (isdigit(c))     {return WTF;}
                 else if(c=='E'||c=='e') {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
-                                        fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
+                                        fsm_state = FSM_DECNUMBER_GOTEXPONENT_POSSIBLE_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
-                                        fsm_state = FSM_DECNUMBER_EXP_DEC;}
+                                        fsm_state = FSM_DECNUMBER_EXPECT_DECIMAL;}
                 else                    {isbuff = true; buffedchar = c;maketoken();/*number processing*/}
                 break;
 
 
-            case FSM_DECNUMBER_EXPONENT_OR_SIGN://got letter E, can get +,-,nums
+            case FSM_DECNUMBER_GOTEXPONENT_POSSIBLE_SIGN://got letter E, can get +,-,nums
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_NUMBER;}
                 else if (c == '+')      {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
@@ -279,7 +281,7 @@ int get_next_token(TOKEN * tokenptr){
                 break;
 
 
-            case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
+            case FSM_DECNUMBER_EXPONENT_NUMBER://only ordinary number in exponent now
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else                    {isbuff = true;buffedchar = c; maketoken();}
                 break;
@@ -287,12 +289,12 @@ int get_next_token(TOKEN * tokenptr){
             case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
-                                        fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
+                                        fsm_state = FSM_DECNUMBER_GOTEXPONENT_POSSIBLE_SIGN;}
                 else                    {isbuff = true;buffedchar = c; maketoken();}
                 break;
 
 
-            case FSM_DECNUMBER_EXP_DEC://got point, need at least one number
+            case FSM_DECNUMBER_EXPECT_DECIMAL://got point, need at least one number
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_FLOAT;}
                 else                    {return WTF;}
