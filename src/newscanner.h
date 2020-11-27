@@ -62,6 +62,7 @@ typedef enum
     TOKEN_TYPE_DEFINE,
     TOKEN_TYPE_ASSIGN,
     TOKEN_TYPE_MAIN,
+    TOKEN_TYPE_EMPTY
     //TODO add more
 
 } TOKEN_TYPES;
