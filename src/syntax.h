@@ -36,6 +36,8 @@ int get_token(TOKEN *token);
  * @param token Token
  */
 void return_token(TOKEN token);
+// ################### end of helper functions #################
+
 
 // ############################# STATES ##################################
 /**
@@ -117,8 +119,8 @@ int s_param_def_list_n();
 /**
  * @brief List of function return parameters
  * 
- * 13.	<ret_t_list> -> <type> <ret_t_list_n>
- * 14.	<ret_t_list> -> e
+ * <ret_t_list> -> <type> <ret_t_list_n>
+ * <ret_t_list> -> e
  * 
  * @return int 
  */
@@ -127,8 +129,8 @@ int s_ret_t_list();
 /**
  * @brief Multi-return values list continuation - definition
  * 
- * 15.	<ret_t_list_n> -> , <type> <ret_t_list_n>
-16.	<ret_t_list_n> -> e
+ * <ret_t_list_n> -> , <type> <ret_t_list_n>
+ * <ret_t_list_n> -> e
  *
  * @return int 
  */
@@ -137,11 +139,11 @@ int s_ret_t_list_n();
 /**
  * @brief Statement: f_call/id_n/for/if
  * 
- * 17.	<stat> -> <if>
-18.	<stat> -> <for>
-19.	<stat> -> <return>
-20.	<stat> -> <id_n>
-21.	<stat> -> e
+ * <stat> -> <if>
+ * <stat> -> <for>
+ * <stat> -> <return>
+ * <stat> -> <id_n>
+ * <stat> -> e
  * 
  * @return int 
  */
@@ -150,8 +152,8 @@ int s_stat();
 /**
  * @brief List of statements
  * 
- * 22.	<stat_list> -> <stat> <eol> <eols> <stat_list>
-23.	<stat_list> -> e
+ * <stat_list> -> <stat> <eol> <eols> <stat_list>
+ * <stat_list> -> e
  * 
  * @return int 
  */
@@ -160,7 +162,7 @@ int s_stat_list();
 /**
  * @brief Condition
  * 
- * 24.	<if> -> if <expr><body><else>
+ * <if> -> if <expr><body><else>
  * 
  * @return int 
  */
@@ -169,8 +171,8 @@ int s_if();
 /**
  * @brief Else statement after condition
  * 
- * 25.	<else> -> else <body>
-26.	<else> -> e
+ * <else> -> else <body>
+ * <else> -> e
  * 
  * @return int 
  */
@@ -179,7 +181,7 @@ int s_else();
 /**
  * @brief For loop
  * 
- * 27.	<for> -> for <id_def_v>; <expr>; <id_assign_v> <body>
+ * <for> -> for <id_def_v>; <expr>; <id_assign_v> <body>
  * 
  * @return int 
  */
@@ -197,8 +199,8 @@ int s_return();
 /**
  * @brief List of expressions
  * 
- * 30.	<expr_list> -> <expr> <expr_list_n>
-31.	<expr_list> -> e
+ * <expr_list> -> <expr> <expr_list_n>
+ * <expr_list> -> e
  * 
  * @return int 
  */
@@ -207,8 +209,8 @@ int s_expr_list();
 /**
  * @brief Continuation of expression list
  * 
- * 50.	<expr_list_n> -> ,<expr> <expr_list_n>
-51.	<expr_list_n> -> e
+ * <expr_list_n> -> ,<expr> <expr_list_n>
+ * <expr_list_n> -> e
  * 
  * @return int 
  */
@@ -217,9 +219,9 @@ int s_expr_list_n();
 /**
  * @brief Id was found in the statement - crossroads
  * 
- * 32.	<id_n> -> <f_call>
-33.	<id_n> -> <id_def>
-34.	<id_n> -> <id_assign>
+ * <id_n> -> <f_call>
+ * <id_n> -> <id_def>
+ * <id_n> -> <id_assign>
  * 
  * @return int 
  */
@@ -228,7 +230,7 @@ int s_id_n();
 /**
  * @brief Variable definition
  * 
- * 36.	<id_def> -> id := <expr>
+ * <id_def> -> id := <expr>
  * 
  * @return int 
  */
@@ -237,7 +239,7 @@ int s_id_def();
 /**
  * @brief List of IDs, must be assignment
  * 
- * 39.	<id_list> -> id,id <id_list_n>
+ * <id_list> -> id,id <id_list_n>
  * 
  * @return int 
  */
@@ -246,8 +248,8 @@ int s_id_list();
 /**
  * @brief Continuation of ID list
  * 
- * 40.	<id_list_n> -> ,id <id_list_n>
-41.	<id_list_n> -> e
+ * <id_list_n> -> ,id <id_list_n>
+ * <id_list_n> -> e
  * 
  * @return int 
  */
@@ -256,8 +258,8 @@ int s_id_list_n();
 /**
  * @brief Assignment of the ID/s
  * 
- * 42.	<id_assign> -> id = <expr>
-43.	<id_assign> -> <id_list> = <expr_list>
+ * <id_assign> -> id = <expr>
+ * <id_assign> -> <id_list> = <expr_list>
  * 
  * @return int 
  */
@@ -266,7 +268,7 @@ int s_id_assign();
 /**
  * @brief Parameter of function call
  * 
- * 44.	<param> -> <expr>
+ * <param> -> <expr>
  * 
  * @return int 
  */
@@ -284,8 +286,8 @@ int s_param_list();
 /**
  * @brief Continuation of function call parameters
  * 
- * 46.	<param_list_n> -> <param>, <param_list_n>
-47.	<param_list_n> -> e
+ * <param_list_n> -> <param>, <param_list_n>
+ * <param_list_n> -> e
  * 
  * @return int 
  */
@@ -294,8 +296,8 @@ int s_param_list_n();
 /**
  * @brief List of eols
  * 
- * 48.	<eols> -> eol <eols>
-49.	<eols> -> e
+ * <eols> -> eol <eols>
+ * <eols> -> e
  * 
  * @return int 
  */
