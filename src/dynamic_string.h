@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 #define DEFAULT_STRING_LENGTH 30
 typedef struct{
     char * string;
@@ -18,3 +19,4 @@ bool dynamic_string_free        (Dynamic_string * dynamicstring);
 void dynamic_string_delete      (Dynamic_string * dynamicstring);
 bool dynamic_string_full        (Dynamic_string * dynamicstring);
 void dynamic_string_backspace   (Dynamic_string * dynamicstring);
+void dynamic_string_print(Dynamic_string dynamicstring);
