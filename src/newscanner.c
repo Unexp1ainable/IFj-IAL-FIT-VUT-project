@@ -24,6 +24,15 @@ Dynamic_string stringbuffer;
 /****************************    variable end    ***********************************************************/
 
 
+bool dynamic_string_copy(dynamic_string *dynamicstring, TOKEN *token) {
+    token->string = (char *) malloc(dynamicstring->actual_size + 1);
+    if (token->string == NULL)
+        return false;
+
+    strcpy(token->string, dynamicstring->string);
+    return true;
+}
+
 int get_next_token(TOKEN * tokenptr){
     int c = 0;
     fsm_state = FSM_START;
