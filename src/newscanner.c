@@ -14,8 +14,6 @@
  * *********************************************************************************************************
  * *********    these variables are used globally inside the function get_next_token    ********************
 ************************************************************************************************************/
-static int eol_value;//EOL char is: 0 = forbidden,1 = optional,2 = required
-static int eol_valid;//do i care about EOL? 0 = false, 1 = true
 static int fsm_state;//state of the finite state machine
 static bool isbuff;//is letter in the buff?
 static int buffedchar;//what letter is in the buff?
@@ -23,9 +21,7 @@ FILE * fileptr;//TODO assign stdin or something
 Dynamic_string stringbuffer;
 //line,nextline, loadedchar, line_pos?
 /****************************    variable end    ***********************************************************/
-void set_fsm_state(FSM_STATES input){
-    fsm_state = input;
-}
+
 
 int get_next_token(TOKEN * tokenptr){
     int c = 0;
@@ -33,6 +29,7 @@ int get_next_token(TOKEN * tokenptr){
     if (tokenptr == NULL){
         return WTF;
     }
+    dynamic_string_delete(&stringbuffer);//can be done on the start of the function, or at EVERY EXIT CONDITION
     //dokoncenie predosleho cyklu+podmienky
     //proper case
     while(1){
@@ -45,28 +42,29 @@ int get_next_token(TOKEN * tokenptr){
         }
         switch(fsm_state){
             case FSM_START:
-                if(isspace(c) && c != '\n')                                         {continue;}/*isspace covers a lot more*/
-                else if (c == '\n')             {if(eol_value == 0){return WTF;}else{if (eol_value == 2){eol_value = 1;}}/*else ignore*/}
-                else if (c == '/')              {/*poss.comm. after curly bracket*/ {fsm_state = FSM_SLASH;}}
-                else if (c == "\"")             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_STRING;}}
-                else if (isalpha(c) || c == '_'){if(eol_value == 2){return WTF;}else{fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}}
-                else if (c == '=')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_EQUALSIGN;}}
-                else if (c == '+')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}}
-                else if (c == ':')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_COLON;}}
-                else if (c == ';')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_SEMICOLON; return OK;}}
-                else if (c == '-')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_SUBTRACT; return OK;}}
-                else if (c == '*')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_MULTIPLY; return OK;}}
-                else if (c == '(')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_OPENING_CLASSIC_BRACKET; return OK;}}
-                else if (c == ')')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_CLOSING_CLASSIC_BRACKET; return OK;}}
-                else if (c == '{')              {if(eol_value == 2){return WTF;}else{eol_value = 2; tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; return OK;}}
-                else if (c == '}')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; return OK;}}
-                else if (c == '!')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_EXCLAMATION;}}
-                else if (isdigit(c))            {if(eol_value == 2){return WTF;}else{fsm_state = FSM_DECNUMBER;dynamic_string_add_char(&stringbuffer,c);}}
-                else if (c == '<')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_SMALLERTHAN;}}
-                else if (c == '>')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_GREATERTHAN;}}
-                else if (c == ',')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}}
-                else if (c == EOF)              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_EOF; return OK;}}
-                else                            {if(eol_value == 2){return WTF;}else{return WTF ;}}
+                if(isspace(c) && c != '\n')     {continue;}/*isspace covers a lot more*/
+                else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; return OK;}/*else ignore*/
+                else if (c == '/')              {fsm_state = FSM_SLASH;}
+                else if (c == "\"")             {fsm_state = FSM_STRING;}
+                else if (isalpha(c) || c == '_'){fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}
+                else if (c == '=')              {fsm_state = FSM_EQUALSIGN;}
+                else if (c == '+')              {tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}
+                else if (c == ':')              {fsm_state = FSM_COLON;}
+                else if (c == ';')              {tokenptr->tokentype = TOKEN_TYPE_SEMICOLON; return OK;}
+                else if (c == '-')              {tokenptr->tokentype = TOKEN_TYPE_SUBTRACT; return OK;}
+                else if (c == '*')              {tokenptr->tokentype = TOKEN_TYPE_MULTIPLY; return OK;}
+                else if (c == '(')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CLASSIC_BRACKET; return OK;}
+                else if (c == ')')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CLASSIC_BRACKET; return OK;}
+                else if (c == '{')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; return OK;}
+                else if (c == '}')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; return OK;}
+                else if (c == '!')              {fsm_state = FSM_EXCLAMATION;}
+                else if (isdigit(c))            {fsm_state = FSM_DECNUMBER;   dynamic_string_add_char(&stringbuffer,c);}
+                else if (c == '<')              {fsm_state = FSM_SMALLERTHAN;}
+                else if (c == '>')              {fsm_state = FSM_GREATERTHAN;}
+                else if (c == ',')              {tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}
+                else if (c == '_')              {tokenptr->tokentype = TOKEN_TYPE_UNDERSCORE;return OK;}
+                else if (c == EOF)              {tokenptr->tokentype = TOKEN_TYPE_EOF; return OK;}
+                else                            {return WTF;}
 
                 break;
 
@@ -75,13 +73,10 @@ int get_next_token(TOKEN * tokenptr){
                 if( c == '/')                   {fsm_state = FSM_LINE_COMMENT_PROPER;}
                 else if (c == '*')              {fsm_state = FSM_BLOCK_COMMENT_PROPER;}
                 else{//did not go to any of the 
-                    if (eol_value == 2){return WTF;}//cuz comments after opening curly brackets are possible
-                    else{
-                        buffedchar = c;
-                        isbuff = true;
-                        tokenptr->tokentype = TOKEN_TYPE_DIVIDE; // TODO exit status ???? (jirka)
-                        return exitus;
-                    }
+                    buffedchar = c;
+                    isbuff = true;
+                    tokenptr->tokentype = TOKEN_TYPE_DIVIDE; // TODO exit status ???? (jirka)
+                    return OK;
                 }
                 break;
 
@@ -317,3 +312,6 @@ int get_next_token(TOKEN * tokenptr){
 ###########################   Additional functions   ###############################################################
 ####################################################################################################################
 */
+void set_fsm_state(FSM_STATES input){
+    fsm_state = input;
+}
