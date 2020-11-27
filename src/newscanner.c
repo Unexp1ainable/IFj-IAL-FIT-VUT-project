@@ -50,7 +50,7 @@ int get_next_token(TOKEN * tokenptr){
                 else if (c == '/')              {/*poss.comm. after curly bracket*/ {fsm_state = FSM_SLASH;}}
                 else if (c == "\"")             {if(eol_value == 2){return WTF;}else{fsm_state = FSM_STRING;}}
                 else if (isalpha(c) || c == '_'){if(eol_value == 2){return WTF;}else{fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}}
-                else if (c == '=')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_FIRST_EQUAL;}}
+                else if (c == '=')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_EQUALSIGN;}}
                 else if (c == '+')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}}
                 else if (c == ':')              {if(eol_value == 2){return WTF;}else{fsm_state = FSM_COLON;}}
                 else if (c == ';')              {if(eol_value == 2){return WTF;}else{tokenptr->tokentype = TOKEN_TYPE_SEMICOLON; return OK;}}
@@ -145,7 +145,7 @@ int get_next_token(TOKEN * tokenptr){
                 }
                 else{
                     tokenptr->tokentype = TOKEN_TYPE_STRING;
-                    tokenptr->string    = stringbuffer;
+                    tokenptr->string    = &stringbuffer;
                     return OK;
                 }
                 break;
@@ -261,12 +261,12 @@ int get_next_token(TOKEN * tokenptr){
 
 
             case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
-                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else                    {isbuff = true;buffedchar = c; maketoken();}
                 break;
 
             case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
-                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
+                if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
                 else                    {isbuff = true;buffedchar = c; maketoken();}
