@@ -69,16 +69,18 @@ typedef enum{
 
 
 
-/**
- * @brief single token representation
- * */
-typedef struct {
+typedef struct
+{
     TOKEN_TYPES tokentype;
-    Dynamic_string * string;
-    int64_t integer;
-    double floater;
-    RESERVED_KEYWORDS keyword;
-}TOKEN;
+
+    union
+    {
+        Dynamic_string *string;
+        int64_t integer;
+        double floater;
+        RESERVED_KEYWORDS keyword;
+    };
+} TOKEN;
 
 
 
