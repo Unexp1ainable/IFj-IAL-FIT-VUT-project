@@ -26,7 +26,7 @@ Dynamic_string stringbuffer;
 
 int get_next_token(TOKEN * tokenptr){
     int c = 0;
-
+    fsm_state = FSM_START;
     if (tokenptr == NULL){
         return WTF;
     }
@@ -162,7 +162,7 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_COLON:
                 if (c == '='){
-                    tokenptr->tokentype = TOKEN_TYPE_EQUAL;
+                    tokenptr->tokentype = TOKEN_TYPE_DEFINE_AND_ASSIGN;
                     return OK;
                 }
                 else{
@@ -173,7 +173,7 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_EXCLAMATION:
                 if (c== '='){
-                    maketoken();
+                    tokenptr->tokentype = TOKEN_TYPE_NOT_EQUAL; return OK;
                 }
                 else{
                     return WTF;
@@ -183,34 +183,32 @@ int get_next_token(TOKEN * tokenptr){
 
             case FSM_EQUALSIGN:
                 if (c == '='){
-                    maketoken();//maketoken
-                }
+                   tokenptr->tokentype = TOKEN_TYPE_EQUAL; return OK;}
                 else{
                     isbuff = true; buffedchar = c;
-                    maketoken(); //=
-                }
+                    tokenptr->tokentype = TOKEN_TYPE_ASSIGN; return OK;}
                 break;
 
 
             case FSM_GREATERTHAN:
                 if (c == '='){
-                    maketoken();//>=
+                    tokenptr->tokentype = TOKEN_TYPE_GREATER_EQUAL; return OK;
                 }
                 else{
                     isbuff = true; buffedchar = c;
-                    maketoken();//>
+                    tokenptr->tokentype = TOKEN_TYPE_GREATER_THAN; return OK;
                 }   
                 break;
 
 
             case FSM_SMALLERTHAN:
                 if (c == '='){
-                    maketoken();//<=
+                    tokenptr->tokentype = TOKEN_TYPE_LOWER_EQUAL;return OK;
                 }
                 else{
                     isbuff = true;
                     buffedchar = c;
-                    maketoken();//<
+                    tokenptr->tokentype = TOKEN_TYPE_LOWER_THAN;return OK;
                 }
                 break;
 
