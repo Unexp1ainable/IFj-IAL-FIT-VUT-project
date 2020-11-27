@@ -1,4 +1,4 @@
-#include "newscanner.c"
+#include "newscanner.h"
 #include "dynamic_string.h"
 
 void print_token(TOKEN t, int code)
@@ -55,12 +55,13 @@ int main(int argc, char *argv[])
         fileptr = stdin;
     }
 
-    TOKEN t;
+    TOKEN t = {TOKEN_TYPE_EMPTY};
     int r_code;
     while (true)
     {
         r_code = get_next_token(&t);
         print_token(t, r_code);
+        fgetc(stdin);
     }
 
     return 0;

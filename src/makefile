@@ -1,5 +1,5 @@
-CFLAGS=-g -Wall -Wextra -pedantic-errors
+CFLAGS=-g -Wall -Wextra 
 FILES=main.c dynamic_string.c pars_string.c newscanner.c
 
 main: $(FILES)
-	gcc -o main $(FILES) $(CFLAGS)
+	gcc $(FILES) -o main $(CFLAGS)

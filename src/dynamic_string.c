@@ -75,7 +75,7 @@ void dynamic_string_delete(Dynamic_string * dynamicstring){
     for (unsigned int i = 0; i < dynamicstring->allocated_size;i++){
         dynamicstring->string[i] = '\0';
     }
-    dynamicstring->actual_size = -1;
+    dynamicstring->actual_size = 0;
 }
 bool dynamic_string_full(Dynamic_string *dynamicstring)
 {
