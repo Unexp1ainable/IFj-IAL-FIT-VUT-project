@@ -261,9 +261,7 @@ int get_next_token(TOKEN *tokenptr)
                     isbuff = true; buffedchar = (char) c;
                     tokenptr->tokentype = TOKEN_TYPE_INTEGER;
                     tokenptr->integer   = atol(stringbuffer.string);
-                    /*test*/
                     return  OK;
-                    //maketoken();
                 }
                 break;
 
@@ -274,7 +272,13 @@ int get_next_token(TOKEN *tokenptr)
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXP_DEC;}
-                else                    {isbuff = true; buffedchar = c;/*maketoken();number processing*/}
+                else                    {
+                    /*number processing*/
+                    isbuff = true; buffedchar = (char) c;
+                    tokenptr->tokentype = TOKEN_TYPE_FLOAT64;
+                    tokenptr->integer   = atof(stringbuffer.string);
+                    return  OK;
+                }
                 break;
 
 
@@ -298,14 +302,26 @@ int get_next_token(TOKEN *tokenptr)
 
             case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
-                else                    {isbuff = true;buffedchar = c; /*maketoken();*/}
+                else                    {
+                    /*number processing*/
+                    isbuff = true; buffedchar = (char) c;
+                    tokenptr->tokentype = TOKEN_TYPE_FLOAT64;
+                    tokenptr->integer   = atof(stringbuffer.string);
+                    return  OK;
+                }
                 break;
 
             case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
-                else                    {isbuff = true;buffedchar = c; /*maketoken();*/}
+                else                    {
+                    /*number processing*/
+                    isbuff = true; buffedchar = (char) c;
+                    tokenptr->tokentype = TOKEN_TYPE_FLOAT64;
+                    tokenptr->integer   = atof(stringbuffer.string);
+                    return  OK;
+                }
                 break;
 
 
