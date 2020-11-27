@@ -301,7 +301,7 @@ int get_next_token(TOKEN *tokenptr)
                     tokenptr->tokentype = TOKEN_TYPE_IDENTIFIER;
                     dynamic_string_copy(tokenptr, &stringbuffer);
                 }
-                dynamic_string_delete(&stringbuffer);
+                //dynamic_string_delete(&stringbuffer); just why
                 return OK;
             }
             break;
@@ -716,6 +716,6 @@ void set_fsm_state(FSM_STATES input)
 }
 bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring)
 {
-    memcpy(token->string, dynamicstring, sizeof(dynamicstring));
+    token->string = dynamicstring;
     return true;
 }

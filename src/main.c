@@ -35,6 +35,10 @@ void print_token(TOKEN t, int code)
     {
         printf("Payload: %s\n", keyword_str[t.keyword]);
     }
+    else if (t.tokentype == TOKEN_TYPE_IDENTIFIER)
+    {
+        printf("Payload: %s\n", t.string->string);
+    }
     printf("Return code: %i\n",code);
     printf("---------------------\n");
 }
@@ -55,7 +59,7 @@ int main(int argc, char *argv[])
         fileptr = stdin;
     }
 
-    TOKEN t = {TOKEN_TYPE_EMPTY};
+    TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
     int r_code;
     while (true)
     {
