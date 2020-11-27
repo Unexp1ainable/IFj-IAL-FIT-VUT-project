@@ -6,28 +6,36 @@
  * @date 2020-11-26
  * 
  */
+#ifndef SYNTAX_H
+#define SYNTAX_H
+// ---------------------------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <stdbool.h>
 #include "newscanner.h"
-#include "mocks.c"
+#include "mocks.h"
+// ########################## global variables #########################
+/**
+ * @brief Buffer for returned token
+ * 
+ */
+extern TOKEN token_buffer;
 
 // ############################# helper functions ###########################
+/**
+ * @brief Get the token object
+ * 
+ * @param token Pointer to output token
+ * @return int Return code. 0 if good
+ */
+int get_token(TOKEN *token);
 
-int get_token(TOKEN *token)
-{
-    static TOKEN buffer = {.tokentype = TOKEN_TYPE_EMPTY};
-
-    if (buffer.tokentype == TOKEN_TYPE_EMPTY)
-    {
-        return get_next_token(token);
-    }
-    else
-    {
-        memcpy(token, &buffer, sizeof(buffer));
-        buffer.tokentype = TOKEN_TYPE_EMPTY;
-        return 0;
-    }
-}
+/**
+ * @brief Return token
+ * 
+ * @param token Token
+ */
+void return_token(TOKEN token);
 
 // ############################# STATES ##################################
 /**
@@ -294,3 +302,6 @@ int s_param_list_n();
 int s_eols();
 
 // ############################# STATES END ###############################
+
+
+#endif /* SYNTAX_H */
