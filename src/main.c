@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include "newscanner.c"
 #include "dynamic_string.h"
 
@@ -63,19 +62,6 @@ int main(int argc, char *argv[])
         r_code = get_next_token(&t);
         print_token(t, r_code);
     }
-=======
-#include "newscanner.h"
-#include "dynamic_string.h"
-
-int main() {
-    int retval;
-    TOKEN *tp;
-    while ((retval=get_next_token(tp)) != WTF)
-        printf("token: %i\n", (int) tp->tokentype);
-
-    if (retval == WTF)
-        return WTF;
->>>>>>> 94c314ac423359927b5070748b537b8d02a4f67d
 
     return 0;
 }
