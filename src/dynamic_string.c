@@ -36,7 +36,7 @@ bool dynamic_string_add_char(Dynamic_string *dynamicstring, char c)
 }
 bool dynamic_string_add_string(Dynamic_string *dynamicstring, char *word)
 {
-    unsigned newlen = strlen(word);
+    int newlen = strlen(word);
     while (strlen(dynamicstring->string) + newlen > dynamicstring->allocated_size)
     {
         bool tmpboolean = dynamic_string_double(dynamicstring);
@@ -49,6 +49,7 @@ bool dynamic_string_add_string(Dynamic_string *dynamicstring, char *word)
     char *startnew = &(dynamicstring->string[dynamicstring->actual_size]);
     strcpy(startnew, word);
     dynamicstring->actual_size += newlen;
+    return true;
 }
 bool dynamic_string_double(Dynamic_string *dynamicstring)
 {
@@ -64,14 +65,14 @@ bool dynamic_string_double(Dynamic_string *dynamicstring)
         return false;
     }
 }
-bool dynamic_string_free(Dynamic_string *dynamicstring)
+void dynamic_string_free(Dynamic_string *dynamicstring)
 {
     free(dynamicstring->string);
     dynamicstring->allocated_size = 0;
     dynamicstring->actual_size = -1;
 }
 void dynamic_string_delete(Dynamic_string * dynamicstring){
-    for (int i = 0; i < dynamicstring->allocated_size;i++){
+    for (unsigned int i = 0; i < dynamicstring->allocated_size;i++){
         dynamicstring->string[i] = '\0';
     }
     dynamicstring->actual_size = -1;

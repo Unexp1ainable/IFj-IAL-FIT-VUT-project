@@ -22,17 +22,6 @@ FILE * fileptr;//TODO assign stdin or something
 Dynamic_string stringbuffer;
 //line,nextline, loadedchar, line_pos?
 /****************************    variable end    ***********************************************************/
-
-
-bool dynamic_string_copy(dynamic_string *dynamicstring, TOKEN *token) {
-    token->string = (char *) malloc(dynamicstring->actual_size + 1);
-    if (token->string == NULL)
-        return false;
-
-    strcpy(token->string, dynamicstring->string);
-    return true;
-}
-
 int get_next_token(TOKEN * tokenptr){
     int c = 0;
     fsm_state = FSM_START;
@@ -146,7 +135,7 @@ int get_next_token(TOKEN * tokenptr){
                     else if (!strcmp(stringbuffer.string,"main"))   {tokenptr->tokentype = TOKEN_TYPE_MAIN; tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;}
                     else{
                         tokenptr->tokentype =TOKEN_TYPE_IDENTIFIER;
-                        dynamic_string_copy(tokenptr->string,stringbuffer);
+                        dynamic_string_copy(tokenptr,&stringbuffer);
                     }
                     dynamic_string_delete(&stringbuffer);
                     return OK;
@@ -335,4 +324,18 @@ int get_next_token(TOKEN * tokenptr){
 */
 void set_fsm_state(FSM_STATES input){
     fsm_state = input;
+}
+bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring) {
+    unsigned all_size = token->string->allocated_size;
+    unsigned new_size     = dynamicstring->actual_size;
+    bool tmp;
+    while (new_size > all_size){
+        tmp = dynamic_string_double(token->string);
+        if (!tmp){
+            return false;//memoryerror
+        }
+        all_size = all_size * 2;
+    }
+    strcpy(token->string->string,dynamicstring->string);
+    return true;
 }

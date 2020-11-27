@@ -119,7 +119,7 @@ FSM_HEXNUMBER_2,
 void set_fsm_state(FSM_STATES input);
 int maketoken();//TODO
 
-bool dynamic_string_copy(dynamic_string *dynamicstring, TOKEN *token);
+bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring);
 
 
 #endif
