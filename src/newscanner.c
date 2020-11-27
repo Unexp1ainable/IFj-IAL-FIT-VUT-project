@@ -260,7 +260,7 @@ int get_next_token(TOKEN * tokenptr){
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
                 else if(c == '.')       {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXP_DEC;}
-                else                    {isbuff = true; buffedchar = c;/*maketoken();/*number processing*/}
+                else                    {isbuff = true; buffedchar = c;/*maketoken();number processing*/}
                 break;
 
 
