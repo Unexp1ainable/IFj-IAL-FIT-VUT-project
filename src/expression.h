@@ -8,18 +8,22 @@
  * 
  * @brief Processing of expressions by precedent analysis
  */
+#include "error.h"
 #include"newscanner.h"
 #include<stdbool.h>
 #include"types_definition.h"
 
+#define START_STACK_SIZE 32
+
 
 
 /*************STACK*************/
-typedef struct Stack{
+typedef struct TheStack{
     int top;            //index of highest item
     int size;           //size of stack
-    item *p;           //array of items
+    Item *p;           //array of items
 }*MyStack;
+
 /*************TYPE OF ITEM ON STACK*************/
 typedef enum{
     IT_TERM,        
@@ -65,13 +69,16 @@ typedef union{
 
 /*************ITEM IN STACK***********/
 
-typedef struct Item{
+typedef struct item{
     ItemType type;
     ItemVal val;
-}item;
+}*Item;
 
 
-void InitStack(Stack *MyStack);     //inicializace stacku
+void InitStack(MyStack *Stack);     //stack initialization
 
+void DisposeStack(MyStack *Stack);      //free the stack and its memory
+
+void PushStack(MyStack Stack, Item item);  //put item to top of the stack
 
 
