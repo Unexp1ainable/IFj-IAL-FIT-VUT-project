@@ -59,14 +59,19 @@ int main(int argc, char *argv[])
         fileptr = stdin;
     }
 
+    dynamic_string_init(&stringbuffer);
+
     TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
     int r_code;
-    while (true)
+    while (!end && !r_code)
     {
         r_code = get_next_token(&t);
-        print_token(t, r_code);
-        fgetc(stdin);
+        if(r_code == 0)
+            print_token(t, r_code);
+        else
+            printf("LEX_ERROR\n");
     }
 
-    return 0;
+    free(stringbuffer.string);
+    return r_code;
 }
