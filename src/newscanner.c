@@ -295,14 +295,14 @@ int get_next_token(TOKEN *tokenptr)
 
             case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
-                else                    {isbuff = true;buffedchar = c; /*maketoken();*/}
+                else                    {isbuff = true;buffedchar = c; make_token_float(tokenptr, stringbuffer.string); return OK;}
                 break;
 
             case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
-                else                    {isbuff = true;buffedchar = c; /*maketoken();*/}
+                else                    {isbuff = true;buffedchar = c; make_token_float(tokenptr, stringbuffer.string); return OK;}
                 break;
 
 
@@ -358,4 +358,9 @@ bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring)
 {
     token->string = dynamicstring;
     return true;
+}
+
+void make_token_float(TOKEN *t,char* num){
+    t->tokentype = TOKEN_TYPE_FLOAT64;
+    t->floater = atof(num);
 }

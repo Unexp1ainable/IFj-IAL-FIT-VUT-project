@@ -63,12 +63,15 @@ int main(int argc, char *argv[])
 
     TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
     int r_code;
-    while (!end)
+    while (!end && !r_code)
     {
         r_code = get_next_token(&t);
-        print_token(t, r_code);
+        if(r_code == 0)
+            print_token(t, r_code);
+        else
+            printf("LEX_ERROR\n");
     }
 
     free(stringbuffer.string);
-    return 0;
+    return r_code;
 }

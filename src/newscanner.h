@@ -11,7 +11,7 @@
 
 #include "dynamic_string.h"
 #define OK  0
-#define WTF 69
+#define WTF 1
 #define exitus 12
 #define memoryerror 42
 /**
@@ -128,7 +128,8 @@ FSM_HEXNUMBER_2,
 int get_next_token(TOKEN * tokenptr);
 
 void set_fsm_state(FSM_STATES input);
-int maketoken();//TODO
+void make_token_float(TOKEN *t,char* num);
+int maketoken(); //TODO
 
 bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring);
 
