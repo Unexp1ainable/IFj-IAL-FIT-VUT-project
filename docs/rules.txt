@@ -60,6 +60,7 @@
 40.	<id_def_v> -> e
 ----------------------------------
 41.	<id_assign> -> <expr>
+----------------------------------
 42.	<id_list_assign> -> <id_list> = <expr_list>
 ----------------------------------
 43.	<id_list> -> id <id_list_n>
@@ -82,5 +83,9 @@
 53. <type> -> int
 54. <type> -> float64
 55. <type> -> string
+
+56.	<id_assign_v> -> <expr>
+57.	<id_assign_v> -> e
+
 
 TODO _
