@@ -66,14 +66,15 @@ typedef enum
 int get_token(TOKEN *token);
 
 /**
- * Return token
+ * Put token to temp holding space
  *
  * param token Token
  */
 void return_token(TOKEN token);
 
 /**
- * Print error description on stderr 
+ * Print error description on stderr  
+ * 
  * 
  * param err Error code
  */
@@ -83,14 +84,14 @@ void describe_error(ERR_CODE_SYN err);
  * Check if next token is eol and increment line
  * 
  */
-bool eol_required());
+bool eol_required();
 // ################### end of helper functions #################
 
 // ############################# STATES ##################################
 /*
  * Beginning of the program
  * 
- * <prolog> -> package main <eol> <eols> <f_list> <eols> <eof>
+1.	<prolog> -> package main <eol> <eols> <f_list> <eols> <eof>
  * 
  * return int 
  */
@@ -99,8 +100,8 @@ int s_prolog();
 /*
  * List of functions
  * 
- * <f_list> -> <eols> <func> <f_list>
- * <f_list> -> e
+2.	<f_list> -> func <func> <eols> <f_list>
+3.	<f_list> -> e
  * 
  * return int 
  */
@@ -109,8 +110,8 @@ int s_f_list();
 /*
  * Function
  * 
- * <func> -> func id <f_init> <body>
- * <func> -> func main <f_init> <body>
+4.	<func> -> id <f_init> <body>
+5.	<func> -> main <f_init> <body>
  * 
  * return int 
  */
@@ -119,7 +120,7 @@ int s_func();
 /*
  * Lists defining function parameters and return types
  * 
- * <f_init> -> (<param_def_list>) <ret_t_list>
+6.	<f_init> -> (<param_def_list>) <ret_t_list>
  * 
  * return int 
  */
@@ -128,7 +129,7 @@ int s_f_init();
 /*
  * Function call
  * 
- * <f_call> -> id (<param_list>)
+46.	<f_call> -> <param_list>
  * 
  * return int 
  */
@@ -137,7 +138,7 @@ int s_f_call();
 /*
  * Body of the function/loop/condition
  * 
- * <body> -> {<stat_list>} <eol> <eols>
+7.	<body> -> {<eol> <eols> <stat_list>} <eol> <eols>
  * 
  * return int 
  */
@@ -146,8 +147,8 @@ int s_body();
 /*
  * List of function parameters - defining
  * 
- * <param_def_list> -> id <type> <param_def_list_n>
- * <param_def_list> -> e
+8.	<param_def_list> -> id <type> <param_def_list_n>
+9.	<param_def_list> -> e
  * 
  * return int
  */
@@ -156,8 +157,8 @@ int s_param_def_list();
 /*
  * Multi-parameter list continuation - definition
  * 
- * <param_def_list_n> -> , id <type> <param_def_list_n>
- * <param_def_list_n> -> e
+10.	<param_def_list_n> -> , id <type> <param_def_list_n>
+11.	<param_def_list_n> -> e
  *
  * return int 
  */
@@ -166,8 +167,8 @@ int s_param_def_list_n();
 /*
  * List of function return parameters
  * 
- * <ret_t_list> -> (<type> <ret_t_list_n>)
- * <ret_t_list> -> e
+12.	<ret_t_list> -> (<type> <ret_t_list_n>)
+13.	<ret_t_list> -> e
  * 
  * return int 
  */
@@ -176,8 +177,8 @@ int s_ret_t_list();
 /*
  * Multi-return values list continuation - definition
  * 
- * <ret_t_list_n> -> , <type> <ret_t_list_n>
- * <ret_t_list_n> -> e
+14.	<ret_t_list_n> -> , <type> <ret_t_list_n>
+15.	<ret_t_list_n> -> e
  *
  * return int 
  */
@@ -186,11 +187,11 @@ int s_ret_t_list_n();
 /*
  * Statement: f_call/id_n/for/if
  * 
- * <stat> -> <if>
- * <stat> -> <for>
- * <stat> -> <return>
- * <stat> -> <id_n>
- * <stat> -> e
+16.	<stat> -> <if>
+17.	<stat> -> <for>
+18.	<stat> -> <return>
+19.	<stat> -> id <id_n>
+20.	<stat> -> e
  * 
  * return int 
  */
@@ -199,8 +200,8 @@ int s_stat();
 /*
  * List of statements
  * 
- * <stat_list> -> <eol> <eols> <stat> <stat_list>
- * <stat_list> -> e
+22.	<stat_list> -> <stat> <eol> <eols> <stat_list>
+23.	<stat_list> -> e
  * 
  * return int 
  */
@@ -209,7 +210,7 @@ int s_stat_list();
 /*
  * Condition
  * 
- * <if> -> if <expr><body><else>
+24.	<if> -> if <expr><body><else>
  * 
  * return int 
  */
@@ -218,8 +219,8 @@ int s_if();
 /*
  * Else statement after condition
  * 
- * <else> -> else <body>
- * <else> -> e
+25.	<else> -> else <body>
+26.	<else> -> e
  * 
  * return int 
  */
@@ -228,7 +229,7 @@ int s_else();
 /*
  * For loop
  * 
- * <for> -> for <id_def_v>; <expr>; <id_assign_v> <body>
+27.	<for> -> for <id_def_v>; <expr>; <id_assign_v> <body>
  * 
  * return int 
  */
@@ -237,7 +238,7 @@ int s_for();
 /*
  * Return statement
  * 
- * <return> -> return <expr_list>
+28.	<return> -> return <expr_list>
  * 
  * return int 
  */
@@ -246,8 +247,8 @@ int s_return();
 /*
  * List of expressions
  * 
- * <expr_list> -> <expr> <expr_list_n>
- * <expr_list> -> e
+30.	<expr_list> -> <expr> <expr_list_n>
+31.	<expr_list> -> e
  * 
  * return int 
  */
@@ -256,8 +257,8 @@ int s_expr_list();
 /*
  * Continuation of expression list
  * 
- * <expr_list_n> -> ,<expr> <expr_list_n>
- * <expr_list_n> -> e
+32.	<expr_list_n> -> ,<expr> <expr_list_n>
+33.	<expr_list_n> -> e
  * 
  * return int 
  */
@@ -266,9 +267,10 @@ int s_expr_list_n();
 /*
  * Id was found in the statement - crossroads
  * 
- * <id_n> -> <f_call>
- * <id_n> -> <id_def>
- * <id_n> -> <id_assign>
+34.	<id_n> -> := <id_def>
+35.	<id_n> -> = <id_assign>
+36.	<id_n> -> , <id_list_assign>
+37.	<id_n> -> ( <f_call> )
  * 
  * return int 
  */
@@ -277,16 +279,26 @@ int s_id_n();
 /*
  * Variable definition
  * 
- * <id_def> -> id := <expr>
+38.	<id_def> -> <expr>
  * 
  * return int 
  */
 int s_id_def();
 
 /*
+ * Voluntary variable definition
+ * 
+39.	<id_def_v> -> <id_def>
+40.	<id_def_v> -> e
+ * 
+ * return int 
+ */
+int s_id_def_v();
+
+/*
  * List of IDs, must be assignment
  * 
- * <id_list> -> id,id <id_list_n>
+43.	<id_list> -> id <id_list_n>
  * 
  * return int 
  */
@@ -295,8 +307,8 @@ int s_id_list();
 /*
  * Continuation of ID list
  * 
- * <id_list_n> -> ,id <id_list_n>
- * <id_list_n> -> e
+44.	<id_list_n> -> ,id <id_list_n>
+45.	<id_list_n> -> e
  * 
  * return int 
  */
@@ -305,26 +317,35 @@ int s_id_list_n();
 /*
  * Assignment of the ID/s
  * 
- * <id_assign> -> id = <expr>
- * <id_assign> -> <id_list> = <expr_list>
+41.	<id_assign> -> <expr>
  * 
  * return int 
  */
 int s_id_assign();
 
 /*
- * Parameter of function call
+ * Voluntary assignment of the ID
  * 
- * <param> -> <expr>
+56.	<id_assign_v> -> <expr>
+57.	<id_assign_v> -> e
  * 
  * return int 
  */
-int s_param();
+int s_id_assign();
+
+/*
+ * Assignment of list to list
+ *
+42.	<id_list_assign> -> <id_list> = <expr_list>
+ * 
+ * return int
+ */
+int s_id_list_assign();
 
 /*
  * List of parameters of function call
  * 
- * <param_list> -> <param> <param_list_n>
+47.	<param_list> -> <expr> <param_list_n>
  * 
  * return int 
  */
@@ -333,8 +354,8 @@ int s_param_list();
 /*
  * Continuation of function call parameters
  * 
- * <param_list_n> -> <param>, <param_list_n>
- * <param_list_n> -> e
+48.	<param_list_n> -> , <param_list_n>
+49.	<param_list_n> -> e
  * 
  * return int 
  */
@@ -343,13 +364,23 @@ int s_param_list_n();
 /*
  * List of eols
  * 
- * <eols> -> eol <eols>
- * <eols> -> e
+51.	<eols> -> eol <eols>
+52.	<eols> -> e
  * 
  * return int 
  */
 int s_eols();
 
+/*
+ * Variable type
+ * 
+53. <type> -> int
+54. <type> -> float64
+55. <type> -> string
+ * 
+ * return int 
+ */
+int s_type();
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */
