@@ -151,3 +151,20 @@ void symtable_free(Symtable *table)
         (*table)[i] = NULL; //is it really needed?
     }
 }
+void printouttable(Symtable * table){
+    Symtable_item * item;
+    for (int i = 0;i<MAX_SIZE_OF_SYM_TABLE;i++){
+        int count = 0;
+        item = (*table)[i];
+        while(item!= NULL){
+            printf("->found on hash %d, index %d : %s ...",i,count,item->key);
+            item = item->next;
+            count++;
+        }
+        if (count == 0){
+            printf("NOTHING at hash %d",i);
+        }
+        item == NULL;
+        printf("\n");
+    } 
+}

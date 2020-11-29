@@ -13,25 +13,21 @@
 
 #include <stdlib.h>
 #include "table_hierarchy.h"
-
+#include <stdio.h>//debug only
 
 
 bool stackInit(SymtableStack *symtablestack){
     //alloc the array proper
-    printf("started stackinit.\n");
     if (symtablestack == NULL)
     {
-        printf("returned false for input variables.\n");
         return false;
     }
     bool alloc = false;
     symtablestack->table = malloc(sizeof(Symtable *) *DEFAULT_STACK_SIZE);
     if (symtablestack->table == NULL)
     {
-        printf("malloc failed.\n");
         return false;
     }
-    printf("after malloc.\n");
     alloc = true;
     symtablestack->size = DEFAULT_STACK_SIZE;
     symtablestack->top = -1;//-1 == empty
@@ -39,7 +35,6 @@ bool stackInit(SymtableStack *symtablestack){
     {
         symtablestack->table[i]=NULL;
     }
-    printf("malloc operation has: %d\n",alloc);
     return true;
 }
 
@@ -83,9 +78,9 @@ bool stackPush(SymtableStack * symtablestack, Symtable * table)
     if (symtablestack == NULL || table == NULL){
         return false;
     }
-    if (stackFull(&symtablestack)){
-        bool tmpbool = stackDoubleSize(&symtablestack);
-        if (tmpbool = false){
+    if (stackFull(symtablestack)){
+        bool tmpbool = stackDoubleSize(symtablestack);
+        if (tmpbool == false){
             return false;
         }
     }
@@ -97,7 +92,7 @@ bool stackPush(SymtableStack * symtablestack, Symtable * table)
 
 Symtable * stackPop(SymtableStack * symtablestack)
 {
-    if (stackEmpty(&symtablestack)){
+    if (stackEmpty(symtablestack)){
         return NULL;
     }
     else
@@ -108,6 +103,9 @@ Symtable * stackPop(SymtableStack * symtablestack)
 }
 void stackFree(SymtableStack * symtablestack)
 {
+    for (int i = 0;i<symtablestack->top+1;i++){
+        symtable_free(symtablestack->table[i]);
+    }
     free(symtablestack->table);
     symtablestack->size = 0;
     symtablestack->top = -1;

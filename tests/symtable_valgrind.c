@@ -13,24 +13,7 @@ void printboolean(bool boolean)
         printf("boolean is false");
     }
 }
-void printouttable(Symtable * table){
-    Symtable_item * item;
-    for (int i = 0;i<MAX_SIZE_OF_SYM_TABLE;i++){
-        int count = 0;
-        item = (*table)[i];
-        while(item!= NULL){
-            printf("->found on hash %d, index %d : %s ...",i,count,item->key);
-            item = item->next;
-            count++;
-        }
-        if (count == 0){
-            printf("NOTHING at hash %d",i);
-        }
-        item == NULL;
-        printf("\n");
-    }
-    
-}
+
 int main()
 {
     Symtable table;
@@ -144,10 +127,6 @@ int main()
     printf("%s\n", founditem->key);
     symtable_remove(&table, "Lukas");
     //to this point, checked with valgrind, all cleared
-
-    for (int i = 0; i <MAX_SIZE_OF_SYM_TABLE;i++){
-        printf("%d\n",table[i]);
-    }
     symtable_init(&table);
     symtable_add(&table,"timotej",&noerror);
     symtable_add(&table,"Matej"  ,&noerror);
@@ -158,15 +137,36 @@ int main()
     symtable_add(&table,"Anton"  ,&noerror);
     symtable_add(&table,"Maria"  ,&noerror);
     symtable_add(&table,"timotej",&noerror);
-    for (int i = 0; i <MAX_SIZE_OF_SYM_TABLE;i++){
-        printf("%d, ",table[i]);
-        if (table[i] != NULL){
-            printf("%s",table[i]->key);
-        }
-        printf("\n");
-    }
+    printf("\nall added:\n");
     printouttable(&table);
-    symtable_free(&table);
+
+    symtable_remove(&table,"Anton");
+    printf("\nanton removed:\n\n");
+    printouttable(&table);
+
+    printf("\nAnton added.\n\n");
+    symtable_add(&table,"Anton",&noerror);
+    printouttable(&table);
+
+    symtable_remove(&table,"Matej");
+    printf("Matej removed.\n");
+    printouttable(&table);
+
+    symtable_add(&table,"Matej",&noerror);
+    printf("\nMatej added.\n\n");
+    printouttable(&table);
+    //symtable_free(&table);
+    symtable_remove(&table, "timotej");
+    symtable_remove(&table, "Matej");
+    symtable_remove(&table, "Lukas");
+    symtable_remove(&table, "Samo");
+    symtable_remove(&table, "Jirka");
+    symtable_remove(&table, "Michal");
+    symtable_remove(&table, "Anton");
+    symtable_remove(&table, "Maria");
+    symtable_remove(&table, "timotej");
+    printf("\nfree all worked like a charm, so tried to remove all manually:\n\n");
+    printouttable(&table);
     printf("#######################    DONE    ##############################################################################################################################################################################\n");
     return 0;
 }

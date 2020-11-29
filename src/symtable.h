@@ -85,8 +85,10 @@ void symtable_remove(Symtable * table, char * key);
  */
 void symtable_free(Symtable * table);
 
-
-
+/**
+ * @brief print out contents of the table. Used for debug
+ */
+void printouttable(Symtable * table);
 
 
 #endif //_SYMTABLE_H

@@ -46,8 +46,8 @@ table_hierarchy_valgrind.o: tests/table_hierarchy_valgrind.c
 check_table_hierarchy_unit_tests: table_hierarchy.o table_hierarchy_unit_tests.o
 	$(CC)  -o tests/check_table_hierarchy_unit_tests
 
-check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o
-	$(CC) table_hierarchy.o table_hierarchy_valgrind.o -o check_table_hierarchy_memory_tests
+check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o symtable.o
+	$(CC) table_hierarchy.o table_hierarchy_valgrind.o symtable.o -o check_table_hierarchy_memory_tests
 
 check_symtable_unit_tests: symtable.o symtable_tests.o
 	$(CC) symtable.o symtable_test.o $(TST_LIBS) $(COV_LIBS) -o check_symtable_tests
@@ -67,7 +67,7 @@ table_testmemory: clean check_symtable_memory_tests
 table_hierarchy_unit_tests: clean check_table_hierarchy_unit_tests
 	./check_table_hierarchy_unit_tests
 
-table_hierarchy_testmemory: clean check_table_hierarchy_memory_tests
+hierarchy_memory: clean check_table_hierarchy_memory_tests
 	valgrind --leak-check=full ./check_table_hierarchy_memory_tests
 
 #############################   USE THESE UP    #######################################################################################################

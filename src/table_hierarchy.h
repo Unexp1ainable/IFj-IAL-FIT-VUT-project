@@ -16,7 +16,7 @@
 #include "symtable.h"
 #ifndef TABLE_HIERARCHY_H
 #define TABLE_HIERARCHY_H
-#define DEFAULT_STACK_SIZE 50
+#define DEFAULT_STACK_SIZE 2
 typedef struct {
     Symtable ** table;
     int top;
@@ -65,7 +65,7 @@ bool stackPush(SymtableStack * symtablestack, Symtable * table);
 Symtable * stackPop(SymtableStack * symtablestack);
 
 /**
- * 
+ * @brief frees the stack and all of its contents
  * */
 void stackFree(SymtableStack * symtablestack);
 
