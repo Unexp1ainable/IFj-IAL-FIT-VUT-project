@@ -5,7 +5,7 @@
 ##@brief makefile for unit testing symbol hash table
 ##@date 22.11.2020
 ##@note to work, has to me placed in main folder, possible conflict with the actual makefile!
-##TODO make it work from the testing folder
+
 ##all basically copypasted from the internet: https://www.ccs.neu.edu/home/skotthe/classes/cs5600/fall/2015/labs/intro-check.html
 
 CC = gcc
