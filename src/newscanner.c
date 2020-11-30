@@ -1,6 +1,7 @@
 /**
  * @file newscanner.c
  * @author Timotej Kamensky, xkamen24,+421 944 687 328
+ * @author Samuel Repka, xrepka07, +421 
  * @brief implementation of scanner for the compiler
  * @date 25.11.2020
  * */
@@ -15,7 +16,7 @@
 static int fsm_state;  //state of the finite state machine
 static bool isbuff;    //is letter in the buff?
 static int buffedchar; //what letter is in the buff?
-FILE *fileptr;         //TODO assign stdin or something
+FILE *fileptr;
 Dynamic_string stringbuffer;
 bool end = false;
 //line,nextline, loadedchar, line_pos?
@@ -162,7 +163,7 @@ int get_next_token(TOKEN *tokenptr)
                 break;
 
 
-            case FSM_STRING://TODO cely case, nieco chcel robit jirka, a toto je uplne ze nedokoncene
+            case FSM_STRING:
                 if (c == '\\'){
                     fsm_state = FSM_BACKSLASH;
                 }
@@ -314,23 +315,22 @@ int get_next_token(TOKEN *tokenptr)
 
 
             case FSM_HEXNUMBER_1://got \x
-                if (isxdigit(c)){fsm_state = FSM_HEXNUMBER_2;}
+                fsm_state = FSM_HEXNUMBER_2;
                 buffedchar = c;//shouldnt bother the actual buffer cuz im not setting isbuff to true
                 break;
 
 
             case FSM_HEXNUMBER_2:
-                if (isxdigit(c)){
+                if (  isxdigit(c) && isxdigit(buffedchar) ){
                     char hexnumber[4];hexnumber[0]='0';hexnumber[1] = 'x';hexnumber[2]=buffedchar;hexnumber[3] = c;
-                    char * endptr;
-                    long c = strtol(hexnumber,&endptr,16);
-                    if (*endptr){return WTF;/*fail*/}
-                    else{/*success*//*TODO is this correct format? ma to vyrobit token ci nie?*/
-                        {if(!dynamic_string_add_char(&stringbuffer,'0'          )){return memoryerror;}}
-                        {if(!dynamic_string_add_char(&stringbuffer,'x'          )){return memoryerror;}}
-                        {if(!dynamic_string_add_char(&stringbuffer,buffedchar   )){return memoryerror;}}
-                        {if(!dynamic_string_add_char(&stringbuffer,c            )){return memoryerror;}}
+                    char * endptr = NULL;
+                    long symbol = strtol(hexnumber,&endptr,16);
+                    if (!endptr){return WTF;/*fail*/}
+                    else{/*success*/
+                        {if(!dynamic_string_add_char(&stringbuffer,symbol)){return memoryerror;}}//note: can input long into int-processing function, since value will never go over 255
+                        fsm_state = FSM_STRING;
                     }
+                    
                 }
                 else{
                     return WTF;
