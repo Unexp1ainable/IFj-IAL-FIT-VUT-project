@@ -39,19 +39,47 @@ extern unsigned long line;
  */
 
 extern bool main_defined;
+
+/**
+ * Used for counting how many items are on the left of the list assignment
+ * Initialised on 1 because id needs to pass 1 item before entering required state.
+ */
+extern unsigned int assign_list_id_n;
+
+/**
+ * Used for counting how many items are on the right of the list assignment
+ * 
+ */
+extern unsigned int assign_list_expr_n;
 // ################### end of global variables #################
 
 // ################### error codes #################
 typedef enum
 {
-    ERR_PROLOG,      // prolog wrong or missing
+    ERR_PROLOG,       // prolog wrong or missing
     ERR_EOL_EXPECTED, // required eol missing
     ERR_EOF_EXPECTED,
     ERR_FUNC_EXPECTED,
     ERR_FUNC_ID_EXPECTED,
     ERR_MULTIPLE_MAIN_FUNC,
     ERR_F_PAR_L_BRACKET,
-    ERR_F_PAR_R_BRACKET
+    ERR_F_PAR_R_BRACKET,
+    ERR_BODY_START,
+    ERR_BODY_END,
+    ERR_FUNC_DEF_UNEXPECTED,
+    ERR_FUNC_DEF_RET_UNEXPECTED,
+    ERR_STAT_UNEXPECTED,
+    ERR_IF_EXPECTED,
+    ERR_FOR_EXPECTED,
+    ERR_SEMICOLON_EXPECTED,
+    ERR_RETURN_EXPECTED,
+    ERR_COMMA_EXPECTED,
+    ERR_UNKNOWN_ID_OPERATION,
+    ERR_ID_DEF_EXPECTED,
+    ERR_ID_EXPECTED,
+    ERR_UNEXPECTED_TOKEN,
+    ERR_ID_ASSIGN_EXPECTED,
+    ERR_TYPE_EXPECTED
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
@@ -86,6 +114,23 @@ void describe_error(ERR_CODE_SYN err);
  */
 bool eol_required();
 // ################### end of helper functions #################
+
+// ################### macros #################
+
+/**
+ * brief Condition for checking tokentype, ==
+ * 
+ */
+#define TOKEN_IS(token) (curr_token.tokentype == token)
+
+/**
+ * brief Condition for checking tokentype, !=
+ * 
+ */
+#define TOKEN_IS_NOT(token) (curr_token.tokentype != token)
+
+
+// ################### end of macros #################
 
 // ############################# STATES ##################################
 /*
@@ -326,12 +371,12 @@ int s_id_assign();
 /*
  * Voluntary assignment of the ID
  * 
- * <id_assign_v> -> <expr>
+ * <id_assign_v> -> <assign>
  * <id_assign_v> -> e
  * 
  * return int 
  */
-int s_id_assign();
+int s_id_assign_v();
 
 /*
  * Assignment of list to list
@@ -354,7 +399,7 @@ int s_param_list();
 /*
  * Continuation of function call parameters
  * 
- * <param_list_n> -> , <param_list_n>
+ * <param_list_n> -> , <expr> <param_list_n>
  * <param_list_n> -> e
  * 
  * return int 
