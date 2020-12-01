@@ -26,12 +26,61 @@ extern TOKEN token_buffer;
  * 
  */
 extern TOKEN curr_token;
+
+/*
+ * Line number
+ * 
+ */
+extern unsigned long line;
+
+/*
+ * For checking if main was already defined.
+ *
+ */
+
+extern bool main_defined;
+
+/**
+ * Used for counting how many items are on the left of the list assignment
+ * Initialised on 1 because id needs to pass 1 item before entering required state.
+ */
+extern unsigned int assign_list_id_n;
+
+/**
+ * Used for counting how many items are on the right of the list assignment
+ * 
+ */
+extern unsigned int assign_list_expr_n;
 // ################### end of global variables #################
 
 // ################### error codes #################
 typedef enum
 {
-    ERR_PROLOG      // prolog wrong or missing
+    ERR_PROLOG,       // prolog wrong or missing
+    ERR_EOL_EXPECTED, // required eol missing
+    ERR_EOF_EXPECTED,
+    ERR_FUNC_EXPECTED,
+    ERR_FUNC_ID_EXPECTED,
+    ERR_MULTIPLE_MAIN_FUNC,
+    ERR_F_PAR_L_BRACKET,
+    ERR_F_PAR_R_BRACKET,
+    ERR_BODY_START,
+    ERR_BODY_END,
+    ERR_FUNC_DEF_UNEXPECTED,
+    ERR_FUNC_DEF_RET_UNEXPECTED,
+    ERR_STAT_UNEXPECTED,
+    ERR_IF_EXPECTED,
+    ERR_FOR_EXPECTED,
+    ERR_SEMICOLON_EXPECTED,
+    ERR_RETURN_EXPECTED,
+    ERR_COMMA_EXPECTED,
+    ERR_UNKNOWN_ID_OPERATION,
+    ERR_ID_DEF_EXPECTED,
+    ERR_ID_EXPECTED,
+    ERR_UNEXPECTED_TOKEN,
+    ERR_ID_ASSIGN_EXPECTED,
+    ERR_TYPE_EXPECTED
+
 } ERR_CODE_SYN;
 // ################### end of error codes #################
 
@@ -45,26 +94,49 @@ typedef enum
 int get_token(TOKEN *token);
 
 /**
- * Return token
+ * Put token to temp holding space
  *
  * param token Token
  */
 void return_token(TOKEN token);
 
 /**
- * Print error description on stderr 
+ * Print error description on stderr  
+ * 
  * 
  * param err Error code
  */
 void describe_error(ERR_CODE_SYN err);
+
+/*
+ * Check if next token is eol and increment line
+ * 
+ */
+bool eol_required();
 // ################### end of helper functions #################
 
+// ################### macros #################
+
+/**
+ * brief Condition for checking tokentype, ==
+ * 
+ */
+#define TOKEN_IS(token) (curr_token.tokentype == token)
+
+/**
+ * brief Condition for checking tokentype, !=
+ * 
+ */
+#define TOKEN_IS_NOT(token) (curr_token.tokentype != token)
+
+
+// ################### end of macros #################
 
 // ############################# STATES ##################################
 /*
  * Beginning of the program
  * 
- * <prolog> -> package main <eol> <f_list> <eols> <eof>
+ * <prolog> -> package main <eol> <eols> <f_list> <eols> <eof>
  * 
  * return int 
  */
@@ -73,7 +145,7 @@ int s_prolog();
 /*
  * List of functions
  * 
- * <f_list> -> <func> <f_list> ||
+ * <f_list> -> func <func> <eols> <f_list>
  * <f_list> -> e
  * 
  * return int 
@@ -83,8 +155,8 @@ int s_f_list();
 /*
  * Function
  * 
- * <func> -> func id <f_init> <body>
- * <func> -> func main <f_init> <body>
+ * <func> -> id <f_init> <body>
+ * <func> -> main <f_init> <body>
  * 
  * return int 
  */
@@ -102,7 +174,7 @@ int s_f_init();
 /*
  * Function call
  * 
- * <f_call> -> id (<param_list>)
+ * <f_call> -> <param_list>
  * 
  * return int 
  */
@@ -111,7 +183,7 @@ int s_f_call();
 /*
  * Body of the function/loop/condition
  * 
- * <body> -> {<stat_list>} <eol> <eols>
+ * <body> -> {<eol> <eols> <stat_list>} <eol> <eols>
  * 
  * return int 
  */
@@ -163,7 +235,7 @@ int s_ret_t_list_n();
  * <stat> -> <if>
  * <stat> -> <for>
  * <stat> -> <return>
- * <stat> -> <id_n>
+ * <stat> -> id <id_n>
  * <stat> -> e
  * 
  * return int 
@@ -173,7 +245,7 @@ int s_stat();
 /*
  * List of statements
  * 
- * <stat_list> -> <eol> <eols> <stat> <stat_list>
+ * <stat_list> -> <stat> <eol> <eols> <stat_list>
  * <stat_list> -> e
  * 
  * return int 
@@ -240,9 +312,10 @@ int s_expr_list_n();
 /*
  * Id was found in the statement - crossroads
  * 
- * <id_n> -> <f_call>
- * <id_n> -> <id_def>
- * <id_n> -> <id_assign>
+ * <id_n> -> := <id_def>
+ * <id_n> -> = <id_assign>
+ * <id_n> -> , <id_list_assign>
+ * <id_n> -> ( <f_call> )
  * 
  * return int 
  */
@@ -251,16 +324,26 @@ int s_id_n();
 /*
  * Variable definition
  * 
- * <id_def> -> id := <expr>
+ * <id_def> -> <expr>
  * 
  * return int 
  */
 int s_id_def();
 
 /*
+ * Voluntary variable definition
+ * 
+ * <id_def_v> -> <id_def>
+ * <id_def_v> -> e
+ * 
+ * return int 
+ */
+int s_id_def_v();
+
+/*
  * List of IDs, must be assignment
  * 
- * <id_list> -> id,id <id_list_n>
+ * <id_list> -> id <id_list_n>
  * 
  * return int 
  */
@@ -279,26 +362,35 @@ int s_id_list_n();
 /*
  * Assignment of the ID/s
  * 
- * <id_assign> -> id = <expr>
- * <id_assign> -> <id_list> = <expr_list>
+ * <id_assign> -> <expr>
  * 
  * return int 
  */
 int s_id_assign();
 
 /*
- * Parameter of function call
+ * Voluntary assignment of the ID
  * 
- * <param> -> <expr>
+ * <id_assign_v> -> <assign>
+ * <id_assign_v> -> e
  * 
  * return int 
  */
-int s_param();
+int s_id_assign_v();
+
+/*
+ * Assignment of list to list
+ *
+ * <id_list_assign> -> <id_list> = <expr_list>
+ * 
+ * return int
+ */
+int s_id_list_assign();
 
 /*
  * List of parameters of function call
  * 
- * <param_list> -> <param> <param_list_n>
+ * <param_list> -> <expr> <param_list_n>
  * 
  * return int 
  */
@@ -307,7 +399,7 @@ int s_param_list();
 /*
  * Continuation of function call parameters
  * 
- * <param_list_n> -> <param>, <param_list_n>
+ * <param_list_n> -> , <expr> <param_list_n>
  * <param_list_n> -> e
  * 
  * return int 
@@ -324,7 +416,16 @@ int s_param_list_n();
  */
 int s_eols();
 
+/*
+ * Variable type
+ * 
+ * <type> -> int
+ * <type> -> float64
+ * <type> -> string
+ * 
+ * return int 
+ */
+int s_type();
 // ############################# STATES END ###############################
-
 
 #endif /* SYNTAX_H */

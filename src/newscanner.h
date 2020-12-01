@@ -84,16 +84,6 @@ typedef struct
     };
 } TOKEN;
 
-
-    union
-    {
-        Dynamic_string *string;
-        int64_t integer;
-        double floater;
-        RESERVED_KEYWORDS keyword;
-    };
-} TOKEN;
-
 /**
  * @enum states of the scanner
  * */

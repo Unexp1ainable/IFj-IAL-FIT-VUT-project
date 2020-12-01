@@ -1,34 +1,33 @@
-1.	<prolog> -> package main <f_list> <eof>
+1.	<prolog> -> package main <eol> <eols> <f_list> <eols> <eof>
 ----------------------------------
-2.	<f_list> -> <func> <f_list>
+2.	<f_list> -> func <func> <eols> <f_list>
 3.	<f_list> -> e
 ----------------------------------
-4.	<func> -> func id <f_init> <body>
-5.	<func> -> func main <f_init> <body>
+4.	<func> -> id <f_init> <body>
+5.	<func> -> main <f_init> <body>
 ----------------------------------
-6.	<f_init> -> (<param_def_list>) (<ret_t_list>)
+6.	<f_init> -> (<param_def_list>) <ret_t_list>
 ----------------------------------
-7.	<f_call> -> id (<param_list>)
+7.	<body> -> {<eol> <eols> <stat_list>} <eol> <eols>
 ----------------------------------
-8.	<body> -> {<stat_list>}
+8.	<param_def_list> -> id <type> <param_def_list_n>
+9.	<param_def_list> -> e
 ----------------------------------
-9.	<param_def_list> -> id <type> <param_def_list_n>
-10.	<param_def_list> -> e
+10.	<param_def_list_n> -> , id <type> <param_def_list_n>
+11.	<param_def_list_n> -> e
 ----------------------------------
-11	<param_def_list_n> -> , id <type> <param_def_list_n>
-12.	<param_def_list_n> -> e
+12.	<ret_t_list> -> (<type> <ret_t_list_n>)
+13.	<ret_t_list> -> e
 ----------------------------------
-13.	<ret_t_list> -> <type> <ret_t_list_n>
-14.	<ret_t_list> -> e
+14.	<ret_t_list_n> -> , <type> <ret_t_list_n>
+15.	<ret_t_list_n> -> e
 ----------------------------------
-15.	<ret_t_list_n> -> , <type> <ret_t_list_n>
-16.	<ret_t_list_n> -> e
-----------------------------------
-17.	<stat> -> <if>
-18.	<stat> -> <for>
-19.	<stat> -> <return>
-20.	<stat> -> <id_n>
-21.	<stat> -> e
+16.	<stat> -> <if>
+17.	<stat> -> <for>
+18.	<stat> -> <return>
+19.	<stat> -> id <id_n>
+20.	<stat> -> e
+21. DELETED
 ----------------------------------
 22.	<stat_list> -> <stat> <eol> <eols> <stat_list>
 23.	<stat_list> -> e
@@ -47,36 +46,46 @@
 30.	<expr_list> -> <expr> <expr_list_n>
 31.	<expr_list> -> e
 ----------------------------------
-32.	<id_n> -> <f_call>
-33.	<id_n> -> <id_def>
-34.	<id_n> -> <id_assign>
-35.	<id_n> -> <id_list> !!NOT USED
+32.	<expr_list_n> -> ,<expr> <expr_list_n>
+33.	<expr_list_n> -> e
 ----------------------------------
-36.	<id_def> -> id := <expr>
+34.	<id_n> -> := <id_def>
+35.	<id_n> -> = <id_assign>
+36.	<id_n> -> , <id_list_assign>
+37.	<id_n> -> ( <f_call> )
 ----------------------------------
-37.	<id_def_v> -> <id_def>
-38.	<id_def_v> -> e
+38.	<id_def> -> <expr>
 ----------------------------------
-39.	<id_list> -> id,id <id_list_n>
+39.	<id_def_v> -> <id_def>
+40.	<id_def_v> -> e
 ----------------------------------
-40.	<id_list_n> -> ,id <id_list_n>
-41.	<id_list_n> -> e
+41.	<id_assign> -> <expr>
 ----------------------------------
-42.	<id_assign> -> id = <expr>
-43.	<id_assign> -> <id_list> = <expr_list>
+42.	<id_list_assign> -> <id_list> = <expr_list>
 ----------------------------------
-44.	<param> -> <expr>
+43.	<id_list> -> id <id_list_n>
 ----------------------------------
-45.	<param_list> -> <param> <param_list_n>
+44.	<id_list_n> -> ,id <id_list_n>
+45.	<id_list_n> -> e
 ----------------------------------
-46.	<param_list_n> -> <param>, <param_list_n>
-47.	<param_list_n> -> e
+46.	<f_call> -> <param_list>
 ----------------------------------
-48.	<eols> -> eol <eols>
-49.	<eols> -> e
+47.	<param_list> -> <expr> <param_list_n>
+----------------------------------
+48.	<param_list_n> -> , <param_list_n>
+49.	<param_list_n> -> e
+----------------------------------
+50.	DELETED
+----------------------------------
+51.	<eols> -> eol <eols>
+52.	<eols> -> e
+----------------------------------
+53. <type> -> int
+54. <type> -> float64
+55. <type> -> string
 
-50.	<expr_list_n> -> ,<expr> <expr_list_n>
-51.	<expr_list_n> -> e
+56.	<id_assign_v> -> <expr>
+57.	<id_assign_v> -> e
 
 
-TODO eols
+TODO _
