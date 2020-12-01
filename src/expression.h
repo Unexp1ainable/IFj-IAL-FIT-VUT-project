@@ -9,20 +9,15 @@
  * @brief Processing of expressions by precedent analysis
  */
 #include "error.h"
-#include"newscanner.h"
-#include<stdbool.h>
-#include"types_definition.h"
+#include "newscanner.h"
+#include <stdbool.h>
+//#include "types_definition.h" temporary disabled
 
 #define START_STACK_SIZE 32
 
 
 
-/*************STACK*************/
-typedef struct TheStack{
-    int top;            //index of highest item
-    int size;           //size of stack
-    Item *p;           //array of items
-}*MyStack;
+
 
 /*************TYPE OF ITEM ON STACK*************/
 typedef enum{
@@ -74,11 +69,17 @@ typedef struct item{
     ItemVal val;
 }*Item;
 
+/*************STACK*************/
+typedef struct TheStack{
+    int top;            //index of highest item
+    int size;           //size of stack
+    Item *p;           //array of items
+}*MyStack;
 
-void InitStack(MyStack *Stack);     //stack initialization
+int InitStack(MyStack *Stack);     //stack initialization
 
 void DisposeStack(MyStack *Stack);      //free the stack and its memory
 
-void PushStack(MyStack Stack, Item item);  //put item to top of the stack
+int PushStack(MyStack Stack, Item item);  //put item to top of the stack
 
-
+int s_expr(); // added temporary function in order for gcc to shut up

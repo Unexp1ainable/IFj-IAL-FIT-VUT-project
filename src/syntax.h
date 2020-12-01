@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "newscanner.h"
-#include "mocks.h"
 // ########################## global variables #########################
 /*
  * Buffer for returned token
@@ -121,13 +120,13 @@ bool eol_required();
  * brief Condition for checking tokentype, ==
  * 
  */
-#define TOKEN_IS(token) (curr_token.tokentype == token)
+#define TOKEN_IS(tt) (curr_token.tokentype == tt)
 
 /**
  * brief Condition for checking tokentype, !=
  * 
  */
-#define TOKEN_IS_NOT(token) (curr_token.tokentype != token)
+#define TOKEN_IS_NOT(tt) (curr_token.tokentype != tt)
 
 
 // ################### end of macros #################
@@ -145,7 +144,7 @@ int s_prolog();
 /*
  * List of functions
  * 
- * <f_list> -> func <func> <eols> <f_list>
+ * <f_list> -> <eols> func <func> <eols> <f_list>
  * <f_list> -> e
  * 
  * return int 
@@ -202,7 +201,7 @@ int s_param_def_list();
 /*
  * Multi-parameter list continuation - definition
  * 
- * <param_def_list_n> -> , id <type> <param_def_list_n>
+ * <param_def_list_n> -> , id <type> <eols> <param_def_list_n>
  * <param_def_list_n> -> e
  *
  * return int 

@@ -1,12 +1,12 @@
 #include "syntax.h"
 #include "newscanner.h"
-#include "expressions.h"
+#include "expression.h"
 
 // ########################## global variables #########################
 
-TOKEN token_buffer = {TOKEN_TYPE_EMPTY};
+TOKEN token_buffer = {TOKEN_TYPE_EMPTY, {NULL}};
 TOKEN curr_token;
-unsigned long int line = 0;
+unsigned long int line = 1;
 bool main_defined = false;
 unsigned int assign_list_id_n = 1;
 unsigned int assign_list_expr_n = 0;
@@ -17,7 +17,15 @@ int get_token(TOKEN *token)
 {
     if (token_buffer.tokentype == TOKEN_TYPE_EMPTY)
     {
-        return get_next_token(token);
+        int r_code = get_next_token(token);
+        if (!r_code)
+        {
+            return 0;
+        }
+        else
+        {
+            exit(1);
+        }
     }
     else
     {
@@ -125,11 +133,11 @@ void describe_error(ERR_CODE_SYN err)
         break;
 
     case ERR_ID_ASSIGN_EXPECTED:
-        fprintf(stderr, "Line %li: \" = \" expected", line);
+        fprintf(stderr, "Line %li: \" = \" expected.\n", line);
         break;
 
     case ERR_TYPE_EXPECTED:
-        fprintf(stderr, "Line %li: Data type expected.", line);
+        fprintf(stderr, "Line %li: Data type expected.\n", line);
         break;
 
     default:
@@ -157,6 +165,7 @@ bool eol_required()
 
 int s_prolog()
 {
+    s_eols();
     get_token(&curr_token); // TODO failure check - possibly implement in get_token?
 
     // package
@@ -206,12 +215,12 @@ int s_f_list()
 {
     // eof
     get_token(&curr_token);
+    return_token(curr_token);
     if (curr_token.tokentype == TOKEN_TYPE_EOF)
     {
-        return_token(curr_token);
+
         return 0;
     }
-    return_token(curr_token);
 
     // func
     get_token(&curr_token);
@@ -232,10 +241,7 @@ int s_f_list()
     s_eols();
 
     // f_list
-    r_code = s_f_list();
-    if (r_code)
-
-        return r_code;
+    return s_f_list();
 }
 
 int s_func()
@@ -250,7 +256,7 @@ int s_func()
         }
         else
         {
-            main_defined == true;
+            main_defined = true;
         }
     }
     else if (curr_token.tokentype == TOKEN_TYPE_IDENTIFIER)
@@ -305,7 +311,12 @@ int s_f_init()
 int s_f_call()
 {
     // param_def_list
-    return s_param_def_list();
+    get_token(&curr_token);
+    if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CLASSIC_BRACKET))
+    {
+        return ERR_UNEXPECTED_TOKEN;
+    }
+    return s_param_list();
 }
 
 int s_body()
@@ -397,6 +408,16 @@ int s_param_def_list_n()
         return ERR_FUNC_DEF_UNEXPECTED;
     }
 
+    // eols
+    s_eols();
+
+    // id
+    get_token(&curr_token);
+    if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
+    {
+        return ERR_ID_EXPECTED;
+    }
+
     // <param_def_list_n>
     int r_code = s_type();
     if (r_code)
@@ -426,9 +447,15 @@ int s_ret_t_list()
         return ERR_FUNC_DEF_RET_UNEXPECTED;
     }
 
+    // <type>
+    int r_code = s_type();
+    if (r_code)
+    {
+        return r_code;
+    }
     // <ret_t_list_n>
-    int r_code = s_ret_t_list_n();
-    if (!r_code)
+    r_code = s_ret_t_list_n();
+    if (r_code)
     {
         return r_code;
     }
@@ -452,6 +479,7 @@ int s_ret_t_list_n()
     get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CLASSIC_BRACKET))
     {
+        return_token(curr_token);
         return 0;
     }
 
@@ -462,14 +490,14 @@ int s_ret_t_list_n()
 
     // <type>
     int r_code = s_type();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
 
     // <ret_t_list_n>
     r_code = s_ret_t_list_n();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -526,6 +554,7 @@ int s_stat_list()
 {
     // e
     get_token(&curr_token);
+    return_token(curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CURVY_BRACKET))
     {
         return 0;
@@ -533,7 +562,7 @@ int s_stat_list()
 
     // <stat>
     int r_code = s_stat();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -561,21 +590,21 @@ int s_if()
         return ERR_IF_EXPECTED;
     }
     int r_code = s_expr();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
 
     // <body>
     r_code = s_body();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
 
     // <else>
     r_code = s_else();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -605,7 +634,7 @@ int s_for()
 
     // <id_def_v>
     int r_code = s_id_def_v();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -618,7 +647,7 @@ int s_for()
 
     // <expr>
     r_code = s_expr();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -631,7 +660,7 @@ int s_for()
 
     // <id_assign_v>
     r_code = s_id_assign_v();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -643,7 +672,7 @@ int s_for()
 int s_return()
 {
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(KEYWORD_RETURN))
+    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token.keyword != KEYWORD_RETURN)
     {
         return ERR_RETURN_EXPECTED;
     }
@@ -655,6 +684,8 @@ int s_expr_list()
 {
     // e
     get_token(&curr_token);
+    return_token(curr_token);
+
     if (TOKEN_IS(TOKEN_TYPE_EOL))
     {
         return 0;
@@ -662,7 +693,7 @@ int s_expr_list()
 
     // <expr>
     int r_code = s_expr();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -678,6 +709,7 @@ int s_expr_list_n()
     // e
     if (TOKEN_IS(TOKEN_TYPE_EOL))
     {
+        return_token(curr_token);
         return 0;
     }
 
@@ -689,7 +721,7 @@ int s_expr_list_n()
 
     // <expr>
     int r_code = s_expr();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -735,7 +767,7 @@ int s_id_def()
     get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_DEFINE))
     {
-        ERR_ID_DEF_EXPECTED;
+        return ERR_ID_DEF_EXPECTED;
     }
 
     return s_expr();
@@ -757,7 +789,7 @@ int s_id_def_v()
 int s_id_list()
 {
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
+    if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER) && TOKEN_IS_NOT(TOKEN_TYPE_UNDERSCORE))
     {
         return ERR_ID_EXPECTED;
     }
@@ -770,8 +802,10 @@ int s_id_list_n()
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_ASSIGN))
     {
+        return_token(curr_token);
         return 0;
     }
+
     if (TOKEN_IS(TOKEN_TYPE_COMMA))
     {
         assign_list_id_n++;
@@ -793,7 +827,7 @@ int s_id_assign()
     get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_ASSIGN))
     {
-        ERR_ID_ASSIGN_EXPECTED;
+        return ERR_ID_ASSIGN_EXPECTED;
     }
 
     return s_expr();
@@ -809,16 +843,39 @@ int s_id_assign_v()
 
     if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
     {
-        ERR_ID_ASSIGN_EXPECTED;
+        return ERR_ID_ASSIGN_EXPECTED;
     }
 
     return s_id_assign();
 }
 
+int s_id_list_assign()
+{
+    get_token(&curr_token);
+    if (TOKEN_IS_NOT(TOKEN_TYPE_COMMA))
+    {
+        return ERR_UNEXPECTED_TOKEN;
+    }
+
+    int r_code = s_id_list();
+    if (r_code)
+    {
+        return r_code;
+    }
+
+    get_token(&curr_token);
+    if (TOKEN_IS_NOT(TOKEN_TYPE_ASSIGN))
+    {
+        return ERR_UNEXPECTED_TOKEN;
+    }
+
+    return s_expr_list();
+}
+
 int s_param_list()
 {
     int r_code = s_expr();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -829,7 +886,7 @@ int s_param_list()
 int s_param_list_n()
 {
     get_token(&curr_token);
-    if (TOKEN_IS(TOKEN_TYPE_OPENING_CURVY_BRACKET))
+    if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
     {
         return 0;
     }
@@ -840,7 +897,7 @@ int s_param_list_n()
     }
 
     int r_code = s_expr();
-    if (!r_code)
+    if (r_code)
     {
         return r_code;
     }
@@ -864,17 +921,21 @@ int s_type()
 {
     get_token(&curr_token);
 
-    switch (curr_token.tokentype)
+    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD))
     {
-    case TOKEN_TYPE_STRING:
+        return ERR_TYPE_EXPECTED;
+    }
+    switch (curr_token.keyword)
+    {
+    case KEYWORD_STRING:
         return 0;
         break;
 
-    case TOKEN_TYPE_INTEGER:
+    case KEYWORD_INTEGER:
         return 0;
         break;
 
-    case TOKEN_TYPE_FLOAT64:
+    case KEYWORD_FLOAT64:
         return 0;
         break;
 

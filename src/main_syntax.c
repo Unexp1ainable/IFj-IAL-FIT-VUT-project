@@ -2,24 +2,14 @@
 
 int main()
 {
-    TOKEN t;
-    int i = get_token(&t);
+    dynamic_string_init(&stringbuffer);
 
-    printf("%i, %li\n", t.tokentype, t.integer);
+    TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
 
-    return_token(t);
-    i = get_token(&t);
-    printf("%i, %li\n", t.tokentype, t.integer);
+    int r_code = s_prolog();
+    describe_error(r_code);
 
-    i = get_token(&t);
-    printf("%i, %li\n", t.tokentype, t.integer);
-
-    i = get_token(&t);
-    printf("%i, %li\n", t.tokentype, t.integer);
-    return_token(t);
-
-    i = get_token(&t);
-    printf("%i, %li\n", t.tokentype, t.integer);
+    free(stringbuffer.string);
 
     return 0;
 }
