@@ -41,6 +41,11 @@ table_hierarchy_unit_tests.o: tests/table_hierarchy_unit_tests.c
 table_hierarchy_valgrind.o: tests/table_hierarchy_valgrind.c
 	$(CC) $(CFLAGS) -c tests/table_hierarchy_valgrind.c
 
+dynamic_string.o: src/dynamic_string.c src/dynamic_string.h
+	$(CC) $(CFLAGS) -c src/dynamic_string.c
+
+
+
 
 
 check_table_hierarchy_unit_tests: table_hierarchy.o table_hierarchy_unit_tests.o
@@ -52,8 +57,8 @@ check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o
 check_symtable_unit_tests: symtable.o symtable_tests.o
 	$(CC) symtable.o symtable_test.o $(TST_LIBS) $(COV_LIBS) -o check_symtable_tests
 
-check_symtable_memory_tests: symtable.o symtable_valgrind.o
-	$(CC) symtable.o symtable_valgrind.o -o check_symtable_memory_tests
+check_symtable_memory_tests: symtable.o symtable_valgrind.o dynamic_string.o
+	$(CC) symtable.o symtable_valgrind.o dynamic_string.o -o check_symtable_memory_tests
 
 
 #####################################################################################################################################################

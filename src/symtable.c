@@ -16,10 +16,11 @@
 #include <stdlib.h>
 #include "symtable.h"
 #include <stdio.h>
+#include "dynamic_string.h"
 unsigned long hash(char *str)
 {
     unsigned long hash = 0;
-    unsigned long x = 0;
+    //unsigned long x = 0;
     for (char letter = *str; letter != '\0'; letter = *(++str))
     {
         hash = (hash << 4) + letter;
@@ -75,15 +76,180 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror)
         return NULL;
     }
 
-    //TODO FILL IN DATA
+
     strcpy(new_item->key, key);
     //put in table
     tmp = (*table)[hash_index];
     (*table)[hash_index] = new_item;
     new_item->next = tmp;
+    new_item->dataType = DATATYPE_YET_UNASSIGNED;
     *noerror = true;
     return new_item;
 }
+
+
+Symtable_item * symtable_add_int(Symtable *table, char *key, int value, bool *noerror){
+    bool internalnoerror = false;
+    Symtable_item * item = symtable_add(table, key,&internalnoerror);
+    if (!item && internalnoerror){item = symtable_search(table,key);}
+    if (!internalnoerror){*noerror = false;return NULL;}
+    item->itemData.intnumber = value;
+    item->dataType = DATATYPE_INTEGER;
+    *noerror = true;
+    return item;
+}
+
+Symtable_item * symtable_add_float(Symtable *table, char *key, float value, bool *noerror){
+    bool internalnoerror = false;
+    Symtable_item * item = symtable_add(table, key,&internalnoerror);
+    if (!item && internalnoerror){item = symtable_search(table,key);}
+    if (!internalnoerror){*noerror = false;return NULL;}
+
+    item->itemData.floatnumber = value;
+    item->dataType = DATATYPE_FLOAT;
+    *noerror = true;
+    return item;
+    
+}
+
+Symtable_item * symtable_add_string(Symtable *table, char *key, char * value, bool *noerror){
+    bool internalnoerror = false;
+    Symtable_item * item = symtable_add(table, key,&internalnoerror);
+    if (!item && internalnoerror){item = symtable_search(table,key);}
+    if (!internalnoerror){*noerror = false;return NULL;}
+    
+    item->dataType = DATATYPE_STRING;
+
+    Dynamic_string *strptr = malloc(sizeof(Dynamic_string));
+    if (!strptr){*noerror = false;return NULL;}
+
+    internalnoerror = dynamic_string_init(strptr); 
+    if (!internalnoerror){free(strptr);*noerror = false; return NULL;}
+
+    internalnoerror = dynamic_string_add_string(strptr,value);
+    if (!internalnoerror){dynamic_string_free(strptr);free(strptr);*noerror = false; return NULL;}
+
+    item->itemData.dynamicstring = strptr;
+    *noerror = true;
+    return item;
+
+}
+
+Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool *noerror){
+    bool internalnoerror = false;
+    Symtable_item * item = symtable_add(table, key, &internalnoerror);
+    if (!item && internalnoerror){item = symtable_search(table,key);}
+    if (!internalnoerror){*noerror = false;return NULL;}
+    item->dataType = DATATYPE_FUNC;
+
+    ItemData * itemdata = malloc(sizeof(ItemData));
+    if (!itemdata){
+        if(item){symtable_remove(table,key);}
+        noerror = false; 
+        return NULL;}
+
+    FuncItemData * funcitemdataptr = malloc(sizeof(FuncItemData));
+    if(!funcitemdataptr){
+        if(item){symtable_remove(table,key);}
+        noerror = false; 
+        return NULL;
+    }
+    funcitemdataptr->return_types = malloc(sizeof(char *) * DEFAULT_PARAM_COUNT);
+    if (!funcitemdataptr->return_types){
+        if(item){symtable_remove(table,key);}
+        free(funcitemdataptr);
+        free(itemdata);
+        noerror = false; 
+        return NULL;
+    }
+    funcitemdataptr->param_names = malloc(sizeof(char *) * DEFAULT_PARAM_COUNT);
+    if (!funcitemdataptr->param_names){
+        if(item){symtable_remove(table,key);}
+        free(funcitemdataptr->return_types);
+        free(funcitemdataptr);
+        free(itemdata);
+        noerror = false; 
+        return NULL;
+    }
+    funcitemdataptr->param_types = malloc(sizeof(char *) * DEFAULT_PARAM_COUNT);
+    if (!funcitemdataptr->param_types){
+        if(item){symtable_remove(table,key);}
+        free(funcitemdataptr->return_types);
+        free(funcitemdataptr->param_types);
+        free(funcitemdataptr);
+        free(itemdata);
+        noerror = false; 
+        return NULL;
+    }
+    funcitemdataptr->alloc_param = DEFAULT_PARAM_COUNT;
+    funcitemdataptr->alloc_return = DEFAULT_PARAM_COUNT;
+    funcitemdataptr->used_param = 0;
+    funcitemdataptr->used_return = 0;
+    item->itemData.funcitemptr = funcitemdataptr;
+    *noerror = true;
+    return item;
+}
+
+/**
+ * @note volaj len na spravne inicializovane
+ * */
+Symtable_item * Symtable_add_function_inparam(Symtable * table, char * key, char *paramname, char * paramtype, bool * noerror){
+    //get what to change
+    bool inbool = false;
+    Symtable_item * item = symtable_add(table,key,&inbool);
+    if (!item && inbool){item = symtable_search(table,key);}
+    if (!inbool){*noerror = false;return NULL;}
+    if (item->dataType != DATATYPE_FUNC){*noerror = false; return NULL;}
+    FuncItemData * lePtr = item->itemData.funcitemptr;
+    //realloc array of pointers to longer, if needed
+    if (lePtr->alloc_param == lePtr->used_param){
+        char ** tmp = realloc(lePtr->param_names,sizeof(char *)*lePtr->alloc_param*2);
+        if (tmp == NULL){*noerror = false;return NULL;}
+
+                tmp = realloc(lePtr->param_types,sizeof(char *)*lePtr->alloc_param*2);
+        if (tmp == NULL){*noerror = false;return NULL;}
+        
+        lePtr->alloc_param = lePtr->alloc_param * 2;
+    }
+    //alloc new strings and copy in
+    lePtr->param_names[lePtr->used_param] = malloc(sizeof(char)*strlen(paramname)+1);
+    if (!lePtr->param_names[lePtr->used_param]) {noerror = false; return NULL;}
+    strcpy(lePtr->param_names[lePtr->used_param],paramname);
+
+    lePtr->param_types[lePtr->used_param] = malloc(sizeof(char)*strlen(paramtype)+1);
+    if (!lePtr->param_types[lePtr->used_param]) {noerror = false; return NULL;}
+    strcpy(lePtr->param_types[lePtr->used_param],paramtype);
+    lePtr->used_param++;
+    //return
+    *noerror = true;
+    return item;
+}
+
+
+Symtable_item * Symtable_add_function_outparam(Symtable * table, char * key, char *returntype,bool * noerror){
+    bool inbool = false;
+    Symtable_item * item = symtable_add(table,key,&inbool);
+    if (!item && inbool){item = symtable_search(table,key);}
+    if (!inbool){*noerror = false;return NULL;}
+    if (item->dataType != DATATYPE_FUNC){*noerror = false; return NULL;}
+    FuncItemData * lePtr = item->itemData.funcitemptr;
+
+    if (lePtr->alloc_return == lePtr->used_return){
+        char ** tmp = realloc(lePtr->return_types,sizeof(char *)*lePtr->alloc_return*2);
+        if (tmp == NULL){*noerror = false;return NULL;}
+        
+        lePtr->alloc_return = lePtr->alloc_return * 2;
+    }
+
+    lePtr->return_types[lePtr->used_return] = malloc(sizeof(char)*strlen(returntype)+1);
+    if (!lePtr->return_types[lePtr->used_return]) {noerror = false; return NULL;}
+    strcpy(lePtr->return_types[lePtr->used_return],returntype);
+
+    lePtr->used_return++;
+    *noerror = true;
+    return item;
+}
+
 Symtable_item *symtable_search(Symtable *table, char *key)
 {
     unsigned long hash_index = hash(key);
@@ -129,10 +295,35 @@ void symtable_remove(Symtable *table, char *key)
         previous->next = current->next;
     }
     //free item
+    if (current->dataType == DATATYPE_FUNC){
+        FuncItemData_free(current->itemData.funcitemptr);
+    }
+    else if (current->dataType == DATATYPE_STRING){
+        dynamic_string_free(current->itemData.dynamicstring);
+    }
+    free(current->itemData.dynamicstring);
     free(current->key); //FREE
     free(current);      //FREE
     return;
 }
+
+
+void FuncItemData_free(FuncItemData * data){
+    if (data == NULL){return;}
+    for (int i = 0; i<data->used_param;i++){
+        free(data->param_names[i]);
+        free(data->param_types[i]);
+    }
+    for (int i = 0;i<data->used_return;i++){
+        free(data->return_types[i]);
+    }
+    free(data->param_names);
+    free(data->param_types);
+    free(data->return_types);
+    free(data);
+    return;
+}
+
 
 void symtable_free(Symtable *table)
 {
@@ -157,14 +348,41 @@ void printouttable(Symtable * table){
         int count = 0;
         item = (*table)[i];
         while(item!= NULL){
-            printf("->found on hash %d, index %d : %s ...",i,count,item->key);
+            printf("->found on hash %d, index %d : %s,",i,count,item->key);
+            if (item->dataType == DATATYPE_STRING){
+                printf("%s, ",item->itemData.dynamicstring->string);
+            }
+            else if(item->dataType == DATATYPE_FLOAT){
+                printf("%f, ",item->itemData.floatnumber);
+            }
+            else if(item->dataType == DATATYPE_INTEGER){
+                printf("%d, ",item->itemData.intnumber);
+            }
+            else if(item->dataType == DATATYPE_FUNC){
+                printf("\n \treturn types:");
+                for (int i = 0;i<item->itemData.funcitemptr->used_return;i++){
+                    printf("\t\t%s, \n",item->itemData.funcitemptr->return_types[i]);
+                }
+                printf("\n \tparam names:");
+                for (int i = 0;i<item->itemData.funcitemptr->used_param;i++){
+                    printf("\t\t%s, \n",item->itemData.funcitemptr->param_names[i]);
+                }
+                printf("\n \tparam types:");
+                for (int i = 0;i<item->itemData.funcitemptr->used_param;i++){
+                    printf("\t\t%s, \n",item->itemData.funcitemptr->param_types[i]);
+                }
+            }
+            else{
+                printf("failed to load data of this item.\n"); 
+            }
             item = item->next;
             count++;
+            
         }
         if (count == 0){
             printf("NOTHING at hash %d",i);
         }
-        item == NULL;
+        //item = NULL;
         printf("\n");
     } 
 }

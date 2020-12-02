@@ -137,6 +137,28 @@ int main()
     symtable_add(&table,"Anton"  ,&noerror);
     symtable_add(&table,"Maria"  ,&noerror);
     symtable_add(&table,"timotej",&noerror);
+    symtable_add_int(&table, "timotej",42,&noerror);
+    symtable_add_int(&table, "Matej",42,&noerror);
+    symtable_add_float(&table,"Lukas",7.2,&noerror);
+    symtable_add_string(&table,"Samo","AK MA NEVIDIS TAK ZLE", &noerror);
+    symtable_add_function_init(&table,"Jirka", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param1","bool", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param2","bool", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param3","bool", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param4","bool", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param5","bool", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param6","bool", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param7","bool", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int2", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int3", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int4", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int5", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int6", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int7", &noerror);
+    Symtable_add_function_outparam(&table, "Jirka", "int8", &noerror);
+
+
     printf("\nall added:\n");
     printouttable(&table);
 
