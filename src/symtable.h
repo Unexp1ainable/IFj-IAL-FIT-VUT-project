@@ -126,13 +126,13 @@ Symtable_item * symtable_add_function_init(Symtable * table, char * key);
 /**
  * @brief insert an input parameter to the function
  * */
-Symtable_item * Symtable_add_function_inparam(Symtable * table, char * key, char *paramname, char * paramtype, bool * noerror);
+Symtable_item * Symtable_add_function_inparam(Symtable * table, char * key, char *paramname, char * paramtype);
 
 
 /**
  * @brief insert an output parameter to the function
  * */
-Symtable_item * Symtable_add_function_outparam(Symtable * table, char * key, char *returntype,bool * noerror);
+Symtable_item * Symtable_add_function_outparam(Symtable * table, char * key, char *returntype);
 
 /**
  * @brief find the tableitem by the keyword

@@ -246,7 +246,7 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key)
 /**
  * @note volaj len na spravne inicializovane
  * */
-Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *paramname, char *paramtype, bool *noerror)
+Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *paramname, char *paramtype)
 {
     //get what to change
     bool inbool = false;
@@ -257,12 +257,10 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
     }
     if (!inbool)
     {
-        *noerror = false;
         return NULL;
     }
     if (item->dataType != DATATYPE_FUNC)
     {
-        *noerror = false;
         return NULL;
     }
     FuncItemData *lePtr = item->itemData.funcitemptr;
@@ -272,7 +270,6 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
         char **tmp = realloc(lePtr->param_names, sizeof(char *) * lePtr->alloc_param * 2);
         if (tmp == NULL)
         {
-            *noerror = false;
             return NULL;
         }
         else
@@ -283,7 +280,6 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
         tmp = realloc(lePtr->param_types, sizeof(char *) * lePtr->alloc_param * 2);
         if (tmp == NULL)
         {
-            *noerror = false;
             return NULL;
         }
         else
@@ -297,7 +293,6 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
     lePtr->param_names[lePtr->used_param] = malloc(sizeof(char) * (strlen(paramname) + 1));
     if (!lePtr->param_names[lePtr->used_param])
     {
-        noerror = false;
         return NULL;
     }
     strcpy(lePtr->param_names[lePtr->used_param], paramname);
@@ -305,17 +300,15 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
     lePtr->param_types[lePtr->used_param] = malloc(sizeof(char) * (strlen(paramtype) + 1));
     if (!lePtr->param_types[lePtr->used_param])
     {
-        noerror = false;
         return NULL;
     }
     strcpy(lePtr->param_types[lePtr->used_param], paramtype);
     lePtr->used_param++;
     //return
-    *noerror = true;
     return item;
 }
 
-Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *returntype, bool *noerror)
+Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *returntype)
 {
     bool inbool = false;
     Symtable_item *item = symtable_add(table, key, &inbool);
@@ -325,12 +318,10 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
     }
     if (!inbool)
     {
-        *noerror = false;
         return NULL;
     }
     if (item->dataType != DATATYPE_FUNC)
     {
-        *noerror = false;
         return NULL;
     }
     FuncItemData *lePtr = item->itemData.funcitemptr;
@@ -340,7 +331,6 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
         char **tmp = realloc(lePtr->return_types, sizeof(char *) * lePtr->alloc_return * 2);
         if (tmp == NULL)
         {
-            *noerror = false;
             return NULL;
         }
         else
@@ -353,13 +343,11 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
     lePtr->return_types[lePtr->used_return] = malloc(sizeof(char) * strlen(returntype) + 1);
     if (!lePtr->return_types[lePtr->used_return])
     {
-        noerror = false;
         return NULL;
     }
     strcpy(lePtr->return_types[lePtr->used_return], returntype);
 
     lePtr->used_return++;
-    *noerror = true;
     return item;
 }
 
