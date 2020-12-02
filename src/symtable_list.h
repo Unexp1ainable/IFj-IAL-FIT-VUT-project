@@ -18,7 +18,7 @@
 typedef struct symListItem
 {
     Symtable *table;
-    symListItem *next;
+    struct symListItem *next;
 } *symListItemPtr;
 
 /**
