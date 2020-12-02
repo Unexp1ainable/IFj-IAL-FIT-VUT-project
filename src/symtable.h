@@ -120,7 +120,7 @@ Symtable_item * symtable_add_string(Symtable *table, char *key, char * value, bo
 /**
  * @brief initialise function symbol. call before putting in params and returns
 */
-Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool * noerror);
+Symtable_item * symtable_add_function_init(Symtable * table, char * key);
 
 
 /**
