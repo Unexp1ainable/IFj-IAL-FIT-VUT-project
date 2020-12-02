@@ -15,6 +15,18 @@
 
 #define START_STACK_SIZE 32
 
+/*
+	    |+- | /*| \ | r | ( | ) | i | $ |
+    +-  | > | < | < | > | < | > | < | > | 
+    /*  | > | > | > | > | < | > | < | > | 
+    \   | > | > | > | > | < | > | < | > | 
+relation| < | < | < |   | < | > | < | > | 
+    (   | < | < | < | < | < | = | < |   |  
+    )   | > | > | > | > |   | > |   | > | 
+  	i   | > | > | > | > |   | > |   | > | 
+ 	$   | < | v | < | < | < |   | < |   | 
+*/
+
 
 
 /*************STACK*************/
@@ -54,11 +66,12 @@ typedef enum{
     TR_ADD_SUB,
     TR_NOT,
     TR_AND_OR,
-    TR_GT_LT,     //>
-    TR_EQUAL,      //=
+    TR_GT_LT,     
+    TR_EQUAL,      
     TR_VAR,
     TR_LB,
-    TR_RB       //doesn't exist
+    TR_RB,      
+    TR_OTHER
 } RelType;
 
 /*************VALUE OF ITEM***********/
@@ -75,10 +88,16 @@ typedef struct item{
 }*Item;
 
 
-void InitStack(MyStack *Stack);     //stack initialization
+void InitStack(MyStack *Stack);                         //stack initialization
 
-void DisposeStack(MyStack *Stack);      //free the stack and its memory
+void DisposeStack(MyStack *Stack);                      //free the stack and its memory
 
-void PushStack(MyStack Stack, Item item);  //put item to top of the stack
+void PushStack(MyStack Stack, Item item);               //put item to top of the stack
 
+Item PopStack(MyStack Stack);                           //delete the item at the top of the stack and returns it
 
+int FirstFindedTerm(MyStack Stack);                     //find first terminal from top
+
+RelType TokenToTerm(TOKEN_TYPES token);
+
+Relation CheckRelation(RelType First, RelType Second);  //with precedence table return relation

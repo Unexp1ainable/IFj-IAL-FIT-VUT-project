@@ -11,6 +11,7 @@
 #include "expression.h"
 
 
+
 void InitStack(MyStack *Stack){
     if(Stack == NULL){
             return;
@@ -57,12 +58,80 @@ void PushStack(MyStack Stack, Item item){
     Stack->p[Stack->top] = item;
 }
 
-Item StackPop(MyStack Stack){
+Item PopStack(MyStack Stack){
     if(Stack->top == 0){
         return NULL;
     }
     else{
         Stack->top--;
         return Stack->p[Stack->top + 1];
+    }
+}
+//return first term from top
+int FirstFindedTerm(MyStack Stack){
+    int position ;
+    position = Stack->top;
+    while(position != 0){
+        if(Stack->p[position]->type == IT_TERM){
+            return position;
+        }
+        position--;
+    }
+    return position;
+}
+RelType TokenToTerm(TOKEN_TYPES token){
+    switch(token){
+        //TODO LOGIC
+        case TOKEN_TYPE_ADD:
+            return TR_ADD_SUB;
+        case TOKEN_TYPE_SUBTRACT:
+            return TR_ADD_SUB;
+        case TOKEN_TYPE_MULTIPLY:
+            return TR_MUL_DIV;
+        case TOKEN_TYPE_DIVIDE:
+            return TR_MUL_DIV;
+        case TOKEN_TYPE_EQUAL:
+            return TR_EQUAL;   
+        case TOKEN_TYPE_NOT_EQUAL:
+            return TR_EQUAL;
+        case TOKEN_TYPE_OPENING_CLASSIC_BRACKET:
+            return TR_LB;
+        case TOKEN_TYPE_CLOSING_CLASSIC_BRACKET:
+            return TR_RB;
+        case TOKEN_TYPE_INTEGER:
+            return TR_VAR;
+        case TOKEN_TYPE_FLOAT64:
+            return TR_VAR;
+        case TOKEN_TYPE_IDENTIFIER:
+            return TR_VAR;
+        case TOKEN_TYPE_STRING:
+            return TR_VAR;
+        default:
+            return TR_OTHER;
+
+    }
+}
+/*
+	    |+- | /*| \ | r | ( | ) | i | $ |
+    +-  | > | < | < | > | < | > | < | > | 
+    /*  | > | > | > | > | < | > | < | > | 
+    \   | > | > | > | > | < | > | < | > | 
+relation| < | < | < |   | < | > | < | > | 
+    (   | < | < | < | < | < | = | < |   |  
+    )   | > | > | > | > |   | > |   | > | 
+  	i   | > | > | > | > |   | > |   | > | 
+ 	$   | < | < | < | < | < |   | < |   | 
+*/
+Relation CheckRelation(RelType First, RelType Second){
+    switch(First){
+        case TR_ADD_SUB:
+            if(Second == TR_LB || Second == TR_VAR){
+                return R_OPEN;
+            }
+            else if(Second == TR_NOT){
+                return
+            }
+
+
     }
 }
