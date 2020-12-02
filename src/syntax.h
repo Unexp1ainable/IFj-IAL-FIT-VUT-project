@@ -1,5 +1,5 @@
-/*
- * file syntax.h
+/**
+ * @brief file syntax.h
  * author Samuel Repka
  * Header file for syntax checker
  * version 0.1
@@ -14,45 +14,50 @@
 #include <stdbool.h>
 #include "newscanner.h"
 // ########################## global variables #########################
-/*
- * Buffer for returned token
+/**
+ * @brief Buffer for returned token
  * 
  */
 extern TOKEN token_buffer;
 
-/*
- * Token being processed
+/**
+ * @brief Token being processed
  * 
  */
 extern TOKEN curr_token;
 
-/*
- * Line number
+/**
+ * @brief Line number
  * 
  */
 extern unsigned long line;
 
-/*
- * For checking if main was already defined.
+/**
+ * @brief For checking if main was already defined.
  *
  */
 
 extern bool main_defined;
 
 /**
- * Used for counting how many items are on the left of the list assignment
+ * @brief Used for counting how many items are on the left of the list assignment
  * Initialised on 1 because id needs to pass 1 item before entering required state.
  */
 extern unsigned int assign_list_id_n;
 
 /**
- * Used for counting how many items are on the right of the list assignment
+ * @brief Used for counting how many items are on the right of the list assignment
  * 
  */
 extern unsigned int assign_list_expr_n;
 // ################### end of global variables #################
 
 // ################### error codes #################
+
+/**
+ * @brief Error codes
+ * 
+ */
 typedef enum
 {
     ERR_PROLOG,       // prolog wrong or missing
@@ -84,46 +89,58 @@ typedef enum
 // ################### end of error codes #################
 
 // ############################# helper functions ###########################
-/*
- * Get the token object
+/**
+ * @brief Get the token object
  * 
  * param token Pointer to output token
- * return int Return code. 0 if good
+ * @return int Return code. 0 if good
  */
 int get_token(TOKEN *token);
 
 /**
- * Put token to temp holding space
+ * @briefPut token to temp holding space
  *
  * param token Token
  */
 void return_token(TOKEN token);
 
 /**
- * Print error description on stderr  
+ * @briefPrint error description on stderr  
  * 
  * 
  * param err Error code
  */
 void describe_error(ERR_CODE_SYN err);
 
-/*
- * Check if next token is eol and increment line
+/**
+ * @brief Check if next token is eol and increment line
  * 
  */
 bool eol_required();
+
+/**
+ * @brief Check if id is already in symtable
+ * 
+ * @param list List of symtables
+ * @param key_t Id which to look for
+ * 
+ * @return true If it is in symtable
+ * @return false If it is not in symtable
+ */
+bool was_it_defined(symtableList list, char* key);
+
 // ################### end of helper functions #################
 
 // ################### macros #################
 
 /**
- * brief Condition for checking tokentype, ==
+ * @brief Condition for checking tokentype, ==
  * 
  */
 #define TOKEN_IS(tt) (curr_token.tokentype == tt)
 
 /**
- * brief Condition for checking tokentype, !=
+ * @brief Condition for checking tokentype, !=
  * 
  */
 #define TOKEN_IS_NOT(tt) (curr_token.tokentype != tt)
@@ -132,104 +149,104 @@ bool eol_required();
 // ################### end of macros #################
 
 // ############################# STATES ##################################
-/*
- * Beginning of the program
+/**
+ * @brief Beginning of the program
  * 
  * <prolog> -> package main <eol> <eols> <f_list> <eols> <eof>
  * 
- * return int 
+ * @return int 
  */
 int s_prolog();
 
-/*
- * List of functions
+/**
+ * @brief List of functions
  * 
  * <f_list> -> <eols> func <func> <eols> <f_list>
  * <f_list> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_f_list();
 
-/*
- * Function
+/**
+ * @brief Function
  * 
  * <func> -> id <f_init> <body>
  * <func> -> main <f_init> <body>
  * 
- * return int 
+ * @return int 
  */
 int s_func();
 
-/*
- * Lists defining function parameters and return types
+/**
+ * @brief Lists defining function parameters and return types
  * 
  * <f_init> -> (<param_def_list>) <ret_t_list>
  * 
- * return int 
+ * @return int 
  */
 int s_f_init();
 
-/*
- * Function call
+/**
+ * @brief Function call
  * 
  * <f_call> -> <param_list>
  * 
- * return int 
+ * @return int 
  */
 int s_f_call();
 
-/*
- * Body of the function/loop/condition
+/**
+ * @brief Body of the function/loop/condition
  * 
  * <body> -> {<eol> <eols> <stat_list>} <eol> <eols>
  * 
- * return int 
+ * @return int 
  */
 int s_body();
 
-/*
- * List of function parameters - defining
+/**
+ * @brief List of function parameters - defining
  * 
  * <param_def_list> -> id <type> <param_def_list_n>
  * <param_def_list> -> e
  * 
- * return int
+ * @return int
  */
 int s_param_def_list();
 
-/*
- * Multi-parameter list continuation - definition
+/**
+ * @brief Multi-parameter list continuation - definition
  * 
  * <param_def_list_n> -> , id <type> <eols> <param_def_list_n>
  * <param_def_list_n> -> e
  *
- * return int 
+ * @return int 
  */
 int s_param_def_list_n();
 
-/*
- * List of function return parameters
+/**
+ * @brief List of function return parameters
  * 
  * <ret_t_list> -> (<type> <ret_t_list_n>)
  * <ret_t_list> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_ret_t_list();
 
-/*
- * Multi-return values list continuation - definition
+/**
+ * @brief Multi-return values list continuation - definition
  * 
  * <ret_t_list_n> -> , <type> <ret_t_list_n>
  * <ret_t_list_n> -> e
  *
- * return int 
+ * @return int 
  */
 int s_ret_t_list_n();
 
-/*
- * Statement: f_call/id_n/for/if
+/**
+ * @brief Statement: f_call/id_n/for/if
  * 
  * <stat> -> <if>
  * <stat> -> <for>
@@ -237,192 +254,192 @@ int s_ret_t_list_n();
  * <stat> -> id <id_n>
  * <stat> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_stat();
 
-/*
- * List of statements
+/**
+ * @brief List of statements
  * 
  * <stat_list> -> <stat> <eol> <eols> <stat_list>
  * <stat_list> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_stat_list();
 
-/*
- * Condition
+/**
+ * @brief Condition
  * 
  * <if> -> if <expr><body><else>
  * 
- * return int 
+ * @return int 
  */
 int s_if();
 
-/*
- * Else statement after condition
+/**
+ * @brief Else statement after condition
  * 
  * <else> -> else <body>
  * <else> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_else();
 
-/*
- * For loop
+/**
+ * @brief For loop
  * 
  * <for> -> for <id_def_v>; <expr>; <id_assign_v> <body>
  * 
- * return int 
+ * @return int 
  */
 int s_for();
 
-/*
- * Return statement
+/**
+ * @brief Return statement
  * 
  * <return> -> return <expr_list>
  * 
- * return int 
+ * @return int 
  */
 int s_return();
 
-/*
- * List of expressions
+/**
+ * @brief List of expressions
  * 
  * <expr_list> -> <expr> <expr_list_n>
  * <expr_list> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_expr_list();
 
-/*
- * Continuation of expression list
+/**
+ * @brief Continuation of expression list
  * 
  * <expr_list_n> -> ,<expr> <expr_list_n>
  * <expr_list_n> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_expr_list_n();
 
-/*
- * Id was found in the statement - crossroads
+/**
+ * @brief Id was found in the statement - crossroads
  * 
  * <id_n> -> := <id_def>
  * <id_n> -> = <id_assign>
  * <id_n> -> , <id_list_assign>
  * <id_n> -> ( <f_call> )
  * 
- * return int 
+ * @return int 
  */
 int s_id_n();
 
-/*
- * Variable definition
+/**
+ * @brief Variable definition
  * 
  * <id_def> -> <expr>
  * 
- * return int 
+ * @return int 
  */
 int s_id_def();
 
-/*
- * Voluntary variable definition
+/**
+ * @brief Voluntary variable definition
  * 
  * <id_def_v> -> <id_def>
  * <id_def_v> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_id_def_v();
 
-/*
- * List of IDs, must be assignment
+/**
+ * @brief List of IDs, must be assignment
  * 
  * <id_list> -> id <id_list_n>
  * 
- * return int 
+ * @return int 
  */
 int s_id_list();
 
-/*
- * Continuation of ID list
+/**
+ * @brief Continuation of ID list
  * 
  * <id_list_n> -> ,id <id_list_n>
  * <id_list_n> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_id_list_n();
 
-/*
- * Assignment of the ID/s
+/**
+ * @brief Assignment of the ID/s
  * 
  * <id_assign> -> <expr>
  * 
- * return int 
+ * @return int 
  */
 int s_id_assign();
 
-/*
- * Voluntary assignment of the ID
+/**
+ * @brief Voluntary assignment of the ID
  * 
  * <id_assign_v> -> <assign>
  * <id_assign_v> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_id_assign_v();
 
-/*
- * Assignment of list to list
+/**
+ * @brief Assignment of list to list
  *
  * <id_list_assign> -> <id_list> = <expr_list>
  * 
- * return int
+ * @return int
  */
 int s_id_list_assign();
 
-/*
- * List of parameters of function call
+/**
+ * @brief List of parameters of function call
  * 
  * <param_list> -> <expr> <param_list_n>
  * 
- * return int 
+ * @return int 
  */
 int s_param_list();
 
-/*
- * Continuation of function call parameters
+/**
+ * @brief Continuation of function call parameters
  * 
  * <param_list_n> -> , <expr> <param_list_n>
  * <param_list_n> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_param_list_n();
 
-/*
- * List of eols
+/**
+ * @brief List of eols
  * 
  * <eols> -> eol <eols>
  * <eols> -> e
  * 
- * return int 
+ * @return int 
  */
 int s_eols();
 
-/*
- * Variable type
+/**
+ * @brief Variable type
  * 
  * <type> -> int
  * <type> -> float64
  * <type> -> string
  * 
- * return int 
+ * @return int 
  */
 int s_type();
 // ############################# STATES END ###############################

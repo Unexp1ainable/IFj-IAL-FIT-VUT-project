@@ -1,6 +1,7 @@
 #include "syntax.h"
 #include "newscanner.h"
 #include "expression.h"
+#include "symtable_list.h"
 
 // ########################## global variables #########################
 
@@ -157,6 +158,28 @@ bool eol_required()
 
     line++;
     return true;
+}
+
+bool was_it_defined(symtableList list, char* key){
+
+    symListItemPtr curr_list_item = list;
+    Symtable_item *symbol;
+
+    if(list == NULL){
+        return false;
+    }
+
+
+    while (curr_list_item != NULL){
+        symbol = symtable_search(curr_list_item->table, key);
+
+        if (symbol != NULL){
+            return true;
+        }
+
+        curr_list_item = curr_list_item->next;
+    }
+    return false;
 }
 
 // ################### end of helper functions #################
