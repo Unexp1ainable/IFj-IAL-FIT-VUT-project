@@ -160,26 +160,121 @@ bool eol_required()
     return true;
 }
 
-bool was_it_defined(symtableList list, char* key){
+bool was_it_defined(symtableList list, char *key)
+{
 
     symListItemPtr curr_list_item = list;
     Symtable_item *symbol;
 
-    if(list == NULL){
+    if (list == NULL)
+    {
         return false;
     }
 
-
-    while (curr_list_item != NULL){
+    while (curr_list_item != NULL)
+    {
         symbol = symtable_search(curr_list_item->table, key);
 
-        if (symbol != NULL){
+        if (symbol != NULL)
+        {
             return true;
         }
 
         curr_list_item = curr_list_item->next;
     }
     return false;
+}
+
+int initialise_predefined(Symtable table)
+{
+    Symtable_item *new_item;
+
+    // func inputs() (string,int)
+    if (!symtable_add_function_init(table, "inputs"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "inputs", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "inputs", "int"))
+        return INTERN_ERROR;
+
+    // func inputi() (int,int)
+    if (!symtable_add_function_init(table, "inputi"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "inputi", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "inputi", "int"))
+        return INTERN_ERROR;
+
+    // func inputf() (float64,int)
+    if (!symtable_add_function_init(table, "inputf"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "inputf", "float64"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "inputf", "int"))
+        return INTERN_ERROR;
+
+    // func int2float(i int) (float64)
+    if (!symtable_add_function_init(table, "int2float"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "int2float", "i", "int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "int2float", "float64"))
+        return INTERN_ERROR;
+
+    // func float2int(f float64) (int)
+    if (!symtable_add_function_init(table, "float2int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "float2int", "f", "float64"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "float2int", "int"))
+        return INTERN_ERROR;
+
+    // func len(𝑠 string) (int)
+    if (!symtable_add_function_init(table, "len"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "len", "s", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "len", "int"))
+        return INTERN_ERROR;
+
+    // func substr(s string, i int, n int) (string, int)
+    if (!symtable_add_function_init(table, "substr"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "substr", "s", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "substr", "i", "int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "substr", "n", "int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "substr", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "substr", "int"))
+        return INTERN_ERROR;
+
+    // func ord(s string, i int) (int, int)
+    if (!symtable_add_function_init(table, "ord"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "ord", "s", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "ord", "i", "int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "ord", "int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "ord", "int"))
+        return INTERN_ERROR;
+
+    // func chr(i int) (string, int)
+    if (!symtable_add_function_init(table, "chr"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_inparam(table, "chr", "i", "int"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "chr", "string"))
+        return INTERN_ERROR;
+    if (!Symtable_add_function_outparam(table, "chr", "int"))
+        return INTERN_ERROR;
+        
+    // TODO print fuj fuj
+    // func print ( term1 , term2 , …, term𝑛 )
 }
 
 // ################### end of helper functions #################

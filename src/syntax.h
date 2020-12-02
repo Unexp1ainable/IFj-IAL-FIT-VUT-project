@@ -129,6 +129,14 @@ bool eol_required();
  */
 bool was_it_defined(symtableList list, char* key);
 
+/**
+ * @brief Put built in functions to the table
+ * 
+ * @param table Table for variables to be put in
+ * @return int Error code, 0 if ok
+ */
+int initialise_predefined(Symtable table);
+
 // ################### end of helper functions #################
 
 // ################### macros #################
