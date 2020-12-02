@@ -81,7 +81,6 @@ int FirstFindedTerm(MyStack Stack){
 }
 RelType TokenToTerm(TOKEN_TYPES token){
     switch(token){
-        //TODO LOGIC
         case TOKEN_TYPE_ADD:
             return TR_ADD_SUB;
         case TOKEN_TYPE_SUBTRACT:
@@ -95,43 +94,92 @@ RelType TokenToTerm(TOKEN_TYPES token){
         case TOKEN_TYPE_NOT_EQUAL:
             return TR_EQUAL;
         case TOKEN_TYPE_OPENING_CLASSIC_BRACKET:
-            return TR_LB;
+            return TR_LBRACKET;
         case TOKEN_TYPE_CLOSING_CLASSIC_BRACKET:
-            return TR_RB;
+            return TR_RBRACKET;
         case TOKEN_TYPE_INTEGER:
-            return TR_VAR;
+            return TR_VALUE;
         case TOKEN_TYPE_FLOAT64:
-            return TR_VAR;
+            return TR_VALUE;
         case TOKEN_TYPE_IDENTIFIER:
-            return TR_VAR;
+            return TR_VALUE;
         case TOKEN_TYPE_STRING:
-            return TR_VAR;
+            return TR_VALUE;
         default:
             return TR_OTHER;
 
     }
 }
-/*
-	    |+- | /*| \ | r | ( | ) | i | $ |
-    +-  | > | < | < | > | < | > | < | > | 
-    /*  | > | > | > | > | < | > | < | > | 
-    \   | > | > | > | > | < | > | < | > | 
-relation| < | < | < |   | < | > | < | > | 
-    (   | < | < | < | < | < | = | < |   |  
-    )   | > | > | > | > |   | > |   | > | 
-  	i   | > | > | > | > |   | > |   | > | 
- 	$   | < | < | < | < | < |   | < |   | 
-*/
-Relation CheckRelation(RelType First, RelType Second){
+
+Relation PrecedenceTable(RelType First, RelType Second){
     switch(First){
         case TR_ADD_SUB:
-            if(Second == TR_LB || Second == TR_VAR){
+            if(Second == TR_LBRACKET || Second == TR_VALUE || Second == TR_MUL_DIV){
                 return R_OPEN;
             }
             else if(Second == TR_NOT){
-                return
+                return R_EMPTY;
             }
-
-
+            return R_CLOSE;
+        case TR_MUL_DIV:
+            if(Second == TR_LBRACKET || Second == TR_VALUE){
+                return R_OPEN;
+            }
+            else if(Second == TR_NOT){
+                return R_EMPTY;
+            }
+            return R_CLOSE;
+        case TR_EQUAL:
+            if(Second == TR_RBRACKET || Second == TR_AND_OR || Second == TR_OTHER ){
+                return R_CLOSE;
+            }
+            else if(Second == TR_EQUAL){
+                return R_EMPTY;
+            }
+            else return R_OPEN;
+        case TR_GT_LT:
+            if( Second == TR_RBRACKET ||Second == TR_EQUAL | Second == TR_OTHER || Second == TR_AND_OR){
+                return R_CLOSE;
+            }
+            else if(Second == TR_GT_LT){
+                return R_EMPTY;
+            }
+            else return R_OPEN;
+        case TR_LBRACKET:
+            if(Second == TR_OTHER){
+                 return R_EMPTY;
+            }
+            else if(Second == TR_RBRACKET){
+                return R_EQUAL;
+            }
+            else return R_OPEN;
+        case TR_RBRACKET:
+            if(Second = TR_LBRACKET || Second == TR_VALUE || Second == TR_NOT){
+                return R_EMPTY;
+            }
+            else return R_CLOSE;
+        case TR_NOT:
+            if(Second == TR_RBRACKET || Second == TR_OTHER || Second == TR_AND_OR){
+                return R_CLOSE;
+            }
+            else return R_OPEN;
+        case TR_VALUE:
+            if(Second == TR_LBRACKET || Second == TR_VALUE || Second == TR_NOT){
+                return R_EMPTY;
+            }
+            else return R_CLOSE;
+        case TR_AND_OR:
+            if(Second == TR_RBRACKET || Second == TR_OTHER){
+                return R_CLOSE;
+            }
+            else return R_OPEN;
+        case TR_OTHER:
+            if(Second == TR_RBRACKET || Second == TR_OTHER){
+                return R_EMPTY;
+            }
+            else return R_OPEN;
+        
     }
+    return R_EMPTY;
 }
+
