@@ -182,4 +182,23 @@ Relation PrecedenceTable(RelType First, RelType Second){
     }
     return R_EMPTY;
 }
+ int CheckAndPass(MyStack stack){
+     Item item = PopStack(stack);
+     if(item->type == IT_TERM){
+         if(item->val.term->type == TOKEN_TYPE_CLOSING_CLASSIC_BRACKET){
+             free(item);
+             item = PopStack(stack);
+             Item leftbracket = PopStack(stack);    //<expr> => ( <expr> )
+             free(leftbracket);
+         }
+         else{
+             TermType type = T_UNKNOWN;
+             switch(item->val)
 
+         }
+        
+
+         
+     }
+
+ }
