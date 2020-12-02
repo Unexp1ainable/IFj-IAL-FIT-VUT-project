@@ -89,7 +89,7 @@ void symtable_init(Symtable * symtable);
 
 
 /**
- * @brief add symbol to symtable
+ * @brief add symbol to symtable without any data. Datatype = Yet_unassigned
  * 
  * @param table pointer to the symbol table
  * @param key keyword
@@ -97,6 +97,7 @@ void symtable_init(Symtable * symtable);
  * @return NULL+true if already existing,NULL+false if failed memory allocation, pointer+true if successful
  */
 Symtable_item * symtable_add(Symtable * table, char * key,bool * noerror);
+
 
 /**
  * @brief calls a symtable add and fills in integer
@@ -109,12 +110,28 @@ Symtable_item * symtable_add_int(Symtable *table, char *key, int value, bool *no
  * */
 Symtable_item * symtable_add_float(Symtable *table, char *key, float value, bool *noerror);
 
+
+/**
+ * @brief add string to the symtable
+ * */
 Symtable_item * symtable_add_string(Symtable *table, char *key, char * value, bool *noerror);
 
+
+/**
+ * @brief initialise function symbol. call before putting in params and returns
+*/
 Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool * noerror);
 
+
+/**
+ * @brief insert an input parameter to the function
+ * */
 Symtable_item * Symtable_add_function_inparam(Symtable * table, char * key, char *paramname, char * paramtype, bool * noerror);
 
+
+/**
+ * @brief insert an output parameter to the function
+ * */
 Symtable_item * Symtable_add_function_outparam(Symtable * table, char * key, char *returntype,bool * noerror);
 
 /**
@@ -153,6 +170,11 @@ void symtable_free(Symtable * table);
  * @brief print out contents of the table. Used for debug
  */
 void printouttable(Symtable * table);
+
+
+/**
+ * @brief assistive function
+*/
 void FuncItemData_free(FuncItemData * data);
 
 #endif //_SYMTABLE_H
