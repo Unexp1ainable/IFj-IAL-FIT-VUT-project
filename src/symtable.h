@@ -16,19 +16,20 @@
 
 #define MAX_SIZE_OF_SYM_TABLE 19 //random prime number
 
-/**
- * @brief hash function 
- * 
- * @note http://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)HashTables.html 4.2.multiplication
- * @param str keyword to be hashed
- * @return hash
- */
-unsigned long hash(char * str);
+typedef enum{
+    DATATYPE_INTEGER,
+    DATATYPE_DOUBLE,
+    DATATYPE_STRING,
+}DataType;
 
 typedef struct ItemData{
-    //TODO INSERT DATA HERE!!!!!!!!!!!!!!!!!!!
-    bool defined;
+    DataType datatype;
+    Dynamic_string ** zoznamparametrov;
+    char * key;
+    bool global;
 }ItemData;
+
+
 
 /**
  * @struct Single item representation
@@ -41,7 +42,22 @@ typedef struct htab_tabitem
     
 } Symtable_item;
 
+
 typedef Symtable_item * Symtable[MAX_SIZE_OF_SYM_TABLE];//define symbol table as array of symtable items
+
+
+
+
+/**
+ * @brief hash function 
+ * 
+ * @note http://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)HashTables.html 4.2.multiplication
+ * @param str keyword to be hashed
+ * @return hash
+ */
+unsigned long hash(char * str);
+
+
 
 
 /**
@@ -50,6 +66,8 @@ typedef Symtable_item * Symtable[MAX_SIZE_OF_SYM_TABLE];//define symbol table as
  * @param symtable pointer to the initialised table
  */
 void symtable_init(Symtable * symtable);
+
+
 
 
 /**
@@ -62,6 +80,9 @@ void symtable_init(Symtable * symtable);
  */
 Symtable_item * symtable_add(Symtable * table, char * key,bool * noerror);
 
+
+
+
 /**
  * @brief find the tableitem by the keyword
  * 
@@ -71,6 +92,9 @@ Symtable_item * symtable_add(Symtable * table, char * key,bool * noerror);
  */
 Symtable_item * symtable_search(Symtable * table, char * key);
 
+
+
+
 /**
  * @brief remove tableitem by keyword
  * 
@@ -79,11 +103,17 @@ Symtable_item * symtable_search(Symtable * table, char * key);
  */
 void symtable_remove(Symtable * table, char * key);
 
+
+
+
 /**
  * @brief clear table and all items of it
  * @param table Symbol table
  */
 void symtable_free(Symtable * table);
+
+
+
 
 /**
  * @brief print out contents of the table. Used for debug
