@@ -142,12 +142,12 @@ Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool *n
     if (!internalnoerror){*noerror = false;return NULL;}
     item->dataType = DATATYPE_FUNC;
 
-    ItemData * itemdata = malloc(sizeof(ItemData));
+    /*ItemData * itemdata = malloc(sizeof(ItemData));
     if (!itemdata){
         if(item){symtable_remove(table,key);}
         noerror = false; 
-        return NULL;}
-
+        return NULL;}*/
+        
     FuncItemData * funcitemdataptr = malloc(sizeof(FuncItemData));
     if(!funcitemdataptr){
         if(item){symtable_remove(table,key);}
@@ -158,7 +158,7 @@ Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool *n
     if (!funcitemdataptr->return_types){
         if(item){symtable_remove(table,key);}
         free(funcitemdataptr);
-        free(itemdata);
+        //free(itemdata);
         noerror = false; 
         return NULL;
     }
@@ -167,7 +167,7 @@ Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool *n
         if(item){symtable_remove(table,key);}
         free(funcitemdataptr->return_types);
         free(funcitemdataptr);
-        free(itemdata);
+        //free(itemdata);
         noerror = false; 
         return NULL;
     }
@@ -177,7 +177,7 @@ Symtable_item * symtable_add_function_init(Symtable * table, char * key, bool *n
         free(funcitemdataptr->return_types);
         free(funcitemdataptr->param_types);
         free(funcitemdataptr);
-        free(itemdata);
+        //free(itemdata);
         noerror = false; 
         return NULL;
     }
@@ -205,18 +205,20 @@ Symtable_item * Symtable_add_function_inparam(Symtable * table, char * key, char
     if (lePtr->alloc_param == lePtr->used_param){
         char ** tmp = realloc(lePtr->param_names,sizeof(char *)*lePtr->alloc_param*2);
         if (tmp == NULL){*noerror = false;return NULL;}
+        else{lePtr->param_names = tmp;}
 
-                tmp = realloc(lePtr->param_types,sizeof(char *)*lePtr->alloc_param*2);
+        tmp = realloc(lePtr->param_types,sizeof(char *)*lePtr->alloc_param*2);
         if (tmp == NULL){*noerror = false;return NULL;}
+        else{lePtr->param_types = tmp;}
         
         lePtr->alloc_param = lePtr->alloc_param * 2;
     }
     //alloc new strings and copy in
-    lePtr->param_names[lePtr->used_param] = malloc(sizeof(char)*strlen(paramname)+1);
+    lePtr->param_names[lePtr->used_param] = malloc(sizeof(char)*(strlen(paramname)+1));
     if (!lePtr->param_names[lePtr->used_param]) {noerror = false; return NULL;}
     strcpy(lePtr->param_names[lePtr->used_param],paramname);
 
-    lePtr->param_types[lePtr->used_param] = malloc(sizeof(char)*strlen(paramtype)+1);
+    lePtr->param_types[lePtr->used_param] = malloc(sizeof(char)*(strlen(paramtype)+1));
     if (!lePtr->param_types[lePtr->used_param]) {noerror = false; return NULL;}
     strcpy(lePtr->param_types[lePtr->used_param],paramtype);
     lePtr->used_param++;
@@ -237,7 +239,7 @@ Symtable_item * Symtable_add_function_outparam(Symtable * table, char * key, cha
     if (lePtr->alloc_return == lePtr->used_return){
         char ** tmp = realloc(lePtr->return_types,sizeof(char *)*lePtr->alloc_return*2);
         if (tmp == NULL){*noerror = false;return NULL;}
-        
+        else {lePtr->return_types = tmp;}
         lePtr->alloc_return = lePtr->alloc_return * 2;
     }
 
@@ -300,8 +302,8 @@ void symtable_remove(Symtable *table, char *key)
     }
     else if (current->dataType == DATATYPE_STRING){
         dynamic_string_free(current->itemData.dynamicstring);
+        free(current->itemData.dynamicstring);
     }
-    free(current->itemData.dynamicstring);
     free(current->key); //FREE
     free(current);      //FREE
     return;
@@ -335,6 +337,13 @@ void symtable_free(Symtable *table)
         while (current != NULL)
         {
             next = current->next; 
+            if (current->dataType == DATATYPE_FUNC){
+                FuncItemData_free(current->itemData.funcitemptr);
+            }
+            else if (current->dataType == DATATYPE_STRING){
+                dynamic_string_free(current->itemData.dynamicstring);
+                free(current->itemData.dynamicstring);
+            }
             free(current->key);
             free(current);
             current = next;
@@ -373,7 +382,7 @@ void printouttable(Symtable * table){
                 }
             }
             else{
-                printf("failed to load data of this item.\n"); 
+                printf("failed to load data of this item."); 
             }
             item = item->next;
             count++;

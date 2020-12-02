@@ -9,7 +9,7 @@
 ##all basically copypasted from the internet: https://www.ccs.neu.edu/home/skotthe/classes/cs5600/fall/2015/labs/intro-check.html
 
 CC = gcc
-CFLAGS = -c -Wall
+CFLAGS = -c -Wall -O0 -g
 PROFILE_FLAGS = -fprofile-arcs -ftest-coverage 
 TST_LIBS = -lcheck -lm -lpthread -lrt -lsubunit
 COV_LIBS = -lgcov -coverage
