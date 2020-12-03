@@ -127,7 +127,7 @@ bool eol_required();
  * @return true If it is in symtable
  * @return false If it is not in symtable
  */
-bool was_it_defined(symtableList list, char* key);
+Symtable_item *was_it_defined(symtableList list, char *key);
 
 /**
  * @brief Put built in functions to the table
@@ -153,7 +153,6 @@ int initialise_predefined(Symtable table);
  */
 #define TOKEN_IS_NOT(tt) (curr_token.tokentype != tt)
 
-
 // ################### end of macros #################
 
 // ############################# STATES ##################################
@@ -164,7 +163,7 @@ int initialise_predefined(Symtable table);
  * 
  * @return int 
  */
-int s_prolog();
+int s_prolog(symtableList symlist);
 
 /**
  * @brief List of functions
@@ -174,7 +173,7 @@ int s_prolog();
  * 
  * @return int 
  */
-int s_f_list();
+int s_f_list(symtableList symlist);
 
 /**
  * @brief Function
@@ -184,7 +183,7 @@ int s_f_list();
  * 
  * @return int 
  */
-int s_func();
+int s_func(symtableList symlist);
 
 /**
  * @brief Lists defining function parameters and return types
@@ -193,7 +192,7 @@ int s_func();
  * 
  * @return int 
  */
-int s_f_init();
+int s_f_init(symtableList symlist);
 
 /**
  * @brief Function call
@@ -202,7 +201,7 @@ int s_f_init();
  * 
  * @return int 
  */
-int s_f_call();
+int s_f_call(symtableList symlist);
 
 /**
  * @brief Body of the function/loop/condition
@@ -211,7 +210,7 @@ int s_f_call();
  * 
  * @return int 
  */
-int s_body();
+int s_body(symtableList symlist);
 
 /**
  * @brief List of function parameters - defining
@@ -221,7 +220,7 @@ int s_body();
  * 
  * @return int
  */
-int s_param_def_list();
+int s_param_def_list(symtableList symlist);
 
 /**
  * @brief Multi-parameter list continuation - definition
@@ -231,7 +230,7 @@ int s_param_def_list();
  *
  * @return int 
  */
-int s_param_def_list_n();
+int s_param_def_list_n(symtableList symlist);
 
 /**
  * @brief List of function return parameters
@@ -241,7 +240,7 @@ int s_param_def_list_n();
  * 
  * @return int 
  */
-int s_ret_t_list();
+int s_ret_t_list(symtableList symlist);
 
 /**
  * @brief Multi-return values list continuation - definition
@@ -251,7 +250,7 @@ int s_ret_t_list();
  *
  * @return int 
  */
-int s_ret_t_list_n();
+int s_ret_t_list_n(symtableList symlist);
 
 /**
  * @brief Statement: f_call/id_n/for/if
@@ -264,7 +263,7 @@ int s_ret_t_list_n();
  * 
  * @return int 
  */
-int s_stat();
+int s_stat(symtableList symlist);
 
 /**
  * @brief List of statements
@@ -274,7 +273,7 @@ int s_stat();
  * 
  * @return int 
  */
-int s_stat_list();
+int s_stat_list(symtableList symlist);
 
 /**
  * @brief Condition
@@ -283,7 +282,7 @@ int s_stat_list();
  * 
  * @return int 
  */
-int s_if();
+int s_if(symtableList symlist);
 
 /**
  * @brief Else statement after condition
@@ -293,7 +292,7 @@ int s_if();
  * 
  * @return int 
  */
-int s_else();
+int s_else(symtableList symlist);
 
 /**
  * @brief For loop
@@ -302,7 +301,7 @@ int s_else();
  * 
  * @return int 
  */
-int s_for();
+int s_for(symtableList symlist);
 
 /**
  * @brief Return statement
@@ -311,7 +310,7 @@ int s_for();
  * 
  * @return int 
  */
-int s_return();
+int s_return(symtableList symlist);
 
 /**
  * @brief List of expressions
@@ -321,7 +320,7 @@ int s_return();
  * 
  * @return int 
  */
-int s_expr_list();
+int s_expr_list(symtableList symlist);
 
 /**
  * @brief Continuation of expression list
@@ -331,7 +330,7 @@ int s_expr_list();
  * 
  * @return int 
  */
-int s_expr_list_n();
+int s_expr_list_n(symtableList symlist);
 
 /**
  * @brief Id was found in the statement - crossroads
@@ -343,7 +342,7 @@ int s_expr_list_n();
  * 
  * @return int 
  */
-int s_id_n();
+int s_id_n(symtableList symlist);
 
 /**
  * @brief Variable definition
@@ -352,7 +351,7 @@ int s_id_n();
  * 
  * @return int 
  */
-int s_id_def();
+int s_id_def(symtableList symlist);
 
 /**
  * @brief Voluntary variable definition
@@ -362,7 +361,7 @@ int s_id_def();
  * 
  * @return int 
  */
-int s_id_def_v();
+int s_id_def_v(symtableList symlist);
 
 /**
  * @brief List of IDs, must be assignment
@@ -371,7 +370,7 @@ int s_id_def_v();
  * 
  * @return int 
  */
-int s_id_list();
+int s_id_list(symtableList symlist);
 
 /**
  * @brief Continuation of ID list
@@ -381,7 +380,7 @@ int s_id_list();
  * 
  * @return int 
  */
-int s_id_list_n();
+int s_id_list_n(symtableList symlist);
 
 /**
  * @brief Assignment of the ID/s
@@ -390,7 +389,7 @@ int s_id_list_n();
  * 
  * @return int 
  */
-int s_id_assign();
+int s_id_assign(symtableList symlist);
 
 /**
  * @brief Voluntary assignment of the ID
@@ -400,7 +399,7 @@ int s_id_assign();
  * 
  * @return int 
  */
-int s_id_assign_v();
+int s_id_assign_v(symtableList symlist);
 
 /**
  * @brief Assignment of list to list
@@ -409,7 +408,7 @@ int s_id_assign_v();
  * 
  * @return int
  */
-int s_id_list_assign();
+int s_id_list_assign(symtableList symlist);
 
 /**
  * @brief List of parameters of function call
@@ -418,7 +417,7 @@ int s_id_list_assign();
  * 
  * @return int 
  */
-int s_param_list();
+int s_param_list(symtableList symlist);
 
 /**
  * @brief Continuation of function call parameters
@@ -428,7 +427,7 @@ int s_param_list();
  * 
  * @return int 
  */
-int s_param_list_n();
+int s_param_list_n(symtableList symlist);
 
 /**
  * @brief List of eols
@@ -438,7 +437,7 @@ int s_param_list_n();
  * 
  * @return int 
  */
-int s_eols();
+int s_eols(symtableList symlist);
 
 /**
  * @brief Variable type
@@ -449,7 +448,7 @@ int s_eols();
  * 
  * @return int 
  */
-int s_type();
+int s_type(symtableList symlist);
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */

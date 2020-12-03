@@ -160,11 +160,11 @@ bool eol_required()
     return true;
 }
 
-bool was_it_defined(symtableList list, char *key)
+Symtable_item *was_it_defined(symtableList list, char *key)
 {
 
     symListItemPtr curr_list_item = list;
-    Symtable_item *symbol;
+    Symtable_item *symbol = NULL;
 
     if (list == NULL)
     {
@@ -177,12 +177,12 @@ bool was_it_defined(symtableList list, char *key)
 
         if (symbol != NULL)
         {
-            return true;
+            return symbol;
         }
 
         curr_list_item = curr_list_item->next;
     }
-    return false;
+    return symbol;
 }
 
 int initialise_predefined(Symtable table)
@@ -272,9 +272,11 @@ int initialise_predefined(Symtable table)
         return INTERN_ERROR;
     if (!Symtable_add_function_outparam(table, "chr", "int"))
         return INTERN_ERROR;
-        
+
     // TODO print fuj fuj
     // func print ( term1 , term2 , …, term𝑛 )
+
+    // TODO underscore
 }
 
 // ################### end of helper functions #################
@@ -284,7 +286,7 @@ int initialise_predefined(Symtable table)
 int s_prolog()
 {
     s_eols();
-    get_token(&curr_token); // TODO failure check - possibly implement in get_token?
+    get_token(&curr_token);
 
     // package
     if (curr_token.tokentype != TOKEN_TYPE_RESERVED_KEYWORD ||
@@ -349,6 +351,8 @@ int s_f_list()
     }
 
     // <func>
+    // TODO create new symtable list with default table
+
     int r_code = s_func();
     if (r_code)
     {
@@ -439,6 +443,7 @@ int s_f_call()
 
 int s_body()
 {
+    // TODO create new symtable
     // {
     get_token(&curr_token);
     if (curr_token.tokentype != TOKEN_TYPE_OPENING_CURVY_BRACKET)
@@ -468,6 +473,7 @@ int s_body()
     {
         return ERR_BODY_START;
     }
+    // TODO delete last symtable
 
     // eol
     if (!eol_required())
@@ -849,7 +855,7 @@ int s_expr_list_n()
 }
 
 int s_id_n()
-{
+{ //TODO check existence of id
     get_token(&curr_token);
     return_token(curr_token);
     switch (curr_token.tokentype)
@@ -871,6 +877,7 @@ int s_id_n()
 
     // (
     case TOKEN_TYPE_OPENING_CLASSIC_BRACKET:
+        // TODO maybe put func id to some temp space, from which it will be removed when function is defined?
         return s_f_call();
         break;
 
@@ -882,6 +889,7 @@ int s_id_n()
 
 int s_id_def()
 {
+    // TODO symtable add
     get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_DEFINE))
     {
