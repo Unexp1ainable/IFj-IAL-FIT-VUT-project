@@ -203,7 +203,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         return INTERN_ERROR;
                         }
                     sprintf(interpret,"#INT#%ld", strtol(item->val.term.string, NULL,10));
-                    realloc(interpret, strlen(interpret));
+                    interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
@@ -215,7 +215,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         return INTERN_ERROR;
                         }
                     sprintf(interpret,"#FLOAT#%ld", strtod(item->val.term.string, NULL));
-                    realloc(interpret, strlen(interpret));
+                    interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
@@ -444,11 +444,11 @@ int StartExpr(Symtable Table, TOKEN *token){
                     stack->p[i+1]=stack->p[i];
                 }
                 Item New = malloc(sizeof(struct item));
-                if(&New == NULL) return INTERN_ERROR;
+                if(New == NULL) return INTERN_ERROR;
                 New->type = IT_OPEN;
                 stack->p[position] = New;
                 item = malloc(sizeof(struct item));
-                if(&item == NULL) return INTERN_ERROR;
+                if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = *token;
                 PushStack(stack, item);
@@ -456,7 +456,7 @@ int StartExpr(Symtable Table, TOKEN *token){
                 break;
             case R_EQUAL:
                 item = malloc(sizeof(struct item));
-                if(&item == NULL) return INTERN_ERROR;
+                if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = *token;
                 PushStack(stack,item);

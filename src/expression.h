@@ -24,12 +24,6 @@
 
 
 
-/*************STACK*************/
-typedef struct TheStack{
-    int top;            //index of highest item
-    int size;           //size of stack
-    Item *p;           //array of items
-}*MyStack;
 
 /*************TYPE OF ITEM ON STACK*************/
 typedef enum{
@@ -74,6 +68,12 @@ typedef struct item{
     ItemVal val;
 }*Item;
 
+/*************STACK*************/
+typedef struct TheStack{
+    int top;            //index of highest item
+    int size;           //size of stack
+    Item *p;           //array of items
+}*MyStack;
 
 void InitStack(MyStack *Stack);                           //stack initialization
 
@@ -88,5 +88,6 @@ int FirstFindedTerm(MyStack Stack);                       //find first terminal 
 RelType TokenToTerm(TOKEN_TYPES token);
 
 Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
+
 int s_expr(symtableList list, TermType *type); // added temporary function in order for gcc to shut up
 #endif /* EXPRESSION_H */

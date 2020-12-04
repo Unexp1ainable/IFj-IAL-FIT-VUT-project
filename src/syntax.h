@@ -110,14 +110,14 @@ typedef enum
 int get_token(TOKEN *token);
 
 /**
- * @briefPut token to temp holding space
+ * @brief Put token to temp holding space
  *
  * param token Token
  */
 void return_token(TOKEN token);
 
 /**
- * @briefPrint error description on stderr  
+ * @brief Print error description on stderr  
  * 
  * 
  * param err Error code
@@ -439,7 +439,7 @@ int s_param_list(symtableList symlist, Symtable_item *func_def);
  * 
  * @return int 
  */
-int s_param_list_n(symtableList symlist, Symtable_item *func_def, unsigned int n);
+int s_param_list_n(symtableList symlist, Symtable_item *func_def, int n);
 
 /**
  * @brief List of eols
@@ -460,7 +460,7 @@ int s_eols();
  * 
  * @return int 
  */
-int s_type(char **type);
+int s_type(DataType *type);
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */

@@ -206,85 +206,85 @@ int initialise_predefined(Symtable *table)
     // func inputs() (string,int)
     if (!symtable_add_function_init(table, "inputs"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputs", "string"))
+    if (!Symtable_add_function_outparam(table, "inputs", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputs", "int"))
+    if (!Symtable_add_function_outparam(table, "inputs", T_INT))
         return INTERN_ERROR;
 
     // func inputi() (int,int)
     if (!symtable_add_function_init(table, "inputi"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputi", "string"))
+    if (!Symtable_add_function_outparam(table, "inputi", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputi", "int"))
+    if (!Symtable_add_function_outparam(table, "inputi", T_INT))
         return INTERN_ERROR;
 
     // func inputf() (float64,int)
     if (!symtable_add_function_init(table, "inputf"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputf", "float64"))
+    if (!Symtable_add_function_outparam(table, "inputf", T_FLOAT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputf", "int"))
+    if (!Symtable_add_function_outparam(table, "inputf", T_INT))
         return INTERN_ERROR;
 
     // func int2float(i int) (float64)
     if (!symtable_add_function_init(table, "int2float"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "int2float", "i", "int"))
+    if (!Symtable_add_function_inparam(table, "int2float", "i", T_INT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "int2float", "float64"))
+    if (!Symtable_add_function_outparam(table, "int2float", T_FLOAT))
         return INTERN_ERROR;
 
     // func float2int(f float64) (int)
     if (!symtable_add_function_init(table, "float2int"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "float2int", "f", "float64"))
+    if (!Symtable_add_function_inparam(table, "float2int", "f", T_FLOAT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "float2int", "int"))
+    if (!Symtable_add_function_outparam(table, "float2int", T_INT))
         return INTERN_ERROR;
 
     // func len(𝑠 string) (int)
     if (!symtable_add_function_init(table, "len"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "len", "s", "string"))
+    if (!Symtable_add_function_inparam(table, "len", "s", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "len", "int"))
+    if (!Symtable_add_function_outparam(table, "len", T_INT))
         return INTERN_ERROR;
 
     // func substr(s string, i int, n int) (string, int)
     if (!symtable_add_function_init(table, "substr"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "substr", "s", "string"))
+    if (!Symtable_add_function_inparam(table, "substr", "s", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "substr", "i", "int"))
+    if (!Symtable_add_function_inparam(table, "substr", "i", T_INT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "substr", "n", "int"))
+    if (!Symtable_add_function_inparam(table, "substr", "n", T_INT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "substr", "string"))
+    if (!Symtable_add_function_outparam(table, "substr", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "substr", "int"))
+    if (!Symtable_add_function_outparam(table, "substr", T_INT))
         return INTERN_ERROR;
 
     // func ord(s string, i int) (int, int)
     if (!symtable_add_function_init(table, "ord"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "ord", "s", "string"))
+    if (!Symtable_add_function_inparam(table, "ord", "s", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "ord", "i", "int"))
+    if (!Symtable_add_function_inparam(table, "ord", "i", T_INT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "ord", "int"))
+    if (!Symtable_add_function_outparam(table, "ord", T_INT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "ord", "int"))
+    if (!Symtable_add_function_outparam(table, "ord", T_INT))
         return INTERN_ERROR;
 
     // func chr(i int) (string, int)
     if (!symtable_add_function_init(table, "chr"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_inparam(table, "chr", "i", "int"))
+    if (!Symtable_add_function_inparam(table, "chr", "i", T_INT))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "chr", "string"))
+    if (!Symtable_add_function_outparam(table, "chr", T_STRING))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "chr", "int"))
+    if (!Symtable_add_function_outparam(table, "chr", T_INT))
         return INTERN_ERROR;
 
     // print(...)
@@ -293,7 +293,7 @@ int initialise_predefined(Symtable *table)
     Symtable_set_var_param(table, "print");
 
     // underscore
-    if (!symtable_add_int(table, "_", 0))
+    if (!symtable_add_int(table, "_", 0))   // TODO Not sure about the type
         return INTERN_ERROR;
 
     return 0;
@@ -540,8 +540,8 @@ int s_param_def_list(symtableList symlist, char *func_id)
     char *id = curr_token.string->string;
 
     // <type>
-    char *type;
-    int r_code = s_type( &type);
+    DataType type;
+    int r_code = s_type(&type);
     if (r_code)
     {
         return r_code;
@@ -586,8 +586,8 @@ int s_param_def_list_n(symtableList symlist, char *func_id)
     char *id = curr_token.string->string;
 
     // <type>
-    char *type;
-    int r_code = s_type( &type);
+    DataType type;
+    int r_code = s_type(&type);
     if (r_code)
     {
         return r_code;
@@ -621,8 +621,8 @@ int s_ret_t_list(symtableList symlist, char *func_id)
     }
 
     // <type>
-    char *type;
-    int r_code = s_type( &type);
+    DataType type;
+    int r_code = s_type(&type);
     if (r_code)
     {
         return r_code;
@@ -669,8 +669,8 @@ int s_ret_t_list_n(symtableList symlist, char *func_id)
     }
 
     // <type>
-    char *type;
-    int r_code = s_type( &type);
+    DataType type;
+    int r_code = s_type(&type);
     if (r_code)
     {
         return r_code;
@@ -1116,7 +1116,7 @@ int s_param_list(symtableList symlist, Symtable_item *func_def)
     return s_param_list_n(symlist, func_def, 1);
 }
 
-int s_param_list_n(symtableList symlist, Symtable_item *func_def, unsigned int n)
+int s_param_list_n(symtableList symlist, Symtable_item *func_def, int n)
 {
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
@@ -1163,7 +1163,7 @@ int s_eols()
     return NO_ERR;
 }
 
-int s_type(char **type)
+int s_type(DataType *type)
 {
     get_token(&curr_token);
 
@@ -1174,18 +1174,22 @@ int s_type(char **type)
     switch (curr_token.keyword)
     {
     case KEYWORD_STRING:
+        *type = T_STRING;
         return NO_ERR;
         break;
 
     case KEYWORD_INTEGER:
+        *type = T_INT;
         return NO_ERR;
         break;
 
     case KEYWORD_FLOAT64:
+        *type = T_FLOAT;
         return NO_ERR;
         break;
 
     default:
+        *type = T_UNKNOWN;
         return ERR_TYPE_EXPECTED;
         break;
     }
