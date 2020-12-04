@@ -6,6 +6,7 @@
  * @date 25.11.2020
  * */
 #include "newscanner.h"
+#include "tokenlist.h"
 #include <stdio.h>
 #include <ctype.h>
 
@@ -21,7 +22,7 @@ Dynamic_string stringbuffer;
 bool end = false;
 //line,nextline, loadedchar, line_pos?
 /****************************    variable end    ***********************************************************/
-int get_next_token(TOKEN *tokenptr)
+int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
 {
     int c = 0;
     fsm_state = FSM_START;    
