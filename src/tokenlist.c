@@ -1,5 +1,5 @@
 #include "tokenlist.h"
-int get_next_token_list(TOKEN * token, TokenList * tokenlist){
+int get_next_token_list(TokenList * tokenlist,TOKEN * token){
     TokenListItem * foundtokenitem = tokenlist->first;
     for (int i = 0; i<tokenlist->head;i++){
         foundtokenitem = foundtokenitem->next;
@@ -11,7 +11,7 @@ int get_next_token_list(TOKEN * token, TokenList * tokenlist){
 
 
 
-bool save_next_token(TOKEN * token, TokenList * tokenlist){
+bool save_next_token(TokenList * tokenlist,TOKEN * token){
 
     TOKEN * newtoken = malloc(sizeof(TOKEN));
     if (!newtoken){return false;}

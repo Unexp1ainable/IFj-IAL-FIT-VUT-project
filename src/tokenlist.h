@@ -5,8 +5,8 @@
 /**
 * @brief get next token from single linked list created by getnexttoken();
 */
-int get_next_token_list(TOKEN * token,TokenList * tokenlist);
-bool save_next_token(TOKEN * token, TokenList * tokenlist);
+int get_next_token_list(TokenList * tokenlist,TOKEN * token);
+bool save_next_token(TokenList * tokenlist,TOKEN * token);
 void init_token_list(TokenList * tokenlist);
 bool copy_token(TOKEN * dest, TOKEN * src);
 
