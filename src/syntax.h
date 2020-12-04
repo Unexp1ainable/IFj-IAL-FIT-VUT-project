@@ -83,7 +83,8 @@ typedef enum
     ERR_ID_EXPECTED,
     ERR_UNEXPECTED_TOKEN,
     ERR_ID_ASSIGN_EXPECTED,
-    ERR_TYPE_EXPECTED
+    ERR_TYPE_EXPECTED,
+    ERR_VAR_REDEFINITION
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
@@ -192,7 +193,7 @@ int s_func(symtableList symlist);
  * 
  * @return int 
  */
-int s_f_init(symtableList symlist);
+int s_f_init(symtableList symlist, char *func_id);
 
 /**
  * @brief Function call
@@ -220,7 +221,7 @@ int s_body(symtableList symlist);
  * 
  * @return int
  */
-int s_param_def_list(symtableList symlist);
+int s_param_def_list(symtableList symlist, char *func_id);
 
 /**
  * @brief Multi-parameter list continuation - definition
@@ -230,7 +231,7 @@ int s_param_def_list(symtableList symlist);
  *
  * @return int 
  */
-int s_param_def_list_n(symtableList symlist);
+int s_param_def_list_n(symtableList symlist, char *func_id);
 
 /**
  * @brief List of function return parameters
@@ -240,7 +241,7 @@ int s_param_def_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_ret_t_list(symtableList symlist);
+int s_ret_t_list(symtableList symlist, char* func_id);
 
 /**
  * @brief Multi-return values list continuation - definition
@@ -250,7 +251,7 @@ int s_ret_t_list(symtableList symlist);
  *
  * @return int 
  */
-int s_ret_t_list_n(symtableList symlist);
+int s_ret_t_list_n(symtableList symlist, char* func_id);
 
 /**
  * @brief Statement: f_call/id_n/for/if
@@ -342,7 +343,7 @@ int s_expr_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_n(symtableList symlist);
+int s_id_n(symtableList symlist, char *id);
 
 /**
  * @brief Variable definition
@@ -351,7 +352,7 @@ int s_id_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_def(symtableList symlist);
+int s_id_def(symtableList symlist, char *id);
 
 /**
  * @brief Voluntary variable definition
@@ -448,7 +449,7 @@ int s_eols(symtableList symlist);
  * 
  * @return int 
  */
-int s_type(symtableList symlist);
+int s_type(symtableList symlist, char **type);
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */
