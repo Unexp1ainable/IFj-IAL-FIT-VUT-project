@@ -43,7 +43,7 @@ int main()
     {
         printf("not saved in table.\n");
     }
-    else if (table[hash("Timotej") != firstitem])
+    else if (table[hash("Timotej")] != firstitem)
     {
         printf("incorrect save in table");
     }
@@ -88,7 +88,7 @@ int main()
     {
         printf("not saved in table.\n");
     }
-    else if (table[hash("Matej") != firstitem])
+    else if (table[hash("Matej")] != firstitem)
     {
         printf("incorrect save in table");
     }
@@ -137,27 +137,27 @@ int main()
     symtable_add(&table,"Anton"  ,&noerror);
     symtable_add(&table,"Maria"  ,&noerror);
     symtable_add(&table,"timotej",&noerror);
-    symtable_add_int(&table, "timotej",42,&noerror);
-    symtable_add_int(&table, "Matej",42,&noerror);
+    symtable_add_int(&table, "timotej",42);
+    symtable_add_int(&table, "Matej",42);
     symtable_add_float(&table,"Lukas",7.2,&noerror);
     symtable_add_string(&table,"Samo","AK MA NEVIDIS TAK ZLE", &noerror);
-    symtable_add_function_init(&table,"Jirka", &noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param1","bool", &noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param2","bool", &noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param3","bool", &noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param4","bool", &noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param5","bool", &noerror);
+    symtable_add_function_init(&table,"Jirka");
+    Symtable_add_function_inparam(&table, "Jirka", "param1",T_BOOL);
+    Symtable_add_function_inparam(&table, "Jirka", "param2",T_BOOL);
+    Symtable_add_function_inparam(&table, "Jirka", "param3",T_BOOL);
+    Symtable_add_function_inparam(&table, "Jirka", "param4",T_BOOL);
+    Symtable_add_function_inparam(&table, "Jirka", "param5",T_BOOL);
     symtable_add_string(&table, "Anton","FUCKME",&noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param6","bool", &noerror);
-    Symtable_add_function_inparam(&table, "Jirka", "param7","bool", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int2", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int3", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int4", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int5", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int6", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int7", &noerror);
-    Symtable_add_function_outparam(&table, "Jirka", "int8", &noerror);
+    Symtable_add_function_inparam(&table, "Jirka", "param6",T_BOOL);
+    Symtable_add_function_inparam(&table, "Jirka", "param7",T_BOOL);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
+    Symtable_add_function_outparam(&table, "Jirka", T_INT);
 
 
     printf("\nall added:\n");

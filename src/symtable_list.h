@@ -12,17 +12,6 @@
 #include "symtable.h"
 
 
-// ###################### structs ####################
-
-/*************TYPE OF TERMS*************/
-typedef enum{
-    T_INT,              //integer
-    T_FLOAT,            //floater
-    T_STRING,           //string
-    T_BOOL,             //true/false
-    T_UNKNOWN           //variable use
-} TermType;
-// ################### end of structs #################
 
 /**
  * @brief Item of linked list of symtables

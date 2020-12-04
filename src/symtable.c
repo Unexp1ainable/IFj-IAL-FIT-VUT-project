@@ -81,7 +81,7 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror)
     tmp = (*table)[hash_index];
     (*table)[hash_index] = new_item;
     new_item->next = tmp;
-    new_item->dataType = DATATYPE_YET_UNASSIGNED;
+    new_item->dataType = T_UNKNOWN;
     *noerror = true;
     return new_item;
 }
@@ -99,7 +99,7 @@ Symtable_item *symtable_add_int(Symtable *table, char *key, int value)
         return NULL;
     }
     item->itemData.intnumber = value;
-    item->dataType = DATATYPE_INTEGER;
+    item->dataType = T_INT;
     return item;
 }
 
@@ -118,7 +118,7 @@ Symtable_item *symtable_add_float(Symtable *table, char *key, float value, bool 
     }
 
     item->itemData.floatnumber = value;
-    item->dataType = DATATYPE_FLOAT;
+    item->dataType = T_FLOAT;
     *noerror = true;
     return item;
 }
@@ -137,7 +137,7 @@ Symtable_item *symtable_add_string(Symtable *table, char *key, char *value, bool
         return NULL;
     }
 
-    item->dataType = DATATYPE_STRING;
+    item->dataType = T_STRING;
 
     Dynamic_string *strptr = malloc(sizeof(Dynamic_string));
     if (!strptr)
@@ -180,7 +180,7 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key)
     {
         return NULL;
     }
-    item->dataType = DATATYPE_FUNC;
+    item->dataType = T_FUNC;
 
     /*ItemData * itemdata = malloc(sizeof(ItemData));
     if (!itemdata){
@@ -200,7 +200,7 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key)
 
     funcitemdataptr->var_param = false;
 
-    funcitemdataptr->return_types = malloc(sizeof(char *) * DEFAULT_PARAM_COUNT);
+    funcitemdataptr->return_types = malloc(sizeof(DataType) * DEFAULT_PARAM_COUNT);
     if (!funcitemdataptr->return_types)
     {
         if (item)
@@ -223,7 +223,7 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key)
         //free(itemdata);
         return NULL;
     }
-    funcitemdataptr->param_types = malloc(sizeof(char *) * DEFAULT_PARAM_COUNT);
+    funcitemdataptr->param_types = malloc(sizeof(DataType) * DEFAULT_PARAM_COUNT);
     if (!funcitemdataptr->param_types)
     {
         if (item)
@@ -247,7 +247,7 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key)
 /**
  * @note volaj len na spravne inicializovane
  * */
-Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *paramname, char *paramtype)
+Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *paramname, DataType paramtype)
 {
     //get what to change
     bool inbool = false;
@@ -260,7 +260,7 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
     {
         return NULL;
     }
-    if (item->dataType != DATATYPE_FUNC)
+    if (item->dataType != T_FUNC)
     {
         return NULL;
     }
@@ -278,14 +278,14 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
             lePtr->param_names = tmp;
         }
 
-        tmp = realloc(lePtr->param_types, sizeof(char *) * lePtr->alloc_param * 2);
-        if (tmp == NULL)
+        DataType *tmp2 = realloc(lePtr->param_types, sizeof(DataType) * lePtr->alloc_param * 2);
+        if (tmp2 == NULL)
         {
             return NULL;
         }
         else
         {
-            lePtr->param_types = tmp;
+            lePtr->param_types = tmp2;
         }
 
         lePtr->alloc_param = lePtr->alloc_param * 2;
@@ -298,18 +298,14 @@ Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *p
     }
     strcpy(lePtr->param_names[lePtr->used_param], paramname);
 
-    lePtr->param_types[lePtr->used_param] = malloc(sizeof(char) * (strlen(paramtype) + 1));
-    if (!lePtr->param_types[lePtr->used_param])
-    {
-        return NULL;
-    }
-    strcpy(lePtr->param_types[lePtr->used_param], paramtype);
+    lePtr->param_types[lePtr->used_param] = paramtype;
+
     lePtr->used_param++;
     //return
     return item;
 }
 
-Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *returntype)
+Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, DataType returntype)
 {
     bool inbool = false;
     Symtable_item *item = symtable_add(table, key, &inbool);
@@ -321,7 +317,7 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
     {
         return NULL;
     }
-    if (item->dataType != DATATYPE_FUNC)
+    if (item->dataType != T_FUNC)
     {
         return NULL;
     }
@@ -329,7 +325,7 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
 
     if (lePtr->alloc_return == lePtr->used_return)
     {
-        char **tmp = realloc(lePtr->return_types, sizeof(char *) * lePtr->alloc_return * 2);
+        DataType *tmp = realloc(lePtr->return_types, sizeof(DataType) * lePtr->alloc_return * 2);
         if (tmp == NULL)
         {
             return NULL;
@@ -341,12 +337,7 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
         lePtr->alloc_return = lePtr->alloc_return * 2;
     }
 
-    lePtr->return_types[lePtr->used_return] = malloc(sizeof(char) * strlen(returntype) + 1);
-    if (!lePtr->return_types[lePtr->used_return])
-    {
-        return NULL;
-    }
-    strcpy(lePtr->return_types[lePtr->used_return], returntype);
+    lePtr->return_types[lePtr->used_return] = returntype;
 
     lePtr->used_return++;
     return item;
@@ -411,11 +402,11 @@ void symtable_remove(Symtable *table, char *key)
         previous->next = current->next;
     }
     //free item
-    if (current->dataType == DATATYPE_FUNC)
+    if (current->dataType == T_FUNC)
     {
         FuncItemData_free(current->itemData.funcitemptr);
     }
-    else if (current->dataType == DATATYPE_STRING)
+    else if (current->dataType == T_STRING)
     {
         dynamic_string_free(current->itemData.dynamicstring);
         free(current->itemData.dynamicstring);
@@ -434,12 +425,8 @@ void FuncItemData_free(FuncItemData *data)
     for (int i = 0; i < data->used_param; i++)
     {
         free(data->param_names[i]);
-        free(data->param_types[i]);
     }
-    for (int i = 0; i < data->used_return; i++)
-    {
-        free(data->return_types[i]);
-    }
+
     free(data->param_names);
     free(data->param_types);
     free(data->return_types);
@@ -457,11 +444,11 @@ void symtable_free(Symtable *table)
         while (current != NULL)
         {
             next = current->next;
-            if (current->dataType == DATATYPE_FUNC)
+            if (current->dataType == T_FUNC)
             {
                 FuncItemData_free(current->itemData.funcitemptr);
             }
-            else if (current->dataType == DATATYPE_STRING)
+            else if (current->dataType == T_STRING)
             {
                 dynamic_string_free(current->itemData.dynamicstring);
                 free(current->itemData.dynamicstring);
@@ -483,24 +470,24 @@ void printouttable(Symtable *table)
         while (item != NULL)
         {
             printf("->found on hash %d, index %d : %s,", i, count, item->key);
-            if (item->dataType == DATATYPE_STRING)
+            if (item->dataType == T_STRING)
             {
                 printf("%s, ", item->itemData.dynamicstring->string);
             }
-            else if (item->dataType == DATATYPE_FLOAT)
+            else if (item->dataType == T_FLOAT)
             {
                 printf("%f, ", item->itemData.floatnumber);
             }
-            else if (item->dataType == DATATYPE_INTEGER)
+            else if (item->dataType == T_INT)
             {
                 printf("%d, ", item->itemData.intnumber);
             }
-            else if (item->dataType == DATATYPE_FUNC)
+            else if (item->dataType == T_FUNC)
             {
                 printf("\n \treturn types:");
                 for (int i = 0; i < item->itemData.funcitemptr->used_return; i++)
                 {
-                    printf("\t\t%s, \n", item->itemData.funcitemptr->return_types[i]);
+                    printf("\t\t%d, \n", item->itemData.funcitemptr->return_types[i]);
                 }
                 printf("\n \tparam names:");
                 for (int i = 0; i < item->itemData.funcitemptr->used_param; i++)
@@ -510,7 +497,7 @@ void printouttable(Symtable *table)
                 printf("\n \tparam types:");
                 for (int i = 0; i < item->itemData.funcitemptr->used_param; i++)
                 {
-                    printf("\t\t%s, \n", item->itemData.funcitemptr->param_types[i]);
+                    printf("\t\t%d, \n", item->itemData.funcitemptr->param_types[i]);
                 }
             }
             else

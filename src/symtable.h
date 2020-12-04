@@ -19,12 +19,15 @@
 #define DEFAULT_PARAM_COUNT 5
 typedef enum
 {
-    DATATYPE_INTEGER = 10,
-    DATATYPE_FLOAT,
-    DATATYPE_STRING,
-    DATATYPE_FUNC,
-    DATATYPE_YET_UNASSIGNED, //used because it is otherwise unitialised value
+    T_INT,              //integer
+    T_FLOAT,            //floater
+    T_STRING,           //string
+    T_BOOL,             //true/false
+    T_UNKNOWN, //used because it is otherwise unitialised value
+    T_FUNC,
 } DataType;
+
+typedef DataType TermType;  // compatibility
 
 typedef struct
 {
@@ -36,9 +39,9 @@ typedef struct
 
     bool var_param; // enable/disable variable number of parameters
 
-    char **return_types;
+    DataType *return_types;
     char **param_names;
-    char **param_types;
+    DataType *param_types;
 
 } FuncItemData;
 
@@ -113,12 +116,12 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key);
 /**
  * @brief insert an input parameter to the function
  * */
-Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *paramname, char *paramtype);
+Symtable_item *Symtable_add_function_inparam(Symtable *table, char *key, char *paramname, DataType paramtype);
 
 /**
  * @brief insert an output parameter to the function
  * */
-Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *returntype);
+Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, DataType returntype);
 
 /**
  * @brief Set function as function with variable number of parameters
