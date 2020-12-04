@@ -24,8 +24,8 @@ typedef enum
     T_STRING,           //string
     T_BOOL,             //true/false
     T_UNKNOWN, //used because it is otherwise unitialised value
-    T_EMPTY,
-    T_FUNC
+    T_FUNC,
+    T_EMPTY
 } DataType;
 
 typedef DataType TermType;  // compatibility
