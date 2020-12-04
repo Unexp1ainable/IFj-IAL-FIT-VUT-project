@@ -8,10 +8,10 @@ int main()
     dynamic_string_init(&stringbuffer);
     TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
 
-    symtableList *symlist;
-    sym_list_init(symlist);
+    symtableList symlist;
+    sym_list_init(&symlist);
 
-    Symtable global;
+    Symtable *global;
     symtable_init(global);
     initialise_predefined(global);
     sym_list_add(symlist, global);

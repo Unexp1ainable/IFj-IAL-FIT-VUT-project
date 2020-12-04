@@ -201,7 +201,7 @@ Symtable_item *was_it_defined(symtableList list, char *key)
     return symbol;
 }
 
-int initialise_predefined(Symtable table)
+int initialise_predefined(Symtable *table)
 {
     Symtable_item *new_item;
 

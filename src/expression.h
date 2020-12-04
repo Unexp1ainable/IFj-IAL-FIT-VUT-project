@@ -14,6 +14,7 @@
 #include "error.h"
 #include "newscanner.h"
 #include "symtable_list.h"
+#include "symtable.h"
 #include <stdbool.h>
 //#include "types_definition.h" temporary disabled
 
