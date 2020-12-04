@@ -47,7 +47,7 @@ void describe_error(ERR_CODE_SYN err)
     switch (err)
     {
     case NO_ERR:
-        fprintf(stderr, "Your prayers were answered.Probably.\n", line);
+        fprintf(stderr, "Your prayers were answered.Probably.\n");
         break;
 
     case ERR_PROLOG:
@@ -203,8 +203,6 @@ Symtable_item *was_it_defined(symtableList list, char *key)
 
 int initialise_predefined(Symtable *table)
 {
-    Symtable_item *new_item;
-
     // func inputs() (string,int)
     if (!symtable_add_function_init(table, "inputs"))
         return INTERN_ERROR;
@@ -476,9 +474,9 @@ int s_f_call(symtableList symlist, Symtable_item *func_def)
 
 int s_body(symtableList symlist)
 {
-    Symtable *new_table;
-    symtable_init(new_table);
-    sym_list_add(symlist, new_table);
+    Symtable new_table;
+    symtable_init(&new_table);
+    sym_list_add(&symlist, &new_table);
 
     // {
     get_token(&curr_token);
@@ -510,7 +508,7 @@ int s_body(symtableList symlist)
         return ERR_BODY_START;
     }
 
-    sym_list_remove_last(symlist);
+    sym_list_remove_last(&symlist);
 
     // eol
     if (!eol_required())

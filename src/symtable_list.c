@@ -7,7 +7,7 @@ void sym_list_init(symtableList *list)
     *list = NULL;
 }
 
-symListItemPtr sym_list_add(symtableList *list, Symtable table)
+symListItemPtr sym_list_add(symtableList *list, Symtable *table)
 {
 
     symListItemPtr new_item = malloc(sizeof(struct symListItem));
@@ -17,7 +17,7 @@ symListItemPtr sym_list_add(symtableList *list, Symtable table)
         return NULL;
     }
     new_item->next = NULL;
-    new_item->table = *table;
+    new_item->table = table;
 
     symListItemPtr curr = *list;
 

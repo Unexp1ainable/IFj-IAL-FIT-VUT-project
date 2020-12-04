@@ -54,7 +54,7 @@ void sym_list_init(symtableList *list);
  * @param table Symtable to be added
  * @return symListItemPtr Pointer to the item if all good, NULL if failed
  */
-symListItemPtr sym_list_add(symtableList *list, Symtable table);
+symListItemPtr sym_list_add(symtableList *list, Symtable *table);
 
 /**
  * @brief Adds variable (not function) to the last symtable in the list

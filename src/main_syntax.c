@@ -6,15 +6,14 @@ int main()
 {
     // initialisation of the structures
     dynamic_string_init(&stringbuffer);
-    TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
 
     symtableList symlist;
     sym_list_init(&symlist);
 
-    Symtable *global;
-    symtable_init(global);
-    initialise_predefined(global);
-    sym_list_add(symlist, global);
+    Symtable global;
+    symtable_init(&global);
+    initialise_predefined(&global);
+    sym_list_add(&symlist, &global);
 
     // begin check
     // first pass
@@ -47,7 +46,7 @@ int main()
 
     // free all resources
     free(stringbuffer.string);
-    sym_list_dispose(symlist);
+    sym_list_dispose(&symlist);
 
     return 0;
 }

@@ -147,7 +147,7 @@ Symtable_item *was_it_defined(symtableList list, char *key);
  * @param table Table for variables to be put in
  * @return int Error code, 0 if ok
  */
-int initialise_predefined(Symtable table);
+int initialise_predefined(Symtable *table);
 
 // ################### end of helper functions #################
 
@@ -252,7 +252,7 @@ int s_param_def_list_n(symtableList symlist, char *func_id);
  * 
  * @return int 
  */
-int s_ret_t_list(symtableList symlist, char* func_id);
+int s_ret_t_list(symtableList symlist, char *func_id);
 
 /**
  * @brief Multi-return values list continuation - definition
@@ -262,7 +262,7 @@ int s_ret_t_list(symtableList symlist, char* func_id);
  *
  * @return int 
  */
-int s_ret_t_list_n(symtableList symlist, char* func_id);
+int s_ret_t_list_n(symtableList symlist, char *func_id);
 
 /**
  * @brief Statement: f_call/id_n/for/if
