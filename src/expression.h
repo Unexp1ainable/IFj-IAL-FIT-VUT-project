@@ -21,32 +21,6 @@
 #define START_STACK_SIZE 32
 
 
-
-
-
-/*************STACK*************/
-typedef struct TheStack{
-    int top;            //index of highest item
-    int size;           //size of stack
-    Item *p;           //array of items
-}*MyStack;
-
-/*************TYPE OF ITEM ON STACK*************/
-typedef enum{
-    IT_TERM,        
-    IT_NONTERM,
-    IT_OPEN
-}ItemType;
-
-
-/*************RELATION************/
-typedef enum{
-    R_OPEN,       //<
-    R_CLOSE,      //>
-    R_EQUAL,      //=
-    R_EMPTY       //doesn't exist
-} Relation;
-
 /*************TYPE OF RELATION************/
 typedef enum{
     TR_MUL_DIV,
@@ -60,19 +34,37 @@ typedef enum{
     TR_RBRACKET,      
     TR_$
 } RelType;
+/*************RELATION************/
+typedef enum{
+    R_OPEN,       //<
+    R_CLOSE,      //>
+    R_EQUAL,      //=
+    R_EMPTY       //doesn't exist
+} Relation;
+/*************TYPE OF ITEM ON STACK*************/
+typedef enum{
+    IT_TERM,        
+    IT_NONTERM,
+    IT_OPEN
+}ItemType;
 
-/*************VALUE OF ITEM***********/
 typedef union{
     TOKEN term;
     TermType type;
 }ItemVal;
-
 /*************ITEM IN STACK***********/
 
 typedef struct item{
     ItemType type;
     ItemVal val;
 }*Item;
+/*************STACK*************/
+typedef struct TheStack{
+    int top;            //index of highest item
+    int size;           //size of stack
+    Item *p;           //array of items
+}*MyStack;
+
 
 
 void InitStack(MyStack *Stack);                           //stack initialization
@@ -88,5 +80,6 @@ int FirstFindedTerm(MyStack Stack);                       //find first terminal 
 RelType TokenToTerm(TOKEN_TYPES token);
 
 Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
+
 int s_expr(symtableList list, TermType *type); // added temporary function in order for gcc to shut up
 #endif /* EXPRESSION_H */

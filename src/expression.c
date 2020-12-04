@@ -20,11 +20,11 @@ void InitStack(MyStack *Stack){
     {
         *Stack = malloc(sizeof(struct TheStack));
         if((*Stack) == NULL){
-            return INTERN_ERROR;
+            return;
         }
         (*Stack)->p = malloc((START_STACK_SIZE)*sizeof(Item));
         if(((*Stack)->p) == NULL){
-            return INTERN_ERROR;
+            return;
         }
         (*Stack)->top = 0;
         (*Stack)->size = START_STACK_SIZE;
@@ -36,8 +36,7 @@ void DisposeStack(MyStack *Stack){
     if((*Stack == NULL || Stack == NULL)){
         return;
     }
-    int i = (*Stack)->top;
-    for( i; i > 0; i--){
+    for( int i = (*Stack)->top; i > 0; i--){
         free((*Stack)->p[i]);
     }
 
@@ -48,11 +47,11 @@ void DisposeStack(MyStack *Stack){
 
 void PushStack(MyStack Stack, Item item){
     Stack->top++;
-    if(Stack->size = Stack->top){
+    if(Stack->size == Stack->top){
         Stack->size = Stack->top + START_STACK_SIZE;
         Stack->p = realloc(Stack->p, sizeof(Item) * Stack->size);
-        if(Stack->p){
-                return INTERN_ERROR;
+        if(Stack->p == NULL){
+                return ;
         }
     }
     Stack->p[Stack->top] = item;
@@ -155,7 +154,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
             else return R_OPEN;
         case TR_RBRACKET:
-            if(Second = TR_LBRACKET || Second == TR_VALUE || Second == TR_NOT){
+            if(Second == TR_LBRACKET || Second == TR_VALUE || Second == TR_NOT){
                 return R_EMPTY;
             }
             else return R_CLOSE;
@@ -198,7 +197,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
             switch(item->val.term.tokentype){
                 case TOKEN_TYPE_INTEGER:
                     type =  T_INT;
-                    *interpret = malloc(sizeof(char) * 60);
+                    interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
@@ -210,19 +209,20 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 break;
                 case TOKEN_TYPE_FLOAT64:
                     type = T_FLOAT;
-                   *interpret = malloc(sizeof(char) * 60);
+                   interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
-                    sprintf(interpret,"#FLOAT#%ld", strtod(item->val.term.string, NULL));
-                    realloc(interpret, strlen(interpret));
+                    sprintf(interpret,"#FLOAT#%f", strtod(item->val.term.string, NULL));
+                    int size = strlen(interpret);
+                    realloc(interpret, size);
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
                 break;
                 case TOKEN_TYPE_STRING:
 
-                    *interpret = malloc(sizeof(char)*(strlen(item->val.term.string)+10));
+                    interpret = malloc(sizeof(char)*(strlen(item->val.term.string)+10));
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
@@ -236,7 +236,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         return SEM_ERR_UNDEF;
                     }
                     else{
-                        *interpret = malloc(sizeof(char)*(strlen(item->val.term.string)+5));
+                        interpret = malloc(sizeof(char)*(strlen(item->val.term.string)+5));
                             if(interpret == NULL){
                                 return INTERN_ERROR;
                             }
@@ -245,7 +245,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         break;
                     }  
                 case TOKEN_TYPE_EMPTY:
-                    *interpret = malloc(sizeof(char)*7);
+                    interpret = malloc(sizeof(char)*7);
                         if(interpret == NULL){
                                 return INTERN_ERROR;
                         }
@@ -288,7 +288,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
 
     TOKEN_TYPES Type = item->val.term.tokentype;  
 
-    if(OnlyOne = false){
+    if(OnlyOne == false){
         if( (LeftType == T_UNKNOWN ) || (RightType == T_UNKNOWN) ){
             SomeUnknown=true;
         }
@@ -388,7 +388,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return SEM_ERR_NEW_VAR;
             }
-            if(Same = false){
+            if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
@@ -413,7 +413,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
     return 0;
 }
 
-int StartExpr(Symtable Table, TOKEN *token){
+int StartExpr(TOKEN *token, Symtable Table){
     int reading = 1;
     MyStack stack;
     InitStack(&stack);
@@ -424,16 +424,16 @@ int StartExpr(Symtable Table, TOKEN *token){
         Item item;
 
         int FirstTermPosition = FirstFindedTerm(stack);
-        if(FirstTermPosition = 0) curr=TR_$;
+        if(FirstTermPosition == 0) curr=TR_$;
         else{
             curr=TokenToTerm(stack->p[FirstTermPosition]->val.term.tokentype);
         }
         new = TokenToTerm(token->tokentype);
-        RelType ResultRelation = PrecedenceTable(curr,new);
+        Relation ResultRelation = PrecedenceTable(curr,new);
         switch (ResultRelation)
         {
             case R_CLOSE:
-                if(CheckWhileR_Close != 0){
+                if(CheckWhileR_Close(stack,Table) != 0){
                     reading = -1;
                 }
                 break;
@@ -444,11 +444,11 @@ int StartExpr(Symtable Table, TOKEN *token){
                     stack->p[i+1]=stack->p[i];
                 }
                 Item New = malloc(sizeof(struct item));
-                if(&New == NULL) return INTERN_ERROR;
+                if(New == NULL) return INTERN_ERROR;
                 New->type = IT_OPEN;
                 stack->p[position] = New;
                 item = malloc(sizeof(struct item));
-                if(&item == NULL) return INTERN_ERROR;
+                if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = *token;
                 PushStack(stack, item);
@@ -456,7 +456,7 @@ int StartExpr(Symtable Table, TOKEN *token){
                 break;
             case R_EQUAL:
                 item = malloc(sizeof(struct item));
-                if(&item == NULL) return INTERN_ERROR;
+                if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = *token;
                 PushStack(stack,item);
