@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "newscanner.h"
+#include "symtable_list.h"
+#include "symtable.h"
 // ########################## global variables #########################
 /**
  * @brief Buffer for returned token
@@ -447,7 +449,7 @@ int s_param_list_n(symtableList symlist, Symtable_item *func_def, unsigned int n
  * 
  * @return int 
  */
-int s_eols(symtableList symlist);
+int s_eols();
 
 /**
  * @brief Variable type
@@ -458,7 +460,7 @@ int s_eols(symtableList symlist);
  * 
  * @return int 
  */
-int s_type(symtableList symlist, char **type);
+int s_type(char **type);
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */

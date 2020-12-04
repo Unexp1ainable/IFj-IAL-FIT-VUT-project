@@ -8,8 +8,12 @@
  * 
  * @brief Processing of expressions by precedent analysis
  */
+
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 #include "error.h"
 #include "newscanner.h"
+#include "symtable_list.h"
 #include <stdbool.h>
 //#include "types_definition.h" temporary disabled
 
@@ -83,3 +87,4 @@ void DisposeStack(MyStack *Stack);      //free the stack and its memory
 int PushStack(MyStack Stack, Item item);  //put item to top of the stack
 
 int s_expr(symtableList list, TermType *type); // added temporary function in order for gcc to shut up
+#endif /* EXPRESSION_H */

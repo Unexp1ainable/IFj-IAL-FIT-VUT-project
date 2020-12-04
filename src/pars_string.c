@@ -54,5 +54,6 @@ void backslash(Dynamic_string *sp) {
 }
 
 void backslash_x(Dynamic_string *sp) {
+    sp = sp; // so gcc will shut up
     return;
 }

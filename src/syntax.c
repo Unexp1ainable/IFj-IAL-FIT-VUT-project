@@ -297,6 +297,8 @@ int initialise_predefined(Symtable table)
     // underscore
     if (!symtable_add_int(table, "_", 0))
         return INTERN_ERROR;
+
+    return 0;
 }
 
 // ################### end of helper functions #################
@@ -305,7 +307,7 @@ int initialise_predefined(Symtable table)
 
 int s_prolog(symtableList symlist)
 {
-    s_eols(symlist);
+    s_eols();
     get_token(&curr_token);
 
     // package
@@ -329,7 +331,7 @@ int s_prolog(symtableList symlist)
     }
 
     // <eols>
-    s_eols(symlist);
+    s_eols();
 
     // <f_list>
     int r_code = s_f_list(symlist);
@@ -339,7 +341,7 @@ int s_prolog(symtableList symlist)
     }
 
     // <eols>
-    s_eols(symlist);
+    s_eols();
 
     // eof
     get_token(&curr_token);
@@ -378,7 +380,7 @@ int s_f_list(symtableList symlist)
     }
 
     // <eols>
-    s_eols(symlist);
+    s_eols();
 
     // f_list
     return s_f_list(symlist);
@@ -492,7 +494,7 @@ int s_body(symtableList symlist)
     }
 
     // <eols>
-    s_eols(symlist);
+    s_eols();
 
     // <stat_list>
     int r_code = s_stat_list(symlist);
@@ -517,7 +519,7 @@ int s_body(symtableList symlist)
     }
 
     // <eols>
-    s_eols(symlist);
+    s_eols();
 
     return NO_ERR;
 }
@@ -541,7 +543,7 @@ int s_param_def_list(symtableList symlist, char *func_id)
 
     // <type>
     char *type;
-    int r_code = s_type(symlist, &type);
+    int r_code = s_type( &type);
     if (r_code)
     {
         return r_code;
@@ -575,7 +577,7 @@ int s_param_def_list_n(symtableList symlist, char *func_id)
     }
 
     // eols
-    s_eols(symlist);
+    s_eols();
 
     // id
     get_token(&curr_token);
@@ -587,7 +589,7 @@ int s_param_def_list_n(symtableList symlist, char *func_id)
 
     // <type>
     char *type;
-    int r_code = s_type(symlist, &type);
+    int r_code = s_type( &type);
     if (r_code)
     {
         return r_code;
@@ -622,7 +624,7 @@ int s_ret_t_list(symtableList symlist, char *func_id)
 
     // <type>
     char *type;
-    int r_code = s_type(symlist, &type);
+    int r_code = s_type( &type);
     if (r_code)
     {
         return r_code;
@@ -670,12 +672,12 @@ int s_ret_t_list_n(symtableList symlist, char *func_id)
 
     // <type>
     char *type;
-    int r_code = s_type(symlist, &type);
+    int r_code = s_type( &type);
     if (r_code)
     {
         return r_code;
     }
-    
+
     if (first_pass == true)
     {
         Symtable_add_function_outparam(symlist->table, func_id, type);
@@ -759,7 +761,7 @@ int s_stat_list(symtableList symlist)
         return ERR_EOL_EXPECTED;
     }
 
-    s_eols(symlist);
+    s_eols();
 
     // <stat-list>
     r_code = s_stat_list(symlist);
@@ -989,6 +991,8 @@ int s_id_def(symtableList symlist, char *id)
         return r_code;
     }
     sym_list_add_to_last(symlist, id, type);
+
+    return r_code;
 }
 
 int s_id_def_v(symtableList symlist)
@@ -1149,7 +1153,7 @@ int s_param_list_n(symtableList symlist, Symtable_item *func_def, unsigned int n
     return s_param_list_n(symlist, func_def, n);
 }
 
-int s_eols(symtableList symlist)
+int s_eols()
 {
     do
     {
@@ -1161,7 +1165,7 @@ int s_eols(symtableList symlist)
     return NO_ERR;
 }
 
-int s_type(symtableList symlist, char **type)
+int s_type(char **type)
 {
     get_token(&curr_token);
 

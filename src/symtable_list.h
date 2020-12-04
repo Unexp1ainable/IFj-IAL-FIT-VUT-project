@@ -10,6 +10,7 @@
 #define SYMTABLE_LIST_H
 
 #include "symtable.h"
+#include "expression.h"
 
 /**
  * @brief Item of linked list of symtables
