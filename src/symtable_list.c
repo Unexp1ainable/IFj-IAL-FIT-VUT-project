@@ -1,5 +1,6 @@
 #include "symtable_list.h"
 #include "newscanner.h"
+#include "expression.h"
 
 void sym_list_init(symtableList *list)
 {
@@ -34,7 +35,7 @@ symListItemPtr sym_list_add(symtableList *list, Symtable table)
     return new_item;
 }
 
-Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TOKEN var)
+Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TermType type)
 {
     Symtable *table;
     symListItemPtr curr_item = symlist;
@@ -46,18 +47,18 @@ Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TOKEN var)
     }
     table = curr_item->table;
 
-    switch (var.tokentype)
+    switch (type)
     {
-    case TOKEN_TYPE_INTEGER:
-        return symtable_add_int(table, id, var.integer, &error);
+    case T_INT:
+        return symtable_add_int(table, id, 1);  // TODO value does not have to be saved
         break;
 
-    case TOKEN_TYPE_FLOAT64:
-        return symtable_add_int(table, id, var.floater, &error);
+    case T_FLOAT:
+        return symtable_add_float(table, id, 1.0, &error);
         break;
 
-    case TOKEN_TYPE_STRING:
-        return symtable_add_int(table, id, var.string->string, &error);
+    case T_STRING:
+        return symtable_add_string(table, id, "\0", &error);
         break;
 
     default:

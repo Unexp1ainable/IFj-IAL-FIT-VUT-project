@@ -26,7 +26,7 @@ typedef enum{
     IT_OPEN
 }ItemType;
 
-/*************TYPE OF TEMRS*************/
+/*************TYPE OF TERMS*************/
 typedef enum{
     T_INT,              //integer
     T_FLOAT,            //floater
@@ -82,4 +82,4 @@ void DisposeStack(MyStack *Stack);      //free the stack and its memory
 
 int PushStack(MyStack Stack, Item item);  //put item to top of the stack
 
-int s_expr(); // added temporary function in order for gcc to shut up
+int s_expr(symtableList list, TermType *type); // added temporary function in order for gcc to shut up

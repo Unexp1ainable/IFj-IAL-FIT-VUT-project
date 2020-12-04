@@ -50,6 +50,12 @@ extern unsigned int assign_list_id_n;
  * 
  */
 extern unsigned int assign_list_expr_n;
+
+/**
+ * @brief Marks whether we are doing first pass through code or second.
+ * 
+ */
+extern bool first_pass;
 // ################### end of global variables #################
 
 // ################### error codes #################
@@ -60,6 +66,7 @@ extern unsigned int assign_list_expr_n;
  */
 typedef enum
 {
+    NO_ERR,
     ERR_PROLOG,       // prolog wrong or missing
     ERR_EOL_EXPECTED, // required eol missing
     ERR_EOF_EXPECTED,
@@ -84,7 +91,9 @@ typedef enum
     ERR_UNEXPECTED_TOKEN,
     ERR_ID_ASSIGN_EXPECTED,
     ERR_TYPE_EXPECTED,
-    ERR_VAR_REDEFINITION
+    ERR_ID_REDEFINITION,
+    ERR_ID_UNDEFINED,
+    ERR_WRONG_FUNC_PARAM
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
@@ -202,7 +211,7 @@ int s_f_init(symtableList symlist, char *func_id);
  * 
  * @return int 
  */
-int s_f_call(symtableList symlist);
+int s_f_call(symtableList symlist, Symtable_item *func_def);
 
 /**
  * @brief Body of the function/loop/condition
@@ -418,7 +427,7 @@ int s_id_list_assign(symtableList symlist);
  * 
  * @return int 
  */
-int s_param_list(symtableList symlist);
+int s_param_list(symtableList symlist, Symtable_item *func_def);
 
 /**
  * @brief Continuation of function call parameters
@@ -428,7 +437,7 @@ int s_param_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_param_list_n(symtableList symlist);
+int s_param_list_n(symtableList symlist, Symtable_item *func_def, unsigned int n);
 
 /**
  * @brief List of eols

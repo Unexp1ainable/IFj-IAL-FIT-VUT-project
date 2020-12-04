@@ -86,7 +86,7 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror)
     return new_item;
 }
 
-Symtable_item *symtable_add_int(Symtable *table, char *key, int value, bool *noerror)
+Symtable_item *symtable_add_int(Symtable *table, char *key, int value)
 {
     bool internalnoerror = false;
     Symtable_item *item = symtable_add(table, key, &internalnoerror);
@@ -96,12 +96,10 @@ Symtable_item *symtable_add_int(Symtable *table, char *key, int value, bool *noe
     }
     if (!internalnoerror)
     {
-        *noerror = false;
         return NULL;
     }
     item->itemData.intnumber = value;
     item->dataType = DATATYPE_INTEGER;
-    *noerror = true;
     return item;
 }
 

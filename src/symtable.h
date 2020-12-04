@@ -93,7 +93,7 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror);
 /**
  * @brief calls a symtable add and fills in integer
  * */
-Symtable_item *symtable_add_int(Symtable *table, char *key, int value, bool *noerror);
+Symtable_item *symtable_add_int(Symtable *table, char *key, int value);
 
 /**
  * @brief calls a symtable_add, makes a dynamic string and fills it as a symtable parameter

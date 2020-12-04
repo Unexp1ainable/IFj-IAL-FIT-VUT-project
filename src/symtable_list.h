@@ -53,7 +53,7 @@ symListItemPtr sym_list_add(symtableList *list, Symtable table);
  * @param var Token with the variable's value
  * @return Symtable_item* Pointer to the item if succeeded, NULL otherwise
  */
-Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TOKEN var);
+Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TermType type);
 
 /**
  * @brief Remove last item from the list
