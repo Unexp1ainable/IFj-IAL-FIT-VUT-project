@@ -21,26 +21,6 @@
 #define START_STACK_SIZE 32
 
 
-
-
-
-
-/*************TYPE OF ITEM ON STACK*************/
-typedef enum{
-    IT_TERM,        
-    IT_NONTERM,
-    IT_OPEN
-}ItemType;
-
-
-/*************RELATION************/
-typedef enum{
-    R_OPEN,       //<
-    R_CLOSE,      //>
-    R_EQUAL,      //=
-    R_EMPTY       //doesn't exist
-} Relation;
-
 /*************TYPE OF RELATION************/
 typedef enum{
     TR_MUL_DIV,
@@ -85,13 +65,6 @@ typedef struct TheStack{
     Item *p;           //array of items
 }*MyStack;
 
-
-/*************STACK*************/
-typedef struct TheStack{
-    int top;            //index of highest item
-    int size;           //size of stack
-    Item *p;           //array of items
-}*MyStack;
 
 void InitStack(MyStack *Stack);                           //stack initialization
 

@@ -8,7 +8,8 @@
  * 
  * @brief  Processing of expressions by precedent analysis
  */
-#include"expression.h"
+#include "expression.h"
+#include "syntax.h"
 
 
 
@@ -138,7 +139,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
             else return R_OPEN;
         case TR_GT_LT:
-            if( Second == TR_RBRACKET ||Second == TR_EQUAL | Second == TR_$ || Second == TR_AND_OR){
+            if( Second == TR_RBRACKET ||Second == TR_EQUAL || Second == TR_$ || Second == TR_AND_OR){
                 return R_CLOSE;
             }
             else if(Second == TR_GT_LT){
@@ -201,7 +202,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
-                    sprintf(interpret,"#INT#%ld", strtol(item->val.term.string, NULL,10));
+                    sprintf(interpret,"#INT#%ld", strtol(item->val.term.string->string, NULL,10));
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
@@ -213,7 +214,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
-                    sprintf(interpret,"#FLOAT#%ld", strtod(item->val.term.string, NULL));
+                    sprintf(interpret,"#FLOAT#%f", strtod(item->val.term.string->string, NULL));
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
@@ -221,26 +222,26 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 break;
                 case TOKEN_TYPE_STRING:
 
-                    interpret = malloc(sizeof(char)*(strlen(item->val.term.string)+10));
+                    interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
                     strcpy(interpret,"#STRING#");
-                    strcat(interpret,item->val.term.string);
+                    strcat(interpret,item->val.term.string->string);
                     type= T_STRING;
                     break;
                 case TOKEN_TYPE_IDENTIFIER:
-                    if(was_it_defined(Table, item->val.term.string) == false){
+                    if(was_it_defined(Table, item->val.term.string->string) == false){
                         free(item);
                         return SEM_ERR_UNDEF;
                     }
                     else{
-                        interpret = malloc(sizeof(char)*(strlen(item->val.term.string)+5));
+                        interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+5));
                             if(interpret == NULL){
                                 return INTERN_ERROR;
                             }
                         strcpy(interpret, "#ID#");
-                        strcat(interpret, item->val.term.string);
+                        strcat(interpret, item->val.term.string->string);
                         break;
                     }  
                 case TOKEN_TYPE_EMPTY:
