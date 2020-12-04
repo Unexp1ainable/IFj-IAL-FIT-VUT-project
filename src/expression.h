@@ -9,15 +9,24 @@
  * @brief Processing of expressions by precedent analysis
  */
 #include "error.h"
-#include "newscanner.h"
-#include <stdbool.h>
-//#include "types_definition.h" temporary disabled
+#include"newscanner.h"
+#include<stdbool.h>
+#include"types_definition.h"
+#include"symtable.h"
+#include"syntax.h"
 
 #define START_STACK_SIZE 32
 
 
 
 
+
+/*************STACK*************/
+typedef struct TheStack{
+    int top;            //index of highest item
+    int size;           //size of stack
+    Item *p;           //array of items
+}*MyStack;
 
 /*************TYPE OF ITEM ON STACK*************/
 typedef enum{
@@ -31,7 +40,7 @@ typedef enum{
     T_INT,              //integer
     T_FLOAT,            //floater
     T_STRING,           //string
-    T_BOOL,             //true/false
+    T_EMPTY,            //null
     T_UNKNOWN           //variable use
 } TermType;
 
@@ -49,11 +58,12 @@ typedef enum{
     TR_ADD_SUB,
     TR_NOT,
     TR_AND_OR,
-    TR_GT_LT,     //>
-    TR_EQUAL,      //=
-    TR_VAR,
-    TR_LB,
-    TR_RB       //doesn't exist
+    TR_GT_LT,     
+    TR_EQUAL,      
+    TR_VALUE,
+    TR_LBRACKET,
+    TR_RBRACKET,      
+    TR_$
 } RelType;
 
 /*************VALUE OF ITEM***********/
@@ -69,17 +79,17 @@ typedef struct item{
     ItemVal val;
 }*Item;
 
-/*************STACK*************/
-typedef struct TheStack{
-    int top;            //index of highest item
-    int size;           //size of stack
-    Item *p;           //array of items
-}*MyStack;
 
-int InitStack(MyStack *Stack);     //stack initialization
+void InitStack(MyStack *Stack);                           //stack initialization
 
-void DisposeStack(MyStack *Stack);      //free the stack and its memory
+void DisposeStack(MyStack *Stack);                        //free the stack and its memory
 
-int PushStack(MyStack Stack, Item item);  //put item to top of the stack
+void PushStack(MyStack Stack, Item item);                 //put item to top of the stack
 
-int s_expr(); // added temporary function in order for gcc to shut up
+Item PopStack(MyStack Stack);                             //delete the item at the top of the stack and returns it
+
+int FirstFindedTerm(MyStack Stack);                       //find first terminal from top
+
+RelType TokenToTerm(TOKEN_TYPES token);
+
+Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
