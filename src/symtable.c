@@ -86,7 +86,7 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror)
     return new_item;
 }
 
-Symtable_item *symtable_add_int(Symtable *table, char *key, int value, bool *noerror)
+Symtable_item *symtable_add_int(Symtable *table, char *key, int value)
 {
     bool internalnoerror = false;
     Symtable_item *item = symtable_add(table, key, &internalnoerror);
@@ -96,12 +96,10 @@ Symtable_item *symtable_add_int(Symtable *table, char *key, int value, bool *noe
     }
     if (!internalnoerror)
     {
-        *noerror = false;
         return NULL;
     }
     item->itemData.intnumber = value;
     item->dataType = DATATYPE_INTEGER;
-    *noerror = true;
     return item;
 }
 
@@ -199,6 +197,9 @@ Symtable_item *symtable_add_function_init(Symtable *table, char *key)
         }
         return NULL;
     }
+
+    funcitemdataptr->var_param = false;
+
     funcitemdataptr->return_types = malloc(sizeof(char *) * DEFAULT_PARAM_COUNT);
     if (!funcitemdataptr->return_types)
     {
@@ -349,6 +350,20 @@ Symtable_item *Symtable_add_function_outparam(Symtable *table, char *key, char *
 
     lePtr->used_return++;
     return item;
+}
+
+void Symtable_set_var_param(Symtable *table, char *key){
+    if (table == NULL){
+        return;
+    }
+
+    Symtable_item *sym_item = symtable_search(table, key);
+
+    if(sym_item == NULL){
+        return;
+    }
+
+    sym_item->itemData.funcitemptr->var_param = true;
 }
 
 Symtable_item *symtable_search(Symtable *table, char *key)

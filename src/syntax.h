@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "newscanner.h"
+#include "symtable_list.h"
+#include "symtable.h"
 // ########################## global variables #########################
 /**
  * @brief Buffer for returned token
@@ -50,6 +52,12 @@ extern unsigned int assign_list_id_n;
  * 
  */
 extern unsigned int assign_list_expr_n;
+
+/**
+ * @brief Marks whether we are doing first pass through code or second.
+ * 
+ */
+extern bool first_pass;
 // ################### end of global variables #################
 
 // ################### error codes #################
@@ -60,6 +68,7 @@ extern unsigned int assign_list_expr_n;
  */
 typedef enum
 {
+    NO_ERR,
     ERR_PROLOG,       // prolog wrong or missing
     ERR_EOL_EXPECTED, // required eol missing
     ERR_EOF_EXPECTED,
@@ -83,7 +92,10 @@ typedef enum
     ERR_ID_EXPECTED,
     ERR_UNEXPECTED_TOKEN,
     ERR_ID_ASSIGN_EXPECTED,
-    ERR_TYPE_EXPECTED
+    ERR_TYPE_EXPECTED,
+    ERR_ID_REDEFINITION,
+    ERR_ID_UNDEFINED,
+    ERR_WRONG_FUNC_PARAM
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
@@ -192,7 +204,7 @@ int s_func(symtableList symlist);
  * 
  * @return int 
  */
-int s_f_init(symtableList symlist);
+int s_f_init(symtableList symlist, char *func_id);
 
 /**
  * @brief Function call
@@ -201,7 +213,7 @@ int s_f_init(symtableList symlist);
  * 
  * @return int 
  */
-int s_f_call(symtableList symlist);
+int s_f_call(symtableList symlist, Symtable_item *func_def);
 
 /**
  * @brief Body of the function/loop/condition
@@ -220,7 +232,7 @@ int s_body(symtableList symlist);
  * 
  * @return int
  */
-int s_param_def_list(symtableList symlist);
+int s_param_def_list(symtableList symlist, char *func_id);
 
 /**
  * @brief Multi-parameter list continuation - definition
@@ -230,7 +242,7 @@ int s_param_def_list(symtableList symlist);
  *
  * @return int 
  */
-int s_param_def_list_n(symtableList symlist);
+int s_param_def_list_n(symtableList symlist, char *func_id);
 
 /**
  * @brief List of function return parameters
@@ -240,7 +252,7 @@ int s_param_def_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_ret_t_list(symtableList symlist);
+int s_ret_t_list(symtableList symlist, char* func_id);
 
 /**
  * @brief Multi-return values list continuation - definition
@@ -250,7 +262,7 @@ int s_ret_t_list(symtableList symlist);
  *
  * @return int 
  */
-int s_ret_t_list_n(symtableList symlist);
+int s_ret_t_list_n(symtableList symlist, char* func_id);
 
 /**
  * @brief Statement: f_call/id_n/for/if
@@ -342,7 +354,7 @@ int s_expr_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_n(symtableList symlist);
+int s_id_n(symtableList symlist, char *id);
 
 /**
  * @brief Variable definition
@@ -351,7 +363,7 @@ int s_id_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_def(symtableList symlist);
+int s_id_def(symtableList symlist, char *id);
 
 /**
  * @brief Voluntary variable definition
@@ -417,7 +429,7 @@ int s_id_list_assign(symtableList symlist);
  * 
  * @return int 
  */
-int s_param_list(symtableList symlist);
+int s_param_list(symtableList symlist, Symtable_item *func_def);
 
 /**
  * @brief Continuation of function call parameters
@@ -427,7 +439,7 @@ int s_param_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_param_list_n(symtableList symlist);
+int s_param_list_n(symtableList symlist, Symtable_item *func_def, unsigned int n);
 
 /**
  * @brief List of eols
@@ -437,7 +449,7 @@ int s_param_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_eols(symtableList symlist);
+int s_eols();
 
 /**
  * @brief Variable type
@@ -448,7 +460,7 @@ int s_eols(symtableList symlist);
  * 
  * @return int 
  */
-int s_type(symtableList symlist);
+int s_type(char **type);
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */

@@ -8,12 +8,22 @@
  * 
  * @brief Processing of expressions by precedent analysis
  */
+
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 #include "error.h"
+<<<<<<< HEAD
 #include"newscanner.h"
 #include<stdbool.h>
 #include"types_definition.h"
 #include"symtable.h"
 #include"syntax.h"
+=======
+#include "newscanner.h"
+#include "symtable_list.h"
+#include <stdbool.h>
+//#include "types_definition.h" temporary disabled
+>>>>>>> 8d2bd9d10d93a19c8e5a1de05af1d7d371ccc6d7
 
 #define START_STACK_SIZE 32
 
@@ -35,7 +45,7 @@ typedef enum{
     IT_OPEN
 }ItemType;
 
-/*************TYPE OF TEMRS*************/
+/*************TYPE OF TERMS*************/
 typedef enum{
     T_INT,              //integer
     T_FLOAT,            //floater
@@ -92,4 +102,9 @@ int FirstFindedTerm(MyStack Stack);                       //find first terminal 
 
 RelType TokenToTerm(TOKEN_TYPES token);
 
+<<<<<<< HEAD
 Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
+=======
+int s_expr(symtableList list, TermType *type); // added temporary function in order for gcc to shut up
+#endif /* EXPRESSION_H */
+>>>>>>> 8d2bd9d10d93a19c8e5a1de05af1d7d371ccc6d7
