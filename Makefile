@@ -51,8 +51,8 @@ dynamic_string.o: src/dynamic_string.c src/dynamic_string.h
 check_table_hierarchy_unit_tests: table_hierarchy.o table_hierarchy_unit_tests.o
 	$(CC)  -o tests/check_table_hierarchy_unit_tests
 
-check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o symtable.o
-	$(CC) table_hierarchy.o table_hierarchy_valgrind.o symtable.o -o check_table_hierarchy_memory_tests
+check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o symtable.o dynamic_string.o
+	$(CC) table_hierarchy.o table_hierarchy_valgrind.o symtable.o dynamic_string.o -o check_table_hierarchy_memory_tests
 
 check_symtable_unit_tests: symtable.o symtable_tests.o
 	$(CC) symtable.o symtable_test.o $(TST_LIBS) $(COV_LIBS) -o check_symtable_tests
