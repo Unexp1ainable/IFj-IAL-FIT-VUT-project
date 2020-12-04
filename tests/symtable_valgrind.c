@@ -88,7 +88,7 @@ int main()
     {
         printf("not saved in table.\n");
     }
-    else if (table[hash("Matej")] != firstitem)
+    else if (table[hash("Matej")] != seconditem)
     {
         printf("incorrect save in table");
     }
