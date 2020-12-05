@@ -66,7 +66,7 @@ Item PopStack(MyStack Stack){
     }
 }
 //return first term from top
-int FirstFindedTerm(MyStack Stack){
+int FirstFoundTerm(MyStack Stack){
     int position ;
     position = Stack->top;
     while(position != 0){
@@ -422,7 +422,7 @@ int StartExpr(symtableList TableList, TermType *type){
         RelType new;
         Item item;
 
-        int FirstTermPosition = FirstFoundToken(stack);
+        int FirstTermPosition = FirstFoundTerm(stack);
         if(FirstTermPosition == 0) curr=TR_$;
         else{
             curr=TokenToTerm(stack->p[FirstTermPosition]->val.term.tokentype);
