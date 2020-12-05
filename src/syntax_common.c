@@ -3,13 +3,13 @@
 TOKEN token_buffer = {TOKEN_TYPE_EMPTY, {NULL}};
 TOKEN curr_token;
 unsigned long int line = 1;
-
+TokenList tokens;
 
 int get_token(TOKEN *token)
 {
     if (token_buffer.tokentype == TOKEN_TYPE_EMPTY)
     {
-        int r_code = get_next_token(token);
+        int r_code = get_next_token(token, &tokens);
         if (!r_code)
         {
             return NO_ERR;

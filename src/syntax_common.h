@@ -63,6 +63,11 @@ extern TOKEN curr_token;
  */
 extern unsigned long line;
 
+/**
+ * @brief List of all loaded tokens
+ * 
+ */
+extern TokenList tokens;
 
 
 /**

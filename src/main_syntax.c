@@ -15,6 +15,8 @@ int main()
     initialise_predefined(&global);
     sym_list_add(&symlist, &global);
 
+    init_token_list(&tokens);
+
     // begin check
     // first pass
     do
@@ -47,6 +49,7 @@ int main()
     // free all resources
     free(stringbuffer.string);
     sym_list_dispose(&symlist);
+    free_token_list(&tokens);
 
     return 0;
 }
