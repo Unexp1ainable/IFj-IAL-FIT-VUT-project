@@ -6,7 +6,6 @@
  * @date 25.11.2020
  * */
 #include "newscanner.h"
-#include "tokenlist.h"
 #include <stdio.h>
 #include <ctype.h>
 
@@ -364,4 +363,105 @@ bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring)
 void make_token_float(TOKEN *t,char* num){
     t->tokentype = TOKEN_TYPE_FLOAT64;
     t->floater = atof(num);
+}
+bool get_next_token_list(TOKEN * token, TokenList * tokenlist){
+    if (token == NULL || tokenlist == NULL){return false;}
+    TokenListItem * foundtokenitem = tokenlist->first;
+    for (int i = 0; i<tokenlist->head;i++){
+        if (foundtokenitem->next != NULL){
+            foundtokenitem = foundtokenitem->next;}
+        else{
+            return false;
+        }
+    }
+    tokenlist->head++;
+    if(!copy_token(token,foundtokenitem->token)){return false;}
+    return true;
+}
+
+
+
+bool save_next_token(TokenList * tokenlist,TOKEN * token){
+
+    TOKEN * newtoken = malloc(sizeof(TOKEN));
+    if (!newtoken){return false;}
+
+    TokenListItem * listitem = malloc(sizeof(TokenListItem));
+    if (listitem == NULL){free(newtoken);return false;}
+    
+    if(!copy_token(newtoken,token)){free(newtoken);free(listitem);return false;}
+    
+    listitem->token = newtoken;
+    listitem->next = NULL;
+    if (tokenlist->first == NULL){
+        tokenlist->first = listitem;
+        return true;
+    }
+    else{
+        TokenListItem * current = tokenlist->first;
+        TokenListItem * previous = NULL;
+        while(current != NULL){
+            previous = current;
+            current = current->next;
+        }
+        previous->next = listitem;
+        return true;
+    }
+}
+
+
+
+void init_token_list(TokenList * tokenlist){
+    tokenlist->head = 0;
+    tokenlist->first = NULL;
+}
+bool dynamic_string_copy_string(TOKEN * dest, TOKEN * src){
+    if (dest->tokentype != TOKEN_TYPE_STRING   ||   src->tokentype != TOKEN_TYPE_STRING)
+        {return false;}
+    while (dest->string->allocated_size < src->string->actual_size){
+        if (!dynamic_string_double(dest->string)){return false;}
+    }
+    strcpy(dest->string->string,src->string->string);
+    return true;
+}
+
+bool copy_token(TOKEN * dest, TOKEN * src){
+    if (dest == NULL || src == NULL){
+        return false;
+    }
+    dest->tokentype = src->tokentype;
+    if (src->tokentype == TOKEN_TYPE_STRING){
+        if (src->string == NULL){
+            Dynamic_string * newdynstring = malloc(sizeof(Dynamic_string));
+            if (newdynstring ==NULL){return false;}
+            if (!dynamic_string_init(newdynstring)){
+                free(newdynstring);return false;
+            }
+        }
+        if(!dynamic_string_copy_string(dest,src)){return false;}
+    }
+    else if(src->tokentype == TOKEN_TYPE_INTEGER){
+        dest->integer = src->integer ;
+    }
+    else if(src->tokentype == TOKEN_TYPE_FLOAT64){
+        dest->floater = src->floater;
+    }
+    else if(src->tokentype == TOKEN_TYPE_RESERVED_KEYWORD){
+        dest->keyword = src->keyword;
+    }
+    return true;
+}
+
+
+void free_token_list(TokenList * tokenlist){
+    if (tokenlist == NULL){return;}
+    TokenListItem * current = tokenlist->first;
+    TokenListItem * previous = NULL;
+    while(current != NULL){
+        previous = current;
+        current = current ->next;
+        free(previous->token);
+        free(previous);
+    }
+    return;
 }

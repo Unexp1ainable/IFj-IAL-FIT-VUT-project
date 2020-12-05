@@ -120,20 +120,38 @@ FSM_HEXNUMBER_2,
 
 }FSM_STATES;
 
+typedef struct tokenlistitm{
+    TOKEN * token;
+    struct tokenlistitm * next;
+}TokenListItem;
+
+typedef struct{
+    int head;
+    TokenListItem * first;
+}TokenList;
+
+
+
+
+
 /*
 ####################################################################################################################
 ###########################   Function headers   ###################################################################################
 ####################################################################################################################
 */
-int get_next_token(TOKEN * tokenptr);
 
-void set_fsm_state(FSM_STATES input);
-void make_token_float(TOKEN *t,char* num);
-int maketoken(); //TODO
 
-bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring);
+int get_next_token      (TOKEN * tokenptr, TokenList * tokenlist);
+bool get_next_token_list(TOKEN * tokenptr, TokenList * tokenlist);
+void set_fsm_state      (FSM_STATES input);
+void make_token_float   (TOKEN * t,        char* num);
+bool dynamic_string_copy(TOKEN * token,    Dynamic_string *dynamicstring);
+bool save_next_token    (TokenList * tokenlist,TOKEN * token);
+void init_token_list    (TokenList * tokenlist);
+bool copy_token         (TOKEN * dest, TOKEN * src);
+bool dynamic_string_copy_string (TOKEN * dest,TOKEN * src);
 
-int get_next_token(TOKEN *tokenptr);
+
 
 // variables
 extern FILE *fileptr;

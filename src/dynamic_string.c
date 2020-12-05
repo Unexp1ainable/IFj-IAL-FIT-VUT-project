@@ -101,12 +101,3 @@ void dynamic_string_print(Dynamic_string dynamicstring) {
 }
 
 
-bool dynamic_string_copy_string(TOKEN * dest, TOKEN * src){
-    if (dest->tokentype != TOKEN_TYPE_STRING   ||   src->tokentype != TOKEN_TYPE_STRING)
-        {return false;}
-    while (dest->string->allocated_size < src->string->actual_size){
-        if (!dynamic_string_double(dest->string)){return false;}
-    }
-    strcpy(dest->string->string,src->string->string);
-    return true;
-}

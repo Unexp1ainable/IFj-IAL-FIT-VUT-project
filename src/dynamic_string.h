@@ -24,5 +24,5 @@ void dynamic_string_delete      (Dynamic_string * dynamicstring);
 bool dynamic_string_full        (Dynamic_string * dynamicstring);
 void dynamic_string_backspace   (Dynamic_string * dynamicstring);
 void dynamic_string_print       (Dynamic_string dynamicstring);
-bool dynamic_string_copy_string (TOKEN * dest,TOKEN * src);
+
 #endif
