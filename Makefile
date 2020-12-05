@@ -44,15 +44,19 @@ table_hierarchy_valgrind.o: tests/table_hierarchy_valgrind.c
 dynamic_string.o: src/dynamic_string.c src/dynamic_string.h
 	$(CC) $(CFLAGS) -c src/dynamic_string.c
 
+newscanner.o: src/newscanner.c src/newscanner.h src/dynamic_string.h src/newscanner.c 
+	$(CC) $(CFLAGS) src/newscanner.c src/newscanner.h src/dynamic_string.h src/newscanner.c -c src/newscanner.c
 
+tokenlist_test.o: tests/tokenlist_test.c src/newscanner.h
+	$(CC) $(CFLAGS) -c tests/tokenlist_test.c
 
 
 
 check_table_hierarchy_unit_tests: table_hierarchy.o table_hierarchy_unit_tests.o
 	$(CC)  -o tests/check_table_hierarchy_unit_tests
 
-check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o symtable.o
-	$(CC) table_hierarchy.o table_hierarchy_valgrind.o symtable.o -o check_table_hierarchy_memory_tests
+check_table_hierarchy_memory_tests: table_hierarchy.o table_hierarchy_valgrind.o symtable.o dynamic_string.o
+	$(CC) table_hierarchy.o table_hierarchy_valgrind.o symtable.o dynamic_string.o -o check_table_hierarchy_memory_tests
 
 check_symtable_unit_tests: symtable.o symtable_tests.o
 	$(CC) symtable.o symtable_test.o $(TST_LIBS) $(COV_LIBS) -o check_symtable_tests
@@ -60,7 +64,8 @@ check_symtable_unit_tests: symtable.o symtable_tests.o
 check_symtable_memory_tests: symtable.o symtable_valgrind.o dynamic_string.o
 	$(CC) symtable.o symtable_valgrind.o dynamic_string.o -o check_symtable_memory_tests
 
-
+tokenlist_test: newscanner.o  tokenlist_test.o dynamic_string.o
+	$(CC) newscanner.o tokenlist_test.o dynamic_string.o -o tokenlist_test
 #####################################################################################################################################################
 ##############################   USE THESE DOWN  ######################################################################################################
 table_testcases: clean check_symtable_unit_tests
@@ -75,6 +80,8 @@ table_hierarchy_unit_tests: clean check_table_hierarchy_unit_tests
 hierarchy_memory: clean check_table_hierarchy_memory_tests
 	valgrind --leak-check=full ./check_table_hierarchy_memory_tests
 
+tokenlist_valgrind: clean tokenlist_test
+	valgrind --leak-check=full ./tokenlist_test
 #############################   USE THESE UP    #######################################################################################################
 #####################################################################################################################################################
 coverage_report.html: test
