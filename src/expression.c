@@ -407,6 +407,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
         free(PopStack(stack));
     }
     PushStack(stack, item);
+    if(SomeUnknown == true){
+        return 1;
+    }
 
     return 0;
 }
