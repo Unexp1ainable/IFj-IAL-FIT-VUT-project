@@ -85,7 +85,5 @@ int CheckWhileR_Close(MyStack stack, symtableList TableList);
 
 int StartExpr(symtableList TableList, TermType *type); // added temporary function in order for gcc to shut up
 
-int s_expr(symtableList TableList, TermType *type); // compatibility
-
 
 #endif /* EXPRESSION_H */

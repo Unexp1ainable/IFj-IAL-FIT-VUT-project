@@ -453,6 +453,7 @@ int StartExpr(symtableList TableList, TermType *type){
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = curr_token;
+                *type = item->val.type;
                 PushStack(stack, item);
                 get_token(&curr_token);
                 break;
