@@ -24,6 +24,9 @@ int main(){
     save_next_token(&list,&token3);
     printtokenlist(&list);
     dynamic_string_free(token4.string);
+
+
+
     printf("\n\n\nnow, i will get them back one by one.\n\n");
     TOKEN tokenptr; tokenptr.tokentype = TOKEN_TYPE_EMPTY;
     int counter = 0;
@@ -31,6 +34,43 @@ int main(){
         printtoken(&tokenptr,counter);
         counter ++;
     }
+
+    printf("\n\n\n\n i will now add two strings in a row.\n\n\n");
+    TOKEN token5; token5.tokentype = TOKEN_TYPE_STRING; token5.string= malloc(sizeof(Dynamic_string));if(!dynamic_string_init(token5.string)){printf("\n\nfailed memory operation\n\n");}
+    TOKEN token6; token6.tokentype = TOKEN_TYPE_STRING; token6.string = malloc(sizeof(Dynamic_string));if(!dynamic_string_init(token6.string)){printf("\n\nfailed memory operation\n\n");}
+    dynamic_string_add_string(token5.string, "NUMBER 1 here");
+    dynamic_string_add_string(token6.string, "NUMBER 2 here");
+    save_next_token(&list,&token5);
+    save_next_token(&list,&token6);
+    list.head = 0;
+    printtokenlist(&list);
+    dynamic_string_free(token5.string);
+    dynamic_string_free(token6.string);
+    free(token5.string);
+    free(token6.string);
+
+
+
+    printf("\n\n\n\nnow i will add third string.\n\n\n");
+
+    TOKEN token7; token7.tokentype = TOKEN_TYPE_STRING; token7.string = malloc(sizeof(Dynamic_string));if(!dynamic_string_init(token7.string)){printf("memory error.\n");}
+    dynamic_string_add_string(token7.string, "NUMBER 3 here");
+    save_next_token(&list,&token7);
+    list.head = 0;
+    printtokenlist(&list);
+    dynamic_string_free(token7.string);
+    free(token7.string);
+
+    printf("\n\n\n now i will add something completely different (monty python pun intended.\n");
+
+    TOKEN token8; token8.tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
+    token8.keyword = KEYWORD_ELSE;
+    save_next_token(&list, &token8);
+    list.head = 0;
+    printtokenlist(&list);
+
+    
+    //
     free_token_list(&list);
     printf("################    END    #############################################################################################################################################################################.\n");
     
