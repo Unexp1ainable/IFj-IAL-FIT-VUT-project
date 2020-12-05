@@ -75,7 +75,7 @@ void PushStack(MyStack Stack, Item item);                 //put item to top of t
 
 Item PopStack(MyStack Stack);                             //delete the item at the top of the stack and returns it
 
-int FirstFindedTerm(MyStack Stack);                       //find first terminal from top
+int FirstFoundTerm(MyStack Stack);                       //find first terminal from top
 
 RelType TokenToTerm(TOKEN_TYPES token);
 
@@ -84,6 +84,8 @@ Relation PrecedenceTable(RelType First, RelType Second);  //with precedence tabl
 int CheckWhileR_Close(MyStack stack, symtableList TableList);
 
 int StartExpr(symtableList TableList, TermType *type); // added temporary function in order for gcc to shut up
+
+int s_expr(symtableList TableList, TermType *type); // compatibility
 
 
 #endif /* EXPRESSION_H */
