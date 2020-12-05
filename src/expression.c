@@ -485,3 +485,7 @@ int StartExpr(symtableList TableList, TermType *type){
     DisposeStack(&stack);
     return reading;             //stav v jakém skončilo převádění
 }
+
+int s_expr(symtableList TableList, TermType *type){
+    return StartExpr(TableList, type);  // TODO not good
+}

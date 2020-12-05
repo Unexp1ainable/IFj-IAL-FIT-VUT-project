@@ -13,9 +13,9 @@
 #define EXPRESSION_H
 #include "symtable_list.h"
 #include "symtable.h"
-#include "syntax.h"
 #include "error.h"
 #include "newscanner.h"
+#include "syntax_common.h"
 #include <stdio.h>
 //#include "types_definition.h" temporary disabled
 
@@ -84,6 +84,5 @@ Relation PrecedenceTable(RelType First, RelType Second);  //with precedence tabl
 int CheckWhileR_Close(MyStack stack, symtableList TableList);
 
 int StartExpr(symtableList TableList, TermType *type); // added temporary function in order for gcc to shut up
-
 
 #endif /* EXPRESSION_H */
