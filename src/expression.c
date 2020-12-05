@@ -66,7 +66,7 @@ Item PopStack(MyStack Stack){
     }
 }
 //return first term from top
-int FirstFindedTerm(MyStack Stack){
+int FirstFoundTerm(MyStack Stack){
     int position ;
     position = Stack->top;
     while(position != 0){
@@ -480,4 +480,8 @@ int StartExpr(symtableList TableList, TermType *type){
     }
     DisposeStack(&stack);
     return reading;             //stav v jakém skončilo převádění
+}
+
+int s_expr(symtableList TableList, TermType *type){
+    return StartExpr(TableList, type);  // TODO not good
 }
