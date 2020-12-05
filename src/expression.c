@@ -9,8 +9,6 @@
  * @brief  Processing of expressions by precedent analysis
  */
 #include "expression.h"
-#include "syntax.h"
-
 
 
 void InitStack(MyStack *Stack){
@@ -183,7 +181,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
     }
     return R_EMPTY;
 }
- int CheckWhileR_Close(MyStack stack, Symtable Table){
+ int CheckWhileR_Close(MyStack stack, symtableList TableList){
     Item item = PopStack(stack);
     if(item->type == IT_TERM){
         if(item->val.term.tokentype == TOKEN_TYPE_CLOSING_CLASSIC_BRACKET){
@@ -231,7 +229,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type= T_STRING;
                     break;
                 case TOKEN_TYPE_IDENTIFIER:
-                    if(was_it_defined(Table, item->val.term.string->string) == false){
+                    if(was_it_defined(TableList, item->val.term.string->string) == false){
                         free(item);
                         return SEM_ERR_UNDEF;
                     }
@@ -413,7 +411,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
     return 0;
 }
 
-int StartExpr(TOKEN *token, Symtable Table){
+int StartExpr(symtableList TableList, TermType *type){
+    get_token(&curr_token);
     int reading = 1;
     MyStack stack;
     InitStack(&stack);
@@ -423,17 +422,17 @@ int StartExpr(TOKEN *token, Symtable Table){
         RelType new;
         Item item;
 
-        int FirstTermPosition = FirstFindedTerm(stack);
+        int FirstTermPosition = FirstFoundToken(stack);
         if(FirstTermPosition == 0) curr=TR_$;
         else{
             curr=TokenToTerm(stack->p[FirstTermPosition]->val.term.tokentype);
         }
-        new = TokenToTerm(token->tokentype);
+        new = TokenToTerm(curr_token.tokentype);
         Relation ResultRelation = PrecedenceTable(curr,new);
         switch (ResultRelation)
         {
             case R_CLOSE:
-                if(CheckWhileR_Close(stack,Table) != 0){
+                if(CheckWhileR_Close(stack,TableList) != 0){
                     reading = -1;
                 }
                 break;
@@ -450,20 +449,20 @@ int StartExpr(TOKEN *token, Symtable Table){
                 item = malloc(sizeof(struct item));
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
-                item->val.term = *token;
+                item->val.term = curr_token;
                 PushStack(stack, item);
-                //TODOpotřeba nahrát ukazatel na nový token do token aby cyklus mohl pokračovat
+                get_token(&curr_token);
                 break;
             case R_EQUAL:
                 item = malloc(sizeof(struct item));
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
-                item->val.term = *token;
+                item->val.term = curr_token;
                 PushStack(stack,item);
-                ////TODOpotřeba nahrát ukazatel na nový token do token aby cyklus mohl pokračovat
+                get_token(&curr_token);
                 break;
             case R_EMPTY:
-                if(curr == new && curr == TR_$){
+                if(curr == new && curr == TR_$){   
                     if(stack->top != 0){
                         reading = -1; //konec
                     }

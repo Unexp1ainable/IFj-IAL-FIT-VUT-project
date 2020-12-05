@@ -11,11 +11,12 @@
 
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
-#include "error.h"
-#include "newscanner.h"
 #include "symtable_list.h"
 #include "symtable.h"
-#include <stdbool.h>
+#include "syntax.h"
+#include "error.h"
+#include "newscanner.h"
+#include <stdio.h>
 //#include "types_definition.h" temporary disabled
 
 #define START_STACK_SIZE 32
@@ -80,5 +81,9 @@ RelType TokenToTerm(TOKEN_TYPES token);
 
 Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
 
-int s_expr(symtableList list, TermType *type); // added temporary function in order for gcc to shut up
+int CheckWhileR_Close(MyStack stack, symtableList TableList);
+
+int StartExpr(symtableList TableList, TermType *type); // added temporary function in order for gcc to shut up
+
+
 #endif /* EXPRESSION_H */
