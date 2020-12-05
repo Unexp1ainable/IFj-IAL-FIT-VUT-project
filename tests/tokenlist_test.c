@@ -16,24 +16,23 @@ int main(){
     TOKEN token4; token4.tokentype = TOKEN_TYPE_STRING;
     Dynamic_string stringfortoken4;
     token4.string = &stringfortoken4;
-    //if(!dynamic_string_init(token4.string)){printf("\n\nfailed memory operation\n\n");}
-    //dynamic_string_add_string(token4.string,"I WANNA SEE YOU!\n");
+    if(!dynamic_string_init(token4.string)){printf("\n\nfailed memory operation\n\n");}
+    dynamic_string_add_string(token4.string,"I WANNA SEE YOU!");
     save_next_token(&list,&token1);
     save_next_token(&list,&token2);
+    save_next_token(&list,&token4);
     save_next_token(&list,&token3);
-    //save_next_token(&list,&token4);
     printtokenlist(&list);
-
-
+    dynamic_string_free(token4.string);
     printf("\n\n\nnow, i will get them back one by one.\n\n");
-    TOKEN tokenptr;
+    TOKEN tokenptr; tokenptr.tokentype = TOKEN_TYPE_EMPTY;
     int counter = 0;
     while(get_next_token_list(&tokenptr, &list) == true){
         printtoken(&tokenptr,counter);
         counter ++;
     }
     free_token_list(&list);
-
+    printf("################    END    #############################################################################################################################################################################.\n");
     
 }
 

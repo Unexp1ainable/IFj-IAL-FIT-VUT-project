@@ -46,28 +46,28 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
             case FSM_START:
                 /*test*/ 
                 if(isspace(c) && c != '\n')     {continue;}/*isspace covers a lot more*/
-                else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; return OK;}/*else ignore*/
+                else if (c == '\n')             {tokenptr->tokentype = TOKEN_TYPE_EOL; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}/*else ignore*/
                 else if (c == '/')              {fsm_state = FSM_SLASH;}
                 else if (c == '\"')             
                 {fsm_state = FSM_STRING;}
                 else if (isalpha(c))            {fsm_state = FSM_ID;dynamic_string_add_char(&stringbuffer,c);}
                 else if (c == '_')              {fsm_state = FSM_UNDERLINE; }
                 else if (c == '=')              {fsm_state = FSM_EQUALSIGN;}
-                else if (c == '+')              {tokenptr->tokentype = TOKEN_TYPE_ADD; return OK;}
+                else if (c == '+')              {tokenptr->tokentype = TOKEN_TYPE_ADD; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
                 else if (c == ':')              {fsm_state = FSM_COLON;}
-                else if (c == ';')              {tokenptr->tokentype = TOKEN_TYPE_SEMICOLON; return OK;}
-                else if (c == '-')              {tokenptr->tokentype = TOKEN_TYPE_SUBTRACT; return OK;}
-                else if (c == '*')              {tokenptr->tokentype = TOKEN_TYPE_MULTIPLY; return OK;}
-                else if (c == '(')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CLASSIC_BRACKET; return OK;}
-                else if (c == ')')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CLASSIC_BRACKET; return OK;}
-                else if (c == '{')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; return OK;}
-                else if (c == '}')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; return OK;}
+                else if (c == ';')              {tokenptr->tokentype = TOKEN_TYPE_SEMICOLON; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == '-')              {tokenptr->tokentype = TOKEN_TYPE_SUBTRACT; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == '*')              {tokenptr->tokentype = TOKEN_TYPE_MULTIPLY; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == '(')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CLASSIC_BRACKET; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == ')')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CLASSIC_BRACKET; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == '{')              {tokenptr->tokentype = TOKEN_TYPE_OPENING_CURVY_BRACKET; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == '}')              {tokenptr->tokentype = TOKEN_TYPE_CLOSING_CURVY_BRACKET; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
                 else if (c == '!')              {fsm_state = FSM_EXCLAMATION;}
                 else if (isdigit(c))            {/*test*/ fsm_state = FSM_DECNUMBER;   dynamic_string_add_char(&stringbuffer,(char)c); /*test*/ }
                 else if (c == '<')              {fsm_state = FSM_SMALLERTHAN;}
                 else if (c == '>')              {fsm_state = FSM_GREATERTHAN;}
-                else if (c == ',')              {tokenptr->tokentype = TOKEN_TYPE_COMMA; return OK;}
-                else if (c == EOF)              {tokenptr->tokentype = TOKEN_TYPE_EOF; end = true;  return OK;
+                else if (c == ',')              {tokenptr->tokentype = TOKEN_TYPE_COMMA; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;}
+                else if (c == EOF)              {tokenptr->tokentype = TOKEN_TYPE_EOF; end = true;  if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}return OK;
                 }
                 else                            {return WTF;}
 
@@ -81,6 +81,7 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
                     buffedchar = c;
                     isbuff = true;
                     tokenptr->tokentype = TOKEN_TYPE_DIVIDE;
+                    if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
                     return OK;
                 }
                 break;
@@ -95,6 +96,7 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
                     isbuff = true;
                     buffedchar = c;
                     tokenptr->tokentype = TOKEN_TYPE_UNDERSCORE;
+                    if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
                     return OK;
                 }
                 break;
@@ -158,6 +160,7 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
                         dynamic_string_copy(tokenptr,&stringbuffer);
                     }
                     //dynamic_string_delete(&stringbuffer); 
+                    if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
                     return OK;
                 }
                 break;
@@ -173,6 +176,7 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
                 else{
                     tokenptr->tokentype = TOKEN_TYPE_STRING;
                     dynamic_string_copy(tokenptr, &stringbuffer);
+                    if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
                     return OK;
                 }
                 break;
@@ -181,6 +185,7 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
             case FSM_COLON:
                 if (c == '='){
                     tokenptr->tokentype = TOKEN_TYPE_DEFINE_AND_ASSIGN;
+                    if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
                     return OK;
                 }
                 else{
@@ -191,7 +196,8 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
 
             case FSM_EXCLAMATION:
                 if (c== '='){
-                    tokenptr->tokentype = TOKEN_TYPE_NOT_EQUAL; return OK;
+                    tokenptr->tokentype = TOKEN_TYPE_NOT_EQUAL; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                    return OK;
                 }
                 else{
                     return WTF;
@@ -201,32 +207,38 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
 
             case FSM_EQUALSIGN:
                 if (c == '='){
-                   tokenptr->tokentype = TOKEN_TYPE_EQUAL; return OK;}
+                   tokenptr->tokentype = TOKEN_TYPE_EQUAL; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                   return OK;}
                 else{
                     isbuff = true; buffedchar = c;
-                    tokenptr->tokentype = TOKEN_TYPE_ASSIGN; return OK;}
+                    tokenptr->tokentype = TOKEN_TYPE_ASSIGN; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                    return OK;}
                 break;
 
 
             case FSM_GREATERTHAN:
                 if (c == '='){
-                    tokenptr->tokentype = TOKEN_TYPE_GREATER_EQUAL; return OK;
+                    tokenptr->tokentype = TOKEN_TYPE_GREATER_EQUAL;if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                     return OK;
                 }
                 else{
                     isbuff = true; buffedchar = c;
-                    tokenptr->tokentype = TOKEN_TYPE_GREATER_THAN; return OK;
+                    tokenptr->tokentype = TOKEN_TYPE_GREATER_THAN; if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                    return OK;
                 }   
                 break;
 
 
             case FSM_SMALLERTHAN:
                 if (c == '='){
-                    tokenptr->tokentype = TOKEN_TYPE_LOWER_EQUAL;return OK;
+                    tokenptr->tokentype = TOKEN_TYPE_LOWER_EQUAL;if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                    return OK;
                 }
                 else{
                     isbuff = true;
                     buffedchar = c;
-                    tokenptr->tokentype = TOKEN_TYPE_LOWER_THAN;return OK;
+                    tokenptr->tokentype = TOKEN_TYPE_LOWER_THAN;if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                    return OK;
                 }
                 break;
 
@@ -260,6 +272,7 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
                     tokenptr->tokentype = TOKEN_TYPE_INTEGER;
                     tokenptr->integer   = atol(stringbuffer.string);
                     /*test*/
+                    if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
                     return  OK;
                     //maketoken();
                 }
@@ -296,14 +309,18 @@ int get_next_token(TOKEN *tokenptr, TokenList * tokenlist)
 
             case FSM_DECNUMBER_EXPONENT_NUMBER://only number in exponent now
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
-                else                    {isbuff = true;buffedchar = c; make_token_float(tokenptr, stringbuffer.string); return OK;}
+                else                    {isbuff = true;buffedchar = c; make_token_float(tokenptr, stringbuffer.string); 
+                                        if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                                        return OK;}
                 break;
 
             case FSM_DECNUMBER_FLOAT://already well in decimal places, possible exponent or more numbers
                 if (isdigit(c))         {if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}}
                 else if(c =='e'||c=='E'){if(!dynamic_string_add_char(&stringbuffer,c)){return memoryerror;}
                                         fsm_state = FSM_DECNUMBER_EXPONENT_OR_SIGN;}
-                else                    {isbuff = true;buffedchar = c; make_token_float(tokenptr, stringbuffer.string); return OK;}
+                else                    {isbuff = true;buffedchar = c; make_token_float(tokenptr, stringbuffer.string); 
+                                        if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                                        return OK;}
                 break;
 
 
@@ -364,9 +381,20 @@ void make_token_float(TOKEN *t,char* num){
     t->tokentype = TOKEN_TYPE_FLOAT64;
     t->floater = atof(num);
 }
+
+
+
 bool get_next_token_list(TOKEN * token, TokenList * tokenlist){
     if (token == NULL || tokenlist == NULL){return false;}
+    //if (token->tokentype == TOKEN_TYPE_STRING){
+    //    if (token->string != NULL){
+    //        dynamic_string_free(token->string);
+    //        free(token->string);
+    //        token->string = NULL;
+    //    }
+    //}
     TokenListItem * foundtokenitem = tokenlist->first;
+
     for (int i = 0; i<tokenlist->head;i++){
         if (foundtokenitem->next != NULL){
             foundtokenitem = foundtokenitem->next;}
@@ -387,12 +415,13 @@ bool save_next_token(TokenList * tokenlist,TOKEN * token){
     if (!newtoken){return false;}
 
     TokenListItem * listitem = malloc(sizeof(TokenListItem));
-    if (listitem == NULL){free(newtoken);return false;}
-    
+    if (!listitem){free(newtoken);return false;}
+    newtoken->tokentype = TOKEN_TYPE_EMPTY;//just so it is an initialised value. will get rewritten by copystring anyway
     if(!copy_token(newtoken,token)){free(newtoken);free(listitem);return false;}
     
     listitem->token = newtoken;
     listitem->next = NULL;
+
     if (tokenlist->first == NULL){
         tokenlist->first = listitem;
         return true;
@@ -415,9 +444,15 @@ void init_token_list(TokenList * tokenlist){
     tokenlist->head = 0;
     tokenlist->first = NULL;
 }
+
+
+
 bool dynamic_string_copy_string(TOKEN * dest, TOKEN * src){
     if (dest->tokentype != TOKEN_TYPE_STRING   ||   src->tokentype != TOKEN_TYPE_STRING)
         {return false;}
+    if (dest->string == NULL || src->string == NULL){
+        printf("uninitialised string");return false;
+    }
     while (dest->string->allocated_size < src->string->actual_size){
         if (!dynamic_string_double(dest->string)){return false;}
     }
@@ -425,19 +460,33 @@ bool dynamic_string_copy_string(TOKEN * dest, TOKEN * src){
     return true;
 }
 
+
+
+
+
 bool copy_token(TOKEN * dest, TOKEN * src){
     if (dest == NULL || src == NULL){
         return false;
     }
-    dest->tokentype = src->tokentype;
-    if (src->tokentype == TOKEN_TYPE_STRING){
-        if (src->string == NULL){
-            Dynamic_string * newdynstring = malloc(sizeof(Dynamic_string));
-            if (newdynstring ==NULL){return false;}
-            if (!dynamic_string_init(newdynstring)){
-                free(newdynstring);return false;
-            }
+    if (dest->tokentype == TOKEN_TYPE_STRING){
+        if (src->tokentype == TOKEN_TYPE_STRING){
+            if(!dynamic_string_copy_string(dest,src)){return false;}
+            return true;
         }
+        else{
+            dynamic_string_free(dest->string);
+            free(dest->string);
+        }
+    }
+    dest->tokentype = src->tokentype;
+
+    if (src->tokentype == TOKEN_TYPE_STRING){
+        Dynamic_string * newdynstring = malloc(sizeof(Dynamic_string));
+        if (newdynstring ==NULL){return false;}
+        if (!dynamic_string_init(newdynstring)){
+            free(newdynstring);return false;
+        }
+        dest->string = newdynstring;
         if(!dynamic_string_copy_string(dest,src)){return false;}
     }
     else if(src->tokentype == TOKEN_TYPE_INTEGER){
@@ -460,6 +509,10 @@ void free_token_list(TokenList * tokenlist){
     while(current != NULL){
         previous = current;
         current = current ->next;
+        if (previous->token->tokentype == TOKEN_TYPE_STRING){
+            dynamic_string_free(previous->token->string);
+            free(previous->token->string);
+        }
         free(previous->token);
         free(previous);
     }

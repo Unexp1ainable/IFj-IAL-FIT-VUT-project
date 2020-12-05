@@ -150,7 +150,7 @@ bool save_next_token    (TokenList * tokenlist,TOKEN * token);
 void init_token_list    (TokenList * tokenlist);
 bool copy_token         (TOKEN * dest, TOKEN * src);
 bool dynamic_string_copy_string (TOKEN * dest,TOKEN * src);
-
+void free_token_list    (TokenList * tokenlist);
 
 
 // variables
