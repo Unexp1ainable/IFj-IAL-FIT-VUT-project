@@ -1,6 +1,7 @@
 /**TODO
  * */
 #include "dynamic_string.h"
+#include "newscanner.h"
 /**
  * actual size means index of the dynamic array
  * */
@@ -98,3 +99,5 @@ void dynamic_string_backspace(Dynamic_string *dynamicstring)
 void dynamic_string_print(Dynamic_string dynamicstring) {
     printf("str:\n%s\n", dynamicstring.string);
 }
+
+

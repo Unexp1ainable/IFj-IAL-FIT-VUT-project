@@ -11,6 +11,7 @@
 #include "expression.h"
 
 
+
 void InitStack(MyStack *Stack){
     if(Stack == NULL){
             return;
@@ -77,7 +78,6 @@ int FirstFoundTerm(MyStack Stack){
     }
     return position;
 }
-
 RelType TokenToTerm(TOKEN_TYPES token){
     switch(token){
         case TOKEN_TYPE_ADD:
