@@ -147,6 +147,27 @@ void describe_error(ERR_CODE_SYN err)
     case ERR_WRONG_FUNC_PARAM:
         fprintf(stderr, "Line %li: Wrong function parameters.\n", line);
         break;
+
+    case ERR_MAIN_MISSING:
+        fprintf(stderr, "No main function defined.\n");
+        break;
+
+    case ERR_INVALID_MAIN_DEFINITION:
+        fprintf(stderr, "Invalid definition of main function.\n");
+        break;
+
+    case ERR_INVALID_EXPRESSION:
+            fprintf(stderr, "Line %li: Invalid expression.\n", line);
+            break;
+
+    case ERR_WRONG_NUMBER_LVALUES:
+            fprintf(stderr, "Line %li: Wrong number of lvalues.\n", line);
+            break;
+
+    case ERR_WRONG_LVALUE_TYPE:
+            fprintf(stderr, "Line %li: Wrong type of lvalue/s.\n", line);
+            break;
+
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
         break;

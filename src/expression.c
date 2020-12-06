@@ -201,7 +201,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         return INTERN_ERROR;
                         }
                      int u = item->val.term.integer;
-                    sprintf(interpret,"#INT#%d", u, NULL,10);
+                    sprintf(interpret,"#INT#%d", u);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
@@ -213,7 +213,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
-                    sprintf(interpret,"#FLOAT#%f",item->val.term.floater, NULL);
+                    sprintf(interpret,"#FLOAT#%f",item->val.term.floater);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;

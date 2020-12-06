@@ -18,7 +18,7 @@ int main()
     init_token_list(&tokens);
 
     // begin check
-    // first pass
+    // first pass - register all function fingerprints
     do
     {
         do
@@ -43,7 +43,24 @@ int main()
 
     first_pass = false;
 
+    // check if main() was defined
+    // TODO main_defined is redundant
+    if (!main_defined)
+    {
+        return ERR_MAIN_MISSING;
+    }
+    else
+    {
+        Symtable_item *main_f = was_it_defined(symlist, "main");
+        if (main_f->itemData.funcitemptr->used_param != 0 || main_f->itemData.funcitemptr->used_return != 0)
+        {
+            return ERR_INVALID_MAIN_DEFINITION;
+        }
+    }
+
+    // second pass
     int r_code = s_prolog(symlist);
+
     describe_error(r_code);
 
     // free all resources

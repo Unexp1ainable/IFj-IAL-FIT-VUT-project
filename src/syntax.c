@@ -9,9 +9,10 @@ unsigned int assign_list_id_n = 1;
 unsigned int assign_list_expr_n = 0;
 bool first_pass = true;
 
+TOKEN id_list[MAX_N_RET_VAL];
+int id_list_n = 0;
+
 // ############################# helper functions ###########################
-
-
 
 bool eol_required()
 {
@@ -25,8 +26,6 @@ bool eol_required()
     line++;
     return true;
 }
-
-
 
 int initialise_predefined(Symtable *table)
 {
@@ -120,7 +119,7 @@ int initialise_predefined(Symtable *table)
     Symtable_set_var_param(table, "print");
 
     // underscore
-    if (!symtable_add_int(table, "_", 0))   // TODO Not sure about the type
+    if (!symtable_add_int(table, "_", 0)) // TODO Not sure about the type
         return INTERN_ERROR;
 
     return 0;
@@ -606,6 +605,12 @@ int s_if(symtableList symlist)
     // <expr>
     TermType type;
     int r_code = s_expr(symlist, &type);
+
+    if (type != T_BOOL)
+    {
+        return ERR_INVALID_EXPRESSION;
+    }
+
     if (r_code)
     {
         return r_code;
@@ -664,6 +669,12 @@ int s_for(symtableList symlist)
     // <expr>
     TermType type;
     r_code = s_expr(symlist, &type);
+
+    if (type != T_BOOL)
+    {
+        return ERR_INVALID_EXPRESSION;
+    }
+
     if (r_code)
     {
         return r_code;
@@ -773,6 +784,10 @@ int s_id_n(symtableList symlist, char *id)
         {
             return ERR_ID_UNDEFINED;
         }
+        // assignment copy to first value
+        memcpy(id_list, &curr_token, sizeof(TOKEN));
+        id_list_n++;
+
         return s_id_assign(symlist);
         break;
 
@@ -782,6 +797,10 @@ int s_id_n(symtableList symlist, char *id)
         {
             return ERR_ID_UNDEFINED;
         }
+        // assignment copy to first value
+        memcpy(id_list, &curr_token, sizeof(TOKEN));
+        id_list_n++;
+
         return s_id_list_assign(symlist);
         break;
 
@@ -841,6 +860,9 @@ int s_id_list(symtableList symlist)
         return ERR_ID_EXPECTED;
     }
 
+    memcpy(id_list + 1, &curr_token, sizeof(TOKEN));
+    id_list_n++;
+
     return s_id_list_n(symlist);
 }
 
@@ -855,11 +877,12 @@ int s_id_list_n(symtableList symlist)
 
     if (TOKEN_IS(TOKEN_TYPE_COMMA))
     {
-        assign_list_id_n++;
 
         get_token(&curr_token);
         if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
         {
+            memcpy(id_list + id_list_n, &curr_token, sizeof(TOKEN));
+            id_list_n++;
             return s_id_list_n(symlist);
         }
 
@@ -877,6 +900,27 @@ int s_id_assign(symtableList symlist)
         return ERR_ID_ASSIGN_EXPECTED;
     }
     TermType type;
+
+    // check if next token is func id
+    get_token(&curr_token);
+    if (curr_token.tokentype != TOKEN_TYPE_IDENTIFIER)
+    {
+        return_token(curr_token);
+        return s_expr(symlist, &type);
+    }
+
+    Symtable_item *item = was_it_defined(symlist, curr_token.string->string);
+
+    if (item == NULL)
+    {
+        return ERR_ID_UNDEFINED;
+    }
+    else if (item->dataType == T_FUNC)
+    {
+        return s_func_assign(symlist, item);
+    }
+
+    return_token(curr_token);
     return s_expr(symlist, &type);
 }
 
@@ -916,6 +960,26 @@ int s_id_list_assign(symtableList symlist)
         return ERR_UNEXPECTED_TOKEN;
     }
 
+    // check if next token is func id
+    get_token(&curr_token);
+    if (curr_token.tokentype != TOKEN_TYPE_IDENTIFIER)
+    {
+        return_token(curr_token);
+        return s_expr_list(symlist);
+    }
+
+    Symtable_item *item = was_it_defined(symlist, curr_token.string->string);
+
+    if (item == NULL)
+    {
+        return ERR_ID_UNDEFINED;
+    }
+    else if (item->dataType == T_FUNC)
+    {
+        return s_func_assign(symlist, item);
+    }
+
+    return_token(curr_token);
     return s_expr_list(symlist);
 }
 
@@ -1020,6 +1084,38 @@ int s_type(DataType *type)
         return ERR_TYPE_EXPECTED;
         break;
     }
+}
+
+int s_func_assign(symtableList symlist, Symtable_item *func_def)
+{
+    if (id_list_n != func_def->itemData.funcitemptr->used_return)
+    {
+        return ERR_WRONG_NUMBER_LVALUES;
+    }
+
+    Symtable_item *item;
+
+    for (int i = 0; i < id_list_n; i++)
+    {   
+        //check if underscore
+        if (id_list[i].tokentype == TOKEN_TYPE_UNDERSCORE){
+            continue;
+        }
+
+        // find id
+        item = was_it_defined(symlist, id_list[i].string->string);
+        if (item == NULL){
+            return ERR_ID_UNDEFINED;
+        }
+
+        // check type
+        if (func_def->itemData.funcitemptr->return_types[i] != item->dataType){
+            return ERR_WRONG_LVALUE_TYPE;
+        }
+    }
+
+    id_list_n = 0;
+    return NO_ERR;
 }
 
 // ############################# STATES END ###############################
