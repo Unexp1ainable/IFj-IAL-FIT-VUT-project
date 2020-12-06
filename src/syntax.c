@@ -210,7 +210,7 @@ int s_f_list(symtableList symlist)
 
 int s_func(symtableList symlist)
 {
-    char *f_name;
+    char *f_name = NULL;
     //main || id
     get_token(&curr_token);
     if (curr_token.tokentype == TOKEN_TYPE_MAIN)
@@ -231,10 +231,10 @@ int s_func(symtableList symlist)
     }
     else if (curr_token.tokentype == TOKEN_TYPE_IDENTIFIER)
     {
+        f_name = curr_token.string->string;
         if (first_pass == true)
         {
             symtable_add_function_init(symlist->table, curr_token.string->string);
-            f_name = curr_token.string->string;
         }
     }
     else
