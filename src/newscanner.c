@@ -803,6 +803,29 @@ void set_fsm_state(FSM_STATES input)
 {
     fsm_state = input;
 }
+
+void reset_list_position(TokenList *t_list)
+{
+    t_list->head = 0;
+}
+
+int load_tokens(TokenList *t_list)
+{
+    int r_code;
+    TOKEN tmp;
+
+    do
+    {
+        r_code = get_next_token(&tmp, t_list);
+        if (r_code)
+        {
+            return r_code;
+        }
+    } while (tmp.tokentype != TOKEN_TYPE_EOF);
+
+    return OK;
+}
+
 bool dynamic_string_copy(TOKEN *token, Dynamic_string *dynamicstring)
 {
     token->string = dynamicstring;
@@ -815,7 +838,7 @@ void make_token_float(TOKEN *t, char *num)
     t->floater = atof(num);
 }
 
-bool get_next_token_list(TOKEN *token, TokenList *tokenlist)
+bool get_next_token_list(TOKEN **token, TokenList *tokenlist)
 {
     if (token == NULL || tokenlist == NULL)
     {
@@ -842,10 +865,7 @@ bool get_next_token_list(TOKEN *token, TokenList *tokenlist)
         }
     }
     tokenlist->head++;
-    if (!copy_token(token, foundtokenitem->token))
-    {
-        return false;
-    }
+    *token = foundtokenitem->token;
     return true;
 }
 
@@ -903,7 +923,7 @@ void init_token_list(TokenList *tokenlist)
 bool dynamic_string_copy_string(TOKEN *dest, TOKEN *src)
 {
     if (((dest->tokentype != TOKEN_TYPE_STRING && dest->tokentype != TOKEN_TYPE_IDENTIFIER) &&
-            ((src->tokentype != TOKEN_TYPE_STRING) && src->tokentype != TOKEN_TYPE_IDENTIFIER)))
+         ((src->tokentype != TOKEN_TYPE_STRING) && src->tokentype != TOKEN_TYPE_IDENTIFIER)))
     {
         printf("AA\n");
         return false;

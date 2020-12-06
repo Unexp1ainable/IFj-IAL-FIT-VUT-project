@@ -15,7 +15,7 @@ int id_list_n = 0;
 bool eol_required()
 {
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_EOL)
+    if (curr_token->tokentype != TOKEN_TYPE_EOL)
     {
         return_token(curr_token);
         return false;
@@ -133,15 +133,15 @@ int s_prolog(symtableList symlist)
     get_token(&curr_token);
 
     // package
-    if (curr_token.tokentype != TOKEN_TYPE_RESERVED_KEYWORD ||
-        curr_token.keyword != KEYWORD_PACKAGE)
+    if (curr_token->tokentype != TOKEN_TYPE_RESERVED_KEYWORD ||
+        curr_token->keyword != KEYWORD_PACKAGE)
     {
         return ERR_PROLOG;
     }
 
     // main
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_MAIN)
+    if (curr_token->tokentype != TOKEN_TYPE_MAIN)
     {
         return ERR_PROLOG;
     }
@@ -167,7 +167,7 @@ int s_prolog(symtableList symlist)
 
     // eof
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_EOF)
+    if (curr_token->tokentype != TOKEN_TYPE_EOF)
     {
         return ERR_EOF_EXPECTED;
     }
@@ -180,7 +180,7 @@ int s_f_list(symtableList symlist)
     // eof
     get_token(&curr_token);
     return_token(curr_token);
-    if (curr_token.tokentype == TOKEN_TYPE_EOF)
+    if (curr_token->tokentype == TOKEN_TYPE_EOF)
     {
 
         return NO_ERR;
@@ -188,8 +188,8 @@ int s_f_list(symtableList symlist)
 
     // func
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_RESERVED_KEYWORD ||
-        curr_token.keyword != KEYWORD_FUNC)
+    if (curr_token->tokentype != TOKEN_TYPE_RESERVED_KEYWORD ||
+        curr_token->keyword != KEYWORD_FUNC)
     {
         return ERR_FUNC_EXPECTED;
     }
@@ -213,7 +213,7 @@ int s_func(symtableList symlist)
     char *f_name = NULL;
     //main || id
     get_token(&curr_token);
-    if (curr_token.tokentype == TOKEN_TYPE_MAIN)
+    if (curr_token->tokentype == TOKEN_TYPE_MAIN)
     {
         if (first_pass == true)
         {
@@ -229,12 +229,12 @@ int s_func(symtableList symlist)
             f_name = "main";
         }
     }
-    else if (curr_token.tokentype == TOKEN_TYPE_IDENTIFIER)
+    else if (curr_token->tokentype == TOKEN_TYPE_IDENTIFIER)
     {
-        f_name = curr_token.string->string;
+        f_name = curr_token->string->string;
         if (first_pass == true)
         {
-            symtable_add_function_init(symlist->table, curr_token.string->string);
+            symtable_add_function_init(symlist->table, curr_token->string->string);
         }
     }
     else
@@ -262,7 +262,7 @@ int s_f_init(symtableList symlist, char *func_id)
 {
     // (
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_OPENING_CLASSIC_BRACKET)
+    if (curr_token->tokentype != TOKEN_TYPE_OPENING_CLASSIC_BRACKET)
     {
         return ERR_F_PAR_L_BRACKET;
     }
@@ -276,7 +276,7 @@ int s_f_init(symtableList symlist, char *func_id)
 
     // )
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_CLOSING_CLASSIC_BRACKET)
+    if (curr_token->tokentype != TOKEN_TYPE_CLOSING_CLASSIC_BRACKET)
     {
         return ERR_F_PAR_R_BRACKET;
     }
@@ -306,7 +306,7 @@ int s_body(symtableList symlist)
 
     // {
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_OPENING_CURVY_BRACKET)
+    if (curr_token->tokentype != TOKEN_TYPE_OPENING_CURVY_BRACKET)
     {
         return ERR_BODY_START;
     }
@@ -329,7 +329,7 @@ int s_body(symtableList symlist)
 
     // }
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_CLOSING_CURVY_BRACKET)
+    if (curr_token->tokentype != TOKEN_TYPE_CLOSING_CURVY_BRACKET)
     {
         return ERR_BODY_START;
     }
@@ -363,7 +363,7 @@ int s_param_def_list(symtableList symlist, char *func_id)
     {
         return ERR_FUNC_DEF_UNEXPECTED;
     }
-    char *id = curr_token.string->string;
+    char *id = curr_token->string->string;
 
     // <type>
     DataType type;
@@ -409,7 +409,7 @@ int s_param_def_list_n(symtableList symlist, char *func_id)
     {
         return ERR_ID_EXPECTED;
     }
-    char *id = curr_token.string->string;
+    char *id = curr_token->string->string;
 
     // <type>
     DataType type;
@@ -529,14 +529,14 @@ int s_stat(symtableList symlist)
     // <stat> -> id <id_n>
     if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
     {
-        return s_id_n(symlist, curr_token.string->string);
+        return s_id_n(symlist, curr_token->string->string);
     }
     if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD))
     {
         return ERR_STAT_UNEXPECTED;
     }
 
-    switch (curr_token.keyword)
+    switch (curr_token->keyword)
     {
     // <if>
     case KEYWORD_IF:
@@ -597,7 +597,7 @@ int s_if(symtableList symlist)
 {
     //if
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token.keyword != KEYWORD_IF)
+    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token->keyword != KEYWORD_IF)
     {
         return ERR_IF_EXPECTED;
     }
@@ -636,7 +636,7 @@ int s_if(symtableList symlist)
 int s_else(symtableList symlist)
 {
     get_token(&curr_token);
-    if (TOKEN_IS(TOKEN_TYPE_RESERVED_KEYWORD) && curr_token.keyword == KEYWORD_ELSE)
+    if (TOKEN_IS(TOKEN_TYPE_RESERVED_KEYWORD) && curr_token->keyword == KEYWORD_ELSE)
     {
         return s_body(symlist);
     }
@@ -648,7 +648,7 @@ int s_for(symtableList symlist)
 {
     // for
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token.keyword != KEYWORD_FOR)
+    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token->keyword != KEYWORD_FOR)
     {
         return ERR_FOR_EXPECTED;
     }
@@ -700,7 +700,7 @@ int s_for(symtableList symlist)
 int s_return(symtableList symlist)
 {
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token.keyword != KEYWORD_RETURN)
+    if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD) || curr_token->keyword != KEYWORD_RETURN)
     {
         return ERR_RETURN_EXPECTED;
     }
@@ -767,7 +767,7 @@ int s_id_n(symtableList symlist, char *id)
 
     Symtable_item *already_defined = was_it_defined(symlist, id);
 
-    switch (curr_token.tokentype)
+    switch (curr_token->tokentype)
     {
     // :=
     case TOKEN_TYPE_DEFINE:
@@ -845,7 +845,7 @@ int s_id_def_v(symtableList symlist)
     if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
     {
         get_token(&curr_token);
-        return s_id_def(symlist, curr_token.string->string);
+        return s_id_def(symlist, curr_token->string->string);
     }
 
     return_token(curr_token);
@@ -903,13 +903,13 @@ int s_id_assign(symtableList symlist)
 
     // check if next token is func id
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_IDENTIFIER)
+    if (curr_token->tokentype != TOKEN_TYPE_IDENTIFIER)
     {
         return_token(curr_token);
         return s_expr(symlist, &type);
     }
 
-    Symtable_item *item = was_it_defined(symlist, curr_token.string->string);
+    Symtable_item *item = was_it_defined(symlist, curr_token->string->string);
 
     if (item == NULL)
     {
@@ -962,13 +962,13 @@ int s_id_list_assign(symtableList symlist)
 
     // check if next token is func id
     get_token(&curr_token);
-    if (curr_token.tokentype != TOKEN_TYPE_IDENTIFIER)
+    if (curr_token->tokentype != TOKEN_TYPE_IDENTIFIER)
     {
         return_token(curr_token);
         return s_expr_list(symlist);
     }
 
-    Symtable_item *item = was_it_defined(symlist, curr_token.string->string);
+    Symtable_item *item = was_it_defined(symlist, curr_token->string->string);
 
     if (item == NULL)
     {
@@ -1062,7 +1062,7 @@ int s_type(DataType *type)
     {
         return ERR_TYPE_EXPECTED;
     }
-    switch (curr_token.keyword)
+    switch (curr_token->keyword)
     {
     case KEYWORD_STRING:
         *type = T_STRING;

@@ -60,13 +60,13 @@ typedef enum
  * @brief Buffer for returned token
  * 
  */
-extern TOKEN token_buffer;
+extern TOKEN* token_buffer;
 
 /**
  * @brief Token being processed
  * 
  */
-extern TOKEN curr_token;
+extern TOKEN *curr_token;
 
 /**
  * @brief Line number
@@ -93,14 +93,14 @@ extern bool first_pass;
  * param token Pointer to output token
  * @return int Return code. 0 if good
  */
-int get_token(TOKEN *token);
+void get_token(TOKEN **token);
 
 /**
  * @brief Put token to temp holding space
  *
  * param token Token
  */
-void return_token(TOKEN token);
+void return_token(TOKEN *token);
 
 /**
  * @brief Print error description on stderr  

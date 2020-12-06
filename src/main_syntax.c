@@ -17,15 +17,17 @@ int main()
 
     init_token_list(&tokens);
 
+    int r_code = load_tokens(&tokens);
+
     // begin check
     // first pass - register all function fingerprints
 
     do
     {
         get_token(&curr_token);
-        if (curr_token.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
+        if (curr_token->tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
         {
-            if (curr_token.keyword == KEYWORD_FUNC)
+            if (curr_token->keyword == KEYWORD_FUNC)
             {
                 int r_code = s_func(symlist);
                 if (r_code)
@@ -34,9 +36,10 @@ int main()
                 }
             }
         }
-    } while (curr_token.tokentype != TOKEN_TYPE_EOF);
+    } while (curr_token->tokentype != TOKEN_TYPE_EOF);
 
     first_pass = false;
+    reset_list_position(&tokens);
 
     // check if main() was defined
     // TODO main_defined is redundant
@@ -54,7 +57,7 @@ int main()
     }
 
     // second pass
-    int r_code = s_prolog(symlist);
+    r_code = s_prolog(symlist);
 
     describe_error(r_code);
 

@@ -74,13 +74,13 @@ int initialise_predefined(Symtable *table);
  * @brief Condition for checking tokentype, ==
  * 
  */
-#define TOKEN_IS(tt) (curr_token.tokentype == tt)
+#define TOKEN_IS(tt) (curr_token->tokentype == tt)
 
 /**
  * @brief Condition for checking tokentype, !=
  * 
  */
-#define TOKEN_IS_NOT(tt) (curr_token.tokentype != tt)
+#define TOKEN_IS_NOT(tt) (curr_token->tokentype != tt)
 
 // ################### end of macros #################
 

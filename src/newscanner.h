@@ -139,7 +139,7 @@ typedef struct{
 
 
 int get_next_token      (TOKEN * tokenptr, TokenList * tokenlist);
-bool get_next_token_list(TOKEN * tokenptr, TokenList * tokenlist);
+bool get_next_token_list(TOKEN ** tokenptr, TokenList * tokenlist);
 void set_fsm_state      (FSM_STATES input);
 void make_token_float   (TOKEN * t,        char* num);
 bool dynamic_string_copy(TOKEN * token,    Dynamic_string *dynamicstring);
@@ -148,7 +148,8 @@ void init_token_list    (TokenList * tokenlist);
 bool copy_token         (TOKEN * dest, TOKEN * src);
 bool dynamic_string_copy_string (TOKEN * dest,TOKEN * src);
 void free_token_list    (TokenList * tokenlist);
-
+void reset_list_position(TokenList *t_list);
+int load_tokens(TokenList *t_list);
 
 // variables
 extern FILE *fileptr;

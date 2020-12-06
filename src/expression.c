@@ -459,7 +459,7 @@ int StartExpr(symtableList TableList, TermType *type){
         else{
             curr=TokenToTerm(stack->p[FirstTermPosition]->val.term.tokentype);
         }
-        new = TokenToTerm(curr_token.tokentype);
+        new = TokenToTerm(curr_token->tokentype);
         Relation ResultRelation = PrecedenceTable(curr,new);
         switch (ResultRelation)
         {
@@ -481,7 +481,7 @@ int StartExpr(symtableList TableList, TermType *type){
                 item = malloc(sizeof(struct item));
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
-                item->val.term = curr_token;
+                item->val.term = *curr_token;
                 *type = item->val.type;
                 PushStack(stack, item);
                 get_token(&curr_token);
@@ -490,7 +490,7 @@ int StartExpr(symtableList TableList, TermType *type){
                 item = malloc(sizeof(struct item));
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
-                item->val.term = curr_token;
+                item->val.term = *curr_token;
                 PushStack(stack,item);
                 get_token(&curr_token);
                 break;

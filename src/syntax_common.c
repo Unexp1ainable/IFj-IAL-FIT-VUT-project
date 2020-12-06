@@ -1,50 +1,30 @@
 #include "syntax_common.h"
 
-TOKEN token_buffer = {TOKEN_TYPE_EMPTY, {NULL}};
-TOKEN curr_token;
+TOKEN *token_buffer = NULL;
+TOKEN *curr_token;
 unsigned long int line = 1;
 TokenList tokens;
 bool first_pass = true;
 
-int get_token(TOKEN *token)
+void get_token(TOKEN **token)
 {
-    if (token_buffer.tokentype == TOKEN_TYPE_EMPTY)
+    if (token_buffer == NULL)
     {
-        if (first_pass)
-        {
-            int r_code = get_next_token(token, &tokens);
-            if (!r_code)
-            {
-                return NO_ERR;
-            }
-            else
-            {
-                exit(1); // TODO proper cleanup
-            }
-        }
-        else
-        {
-            if (get_next_token_list(token, &tokens))
-            {
-                return NO_ERR;
-            }
-            else
-            {
-                exit(1); // TODO proper cleanup
-            }
+        if(!get_next_token_list(token, &tokens)){
+            fputs("Something went extremely wrong. Token list corrupted?\n", stderr);
+            exit(1);
         }
     }
     else
     {
-        memcpy(token, &token_buffer, sizeof(TOKEN));
-        token_buffer.tokentype = TOKEN_TYPE_EMPTY;
-        return NO_ERR;
+        *token = token_buffer;
+        token_buffer = NULL;
     }
 }
 
-void return_token(TOKEN token)
+void return_token(TOKEN *token)
 {
-    memcpy(&token_buffer, &token, sizeof(TOKEN));
+    token_buffer = token;
 }
 
 void describe_error(ERR_CODE_SYN err)
