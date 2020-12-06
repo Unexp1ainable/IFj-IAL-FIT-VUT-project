@@ -320,6 +320,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
 
     switch(Type){
         case TOKEN_TYPE_ADD:
+            printf("sčítám\n");
+            printf("sčítám %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_STRING && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
@@ -336,6 +338,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
         break;
         case TOKEN_TYPE_SUBTRACT:
+                printf("odečítám\n");
+                printf("odčítám %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
@@ -352,6 +356,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
         break;
         case TOKEN_TYPE_MULTIPLY:
+            printf("násobím\n");
+            printf("násobím %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
@@ -368,7 +374,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
         break;
         case TOKEN_TYPE_DIVIDE:
-             if(Same == false){
+            printf("dělím\n");
+            printf("dělím %u a %u\n", LeftItem->val.type, RightItem->val.type);
+            if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
@@ -423,8 +431,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
     }
     free(RightItem);
     free(LeftItem);
-    item->val.type = ResultType;
+    item->val.type = Result;
     item->type = IT_NONTERM;
+    printf("výsledek je %d\n", Result);
     if(OnlyOne == false){
         free(PopStack(stack));
     }
@@ -488,7 +497,7 @@ int StartExpr(symtableList TableList, TermType *type){
             case R_EMPTY:
                 if(curr == new && curr == TR_$){   
                     if(stack->top != 0){
-                        reading = -1; //konec výrazu
+                        reading = 0; //konec výrazu
                     }
                     else{
                         printf("výraz je prázdný");
@@ -497,9 +506,11 @@ int StartExpr(symtableList TableList, TermType *type){
                 }
         }
     }
-   printf("%u", Result);
+    if(reading == 0){
+        printf("%u", Result);
+        *type = Result;
+    }
     DisposeStack(&stack);
-    *type = Result;
     return reading;             //stav v jakém skončilo převádění
 }
 
