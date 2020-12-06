@@ -468,8 +468,8 @@ bool copy_token(TOKEN * dest, TOKEN * src){
     if (dest == NULL || src == NULL){
         return false;
     }
-    if (dest->tokentype == TOKEN_TYPE_STRING){
-        if (src->tokentype == TOKEN_TYPE_STRING){
+    if (dest->tokentype == TOKEN_TYPE_STRING || dest->tokentype == TOKEN_TYPE_IDENTIFIER){
+        if (src->tokentype == TOKEN_TYPE_STRING || src->tokentype == TOKEN_TYPE_IDENTIFIER){
             if(!dynamic_string_copy_string(dest,src)){return false;}
             return true;
         }
@@ -480,7 +480,7 @@ bool copy_token(TOKEN * dest, TOKEN * src){
     }
     dest->tokentype = src->tokentype;
 
-    if (src->tokentype == TOKEN_TYPE_STRING){
+    if (src->tokentype == TOKEN_TYPE_STRING || TOKEN_TYPE_IDENTIFIER){
         Dynamic_string * newdynstring = malloc(sizeof(Dynamic_string));
         if (newdynstring ==NULL){return false;}
         if (!dynamic_string_init(newdynstring)){
