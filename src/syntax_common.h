@@ -80,6 +80,12 @@ extern unsigned long line;
  */
 extern TokenList tokens;
 
+/**
+ * @brief Marks whether we are doing first pass through code or second.
+ * 
+ */
+extern bool first_pass;
+
 
 /**
  * @brief Get the token object

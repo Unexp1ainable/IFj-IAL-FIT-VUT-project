@@ -38,12 +38,6 @@ extern unsigned int assign_list_id_n;
 extern unsigned int assign_list_expr_n;
 
 /**
- * @brief Marks whether we are doing first pass through code or second.
- * 
- */
-extern bool first_pass;
-
-/**
  * @brief Temporary holding space for IDs on the left side of assignment.
  * 
  */

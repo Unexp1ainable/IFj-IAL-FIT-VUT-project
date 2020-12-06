@@ -4,19 +4,34 @@ TOKEN token_buffer = {TOKEN_TYPE_EMPTY, {NULL}};
 TOKEN curr_token;
 unsigned long int line = 1;
 TokenList tokens;
+bool first_pass = true;
 
 int get_token(TOKEN *token)
 {
     if (token_buffer.tokentype == TOKEN_TYPE_EMPTY)
     {
-        int r_code = get_next_token(token, &tokens);
-        if (!r_code)
+        if (first_pass)
         {
-            return NO_ERR;
+            int r_code = get_next_token(token, &tokens);
+            if (!r_code)
+            {
+                return NO_ERR;
+            }
+            else
+            {
+                exit(1); // TODO proper cleanup
+            }
         }
         else
         {
-            exit(1);
+            if (get_next_token_list(token, &tokens))
+            {
+                return NO_ERR;
+            }
+            else
+            {
+                exit(1); // TODO proper cleanup
+            }
         }
     }
     else
@@ -157,23 +172,22 @@ void describe_error(ERR_CODE_SYN err)
         break;
 
     case ERR_INVALID_EXPRESSION:
-            fprintf(stderr, "Line %li: Invalid expression.\n", line);
-            break;
+        fprintf(stderr, "Line %li: Invalid expression.\n", line);
+        break;
 
     case ERR_WRONG_NUMBER_LVALUES:
-            fprintf(stderr, "Line %li: Wrong number of lvalues.\n", line);
-            break;
+        fprintf(stderr, "Line %li: Wrong number of lvalues.\n", line);
+        break;
 
     case ERR_WRONG_LVALUE_TYPE:
-            fprintf(stderr, "Line %li: Wrong type of lvalue/s.\n", line);
-            break;
+        fprintf(stderr, "Line %li: Wrong type of lvalue/s.\n", line);
+        break;
 
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
         break;
     }
 }
-
 
 Symtable_item *was_it_defined(symtableList list, char *key)
 {

@@ -7,8 +7,6 @@
 bool main_defined = false;
 unsigned int assign_list_id_n = 1;
 unsigned int assign_list_expr_n = 0;
-bool first_pass = true;
-
 TOKEN id_list[MAX_N_RET_VAL];
 int id_list_n = 0;
 
@@ -212,22 +210,23 @@ int s_f_list(symtableList symlist)
 
 int s_func(symtableList symlist)
 {
+    char *f_name;
     //main || id
     get_token(&curr_token);
     if (curr_token.tokentype == TOKEN_TYPE_MAIN)
     {
-        if (main_defined)
+        if (first_pass == true)
         {
-            return ERR_MULTIPLE_MAIN_FUNC;
-        }
-        else
-        {
-            main_defined = true;
-
-            if (first_pass == true)
+            if (main_defined)
             {
-                symtable_add_function_init(symlist->table, "main");
+                return ERR_MULTIPLE_MAIN_FUNC;
             }
+            else
+            {
+                main_defined = true;
+            }
+            symtable_add_function_init(symlist->table, "main");
+            f_name = "main";
         }
     }
     else if (curr_token.tokentype == TOKEN_TYPE_IDENTIFIER)
@@ -235,6 +234,7 @@ int s_func(symtableList symlist)
         if (first_pass == true)
         {
             symtable_add_function_init(symlist->table, curr_token.string->string);
+            f_name = curr_token.string->string;
         }
     }
     else
@@ -242,7 +242,7 @@ int s_func(symtableList symlist)
         return ERR_FUNC_ID_EXPECTED;
     }
 
-    int r_code = s_f_init(symlist, curr_token.string->string);
+    int r_code = s_f_init(symlist, f_name);
     if (r_code)
     {
         return r_code;
@@ -1096,20 +1096,23 @@ int s_func_assign(symtableList symlist, Symtable_item *func_def)
     Symtable_item *item;
 
     for (int i = 0; i < id_list_n; i++)
-    {   
+    {
         //check if underscore
-        if (id_list[i].tokentype == TOKEN_TYPE_UNDERSCORE){
+        if (id_list[i].tokentype == TOKEN_TYPE_UNDERSCORE)
+        {
             continue;
         }
 
         // find id
         item = was_it_defined(symlist, id_list[i].string->string);
-        if (item == NULL){
+        if (item == NULL)
+        {
             return ERR_ID_UNDEFINED;
         }
 
         // check type
-        if (func_def->itemData.funcitemptr->return_types[i] != item->dataType){
+        if (func_def->itemData.funcitemptr->return_types[i] != item->dataType)
+        {
             return ERR_WRONG_LVALUE_TYPE;
         }
     }

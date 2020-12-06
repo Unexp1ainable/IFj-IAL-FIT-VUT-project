@@ -19,26 +19,21 @@ int main()
 
     // begin check
     // first pass - register all function fingerprints
+
     do
     {
-        do
+        get_token(&curr_token);
+        if (curr_token.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
         {
-            get_token(&curr_token);
-            if (curr_token.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
+            if (curr_token.keyword == KEYWORD_FUNC)
             {
-                if (curr_token.keyword == KEYWORD_FUNC)
+                int r_code = s_func(symlist);
+                if (r_code)
                 {
-                    break;
+                    return r_code;
                 }
             }
-        } while (curr_token.tokentype != TOKEN_TYPE_EOF);
-
-        int r_code = s_func(symlist);
-        if (r_code)
-        {
-            return r_code;
         }
-
     } while (curr_token.tokentype != TOKEN_TYPE_EOF);
 
     first_pass = false;
