@@ -10,7 +10,7 @@
  */
 #include "expression.h"
 
-
+TermType Result;
 
 void InitStack(MyStack *Stack){
     if(Stack == NULL){
@@ -200,7 +200,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
-                    sprintf(interpret,"#INT#%ld", strtol(item->val.term.string->string, NULL,10));
+                     int u = item->val.term.integer;
+                    sprintf(interpret,"#INT#%d", u);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
@@ -208,18 +209,17 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 break;
                 case TOKEN_TYPE_FLOAT64:
                     type = T_FLOAT;
-                   interpret = malloc(sizeof(char) * 60);
+                    interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
                         return INTERN_ERROR;
                         }
-                    sprintf(interpret,"#FLOAT#%f", strtod(item->val.term.string->string, NULL));
+                    sprintf(interpret,"#FLOAT#%f",item->val.term.floater);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
                 break;
                 case TOKEN_TYPE_STRING:
-
                     interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
                     if(interpret == NULL){
                         return INTERN_ERROR;
@@ -251,6 +251,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type = T_EMPTY;
                     break;
                 default:
+                    printf("Chyba, špatná poslopnoust\n");
                     free(item);
                     return INTERN_ERROR;
                 
@@ -289,90 +290,115 @@ Relation PrecedenceTable(RelType First, RelType Second){
     if(OnlyOne == false){
         if( (LeftType == T_UNKNOWN ) || (RightType == T_UNKNOWN) ){
             SomeUnknown=true;
+            Result = LeftType;
         }
         if(LeftType == RightType){
             Same = true;
+            Result = LeftType;
         }
         else if (LeftType == T_UNKNOWN)
         {
             Same = true;
+            Result = RightType;
         }
         else if (RightType == T_UNKNOWN)
         {
             ResultType = LeftType;
             Same = true;
+            Result = LeftType;
         }
         else if (LeftType == T_FLOAT && RightType == T_INT){
             Same = true;
-            ResultType = T_FLOAT;
+            Result = LeftType;
+
         }
         else if (LeftType == T_INT && RightType == T_FLOAT){
             Same = true;
+            Result = RightType;
         }
     }
+
     switch(Type){
         case TOKEN_TYPE_ADD:
+            printf("sčítám\n");
+            printf("sčítám %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_STRING && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
         case TOKEN_TYPE_SUBTRACT:
+                printf("odečítám\n");
+                printf("odčítám %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
         case TOKEN_TYPE_MULTIPLY:
+            printf("násobím\n");
+            printf("násobím %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
         case TOKEN_TYPE_DIVIDE:
-             if(Same == false){
+            printf("dělím\n");
+            printf("dělím %u a %u\n", LeftItem->val.type, RightItem->val.type);
+            if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
         case TOKEN_TYPE_EQUAL:
         case TOKEN_TYPE_NOT_EQUAL:
+            Result = T_BOOL;
             if(OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
@@ -380,16 +406,19 @@ Relation PrecedenceTable(RelType First, RelType Second){
         case TOKEN_TYPE_GREATER_THAN:
         case TOKEN_TYPE_LOWER_EQUAL:
         case TOKEN_TYPE_GREATER_EQUAL:
+            Result = T_BOOL;
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_STRING && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů");
                 return SEM_ERR_NEW_VAR;
             }
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
+                printf("Chyba typů\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
@@ -397,19 +426,18 @@ Relation PrecedenceTable(RelType First, RelType Second){
             free(RightItem);
             free(LeftItem);
             free(item);
+            printf("Chyba typů\n");
             return SEM_ERR_NEW_VAR;
     }
     free(RightItem);
     free(LeftItem);
-    item->val.type = ResultType;
+    item->val.type = Result;
     item->type = IT_NONTERM;
+    printf("výsledek je %d\n", Result);
     if(OnlyOne == false){
         free(PopStack(stack));
     }
     PushStack(stack, item);
-    if(SomeUnknown == true){
-        return 1;
-    }
 
     return 0;
 }
@@ -419,14 +447,15 @@ int StartExpr(symtableList TableList, TermType *type){
     int reading = 1;
     MyStack stack;
     InitStack(&stack);
-
     while(reading > 0){
         RelType curr;
         RelType new;
         Item item;
 
         int FirstTermPosition = FirstFoundTerm(stack);
-        if(FirstTermPosition == 0) curr=TR_$;
+        if(FirstTermPosition == 0){ 
+            curr=TR_$;
+        }
         else{
             curr=TokenToTerm(stack->p[FirstTermPosition]->val.term.tokentype);
         }
@@ -436,7 +465,7 @@ int StartExpr(symtableList TableList, TermType *type){
         {
             case R_CLOSE:
                 if(CheckWhileR_Close(stack,TableList) != 0){
-                    reading = -1;
+                    reading = -1; //chyba už vypsaná z funkce
                 }
                 break;
             case R_OPEN:
@@ -468,19 +497,18 @@ int StartExpr(symtableList TableList, TermType *type){
             case R_EMPTY:
                 if(curr == new && curr == TR_$){   
                     if(stack->top != 0){
-                        reading = -1; //konec
+                        reading = 0; //konec výrazu
                     }
                     else{
-                        //je to prázdné
-                        reading = 1; //výraz nemůže být prázdný
+                        printf("výraz je prázdný");
+                        reading = -3; //výraz nemůže být prázdný
                     }
                 }
-                else{
-                    reading = 1; //něco navíc
-                }
-
-        
         }
+    }
+    if(reading == 0){
+        printf("%u", Result);
+        *type = Result;
     }
     DisposeStack(&stack);
     return reading;             //stav v jakém skončilo převádění

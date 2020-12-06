@@ -38,13 +38,17 @@ extern unsigned int assign_list_id_n;
 extern unsigned int assign_list_expr_n;
 
 /**
- * @brief Marks whether we are doing first pass through code or second.
+ * @brief Temporary holding space for IDs on the left side of assignment.
  * 
  */
-extern bool first_pass;
+extern TOKEN id_list[MAX_N_RET_VAL];
+
+/**
+ * @brief Number of elements in id_list
+ * 
+ */
+extern int id_list_n;
 // ################### end of global variables #################
-
-
 
 // ############################# helper functions ###########################
 
@@ -334,6 +338,16 @@ int s_id_assign_v(symtableList symlist);
  * @return int
  */
 int s_id_list_assign(symtableList symlist);
+
+
+/**
+ * @brief Assigning values to id/s from function.
+ * 
+ * @param symlist List of symtables
+ * @param func_def Function, from which we are assigning
+ * @return int Return code (see syntax_common.h error_codes)
+ */
+int s_func_assign(symtableList symlist, Symtable_item *func_def);
 
 /**
  * @brief List of parameters of function call

@@ -40,10 +40,21 @@ typedef enum
     ERR_TYPE_EXPECTED,
     ERR_ID_REDEFINITION,
     ERR_ID_UNDEFINED,
-    ERR_WRONG_FUNC_PARAM
+    ERR_WRONG_FUNC_PARAM,
+    ERR_MAIN_MISSING,
+    ERR_INVALID_MAIN_DEFINITION,
+    ERR_INVALID_EXPRESSION,
+    ERR_WRONG_NUMBER_LVALUES,
+    ERR_WRONG_LVALUE_TYPE
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
+
+/**
+ * @brief Maximum number of return values that can be returned from a function
+ * 
+ */
+#define MAX_N_RET_VAL 100
 
 /**
  * @brief Buffer for returned token
@@ -63,6 +74,17 @@ extern TOKEN curr_token;
  */
 extern unsigned long line;
 
+/**
+ * @brief List of all loaded tokens
+ * 
+ */
+extern TokenList tokens;
+
+/**
+ * @brief Marks whether we are doing first pass through code or second.
+ * 
+ */
+extern bool first_pass;
 
 
 /**

@@ -21,13 +21,22 @@ int main()
     initialise_predefined(&global);
     sym_list_add(&symlist, &global);
 
+    init_token_list(&tokens);
+
     // begin check
     // first pass
-    do
-    {
+  //  do
+  //  {
         do
         {
-            get_token(&curr_token);
+     //       get_token(&curr_token);
+      //      printf("NOVÝ TOKEN\n");
+      //      printf("typ je %u\n",curr_token.tokentype);
+            TermType type;
+             int r_code = StartExpr(symlist, &type);
+             if(r_code != 0){
+                 return 0;
+             }
             if (curr_token.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
             {
                 if (curr_token.keyword == KEYWORD_FUNC)
@@ -36,23 +45,23 @@ int main()
                 }
             }
         } while (curr_token.tokentype != TOKEN_TYPE_EOF);
+   //         printf("dryhý cyklus");
+    //
+     //   int r_code = s_func(symlist);
+      //  if (r_code)
+       // {
+        //    return r_code;
+        //}
 
-        int r_code = s_func(symlist);
-        if (r_code)
-        {
-            return r_code;
-        }
-
-    } while (curr_token.tokentype != TOKEN_TYPE_EOF);
+   // } while (curr_token.tokentype != TOKEN_TYPE_EOF);
 
     first_pass = false;
-    TermType type;
-    int r_code = StartExpr(symlist, &type);
-    describe_error(r_code);
+
 
     // free all resources
     free(stringbuffer.string);
     sym_list_dispose(&symlist);
+    free_token_list(&tokens);
 
     return 0;
 }
