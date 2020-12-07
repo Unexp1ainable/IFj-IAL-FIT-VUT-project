@@ -52,6 +52,22 @@ typedef enum
 } ERR_CODE_SYN;
 // ################### end of error codes #################
 
+// ################### macros #################
+
+/**
+ * @brief Condition for checking tokentype, ==
+ * 
+ */
+#define TOKEN_IS(tt) (curr_token->tokentype == tt)
+
+/**
+ * @brief Condition for checking tokentype, !=
+ * 
+ */
+#define TOKEN_IS_NOT(tt) (curr_token->tokentype != tt)
+
+// ################### end of macros #################
+
 /**
  * @brief Maximum number of return values that can be returned from a function
  * 

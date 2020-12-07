@@ -68,22 +68,6 @@ int initialise_predefined(Symtable *table);
 
 // ################### end of helper functions #################
 
-// ################### macros #################
-
-/**
- * @brief Condition for checking tokentype, ==
- * 
- */
-#define TOKEN_IS(tt) (curr_token->tokentype == tt)
-
-/**
- * @brief Condition for checking tokentype, !=
- * 
- */
-#define TOKEN_IS_NOT(tt) (curr_token->tokentype != tt)
-
-// ################### end of macros #################
-
 // ############################# STATES ##################################
 /**
  * @brief Beginning of the program

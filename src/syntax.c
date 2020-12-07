@@ -896,7 +896,7 @@ int s_id_list(symtableList symlist)
         else
         {
             sym_item = was_it_defined(symlist, "_");
-            if (sym_item)
+            if (!sym_item)
             {
                 return ERR_ID_UNDEFINED;
             }
