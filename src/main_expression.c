@@ -22,6 +22,7 @@ int main()
     sym_list_add(&symlist, &global);
 
     init_token_list(&tokens);
+    load_tokens(&tokens);
 
     // begin check
     // first pass
@@ -37,14 +38,14 @@ int main()
              if(r_code != 0){
                  return 0;
              }
-            if (curr_token.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
+            if (curr_token->tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
             {
-                if (curr_token.keyword == KEYWORD_FUNC)
+                if (curr_token->keyword == KEYWORD_FUNC)
                 {
                     break;
                 }
             }
-        } while (curr_token.tokentype != TOKEN_TYPE_EOF);
+        } while (curr_token->tokentype != TOKEN_TYPE_EOF);
    //         printf("dryhý cyklus");
     //
      //   int r_code = s_func(symlist);
