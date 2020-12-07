@@ -499,7 +499,7 @@ int StartExpr(symtableList TableList, TermType *type){
                         reading = 0; //konec výrazu
                     }
                     else{
-                        fprintf(stderr, "Expression can not be empty\n");
+                        fprintf(stderr, "Line %i: Expression can not be empty\n", line);
                         reading = -3; //výraz nemůže být prázdný
                     }
                 }
@@ -523,6 +523,7 @@ int StartExpr(symtableList TableList, TermType *type){
         *type = Result;
     }
     DisposeStack(&stack);
+    return_token(curr_token);
     return reading;             //stav v jakém skončilo převádění
 }
 

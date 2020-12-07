@@ -7,7 +7,7 @@
 bool main_defined = false;
 unsigned int assign_list_id_n = 1;
 unsigned int assign_list_expr_n = 0;
-TOKEN id_list[MAX_N_RET_VAL];
+Symtable_item id_list[MAX_N_RET_VAL];
 int id_list_n = 0;
 
 // ############################# helper functions ###########################
@@ -179,7 +179,7 @@ int s_f_list(symtableList symlist)
 {
     // eof
     get_token(&curr_token);
-    return_token(curr_token);
+    return_token(curr_token); // TODO this is weird
     if (curr_token->tokentype == TOKEN_TYPE_EOF)
     {
 
@@ -211,10 +211,13 @@ int s_f_list(symtableList symlist)
 int s_func(symtableList symlist)
 {
     char *f_name = NULL;
+    Symtable_item *new_func = NULL;
+
     //main || id
     get_token(&curr_token);
     if (curr_token->tokentype == TOKEN_TYPE_MAIN)
     {
+        f_name = "main"; // TODO currently not needed I guess
         if (first_pass == true)
         {
             if (main_defined)
@@ -225,8 +228,11 @@ int s_func(symtableList symlist)
             {
                 main_defined = true;
             }
-            symtable_add_function_init(symlist->table, "main");
-            f_name = "main";
+            new_func = symtable_add_function_init(symlist->table, "main");
+            if (!new_func)
+            {
+                return ERR_SYMTABLE;
+            }
         }
     }
     else if (curr_token->tokentype == TOKEN_TYPE_IDENTIFIER)
@@ -234,7 +240,11 @@ int s_func(symtableList symlist)
         f_name = curr_token->string->string;
         if (first_pass == true)
         {
-            symtable_add_function_init(symlist->table, curr_token->string->string);
+            new_func = symtable_add_function_init(symlist->table, curr_token->string->string);
+            if (!new_func)
+            {
+                return ERR_SYMTABLE;
+            }
         }
     }
     else
@@ -253,7 +263,16 @@ int s_func(symtableList symlist)
         return NO_ERR;
     }
 
-    r_code = s_body(symlist);
+    new_func = was_it_defined(symlist, f_name);
+
+    if (new_func)
+    {
+        r_code = s_body(symlist, new_func->itemData.funcitemptr);
+    }
+    else
+    {
+        return ERR_SYMTABLE;
+    }
 
     return r_code;
 }
@@ -298,22 +317,33 @@ int s_f_call(symtableList symlist, Symtable_item *func_def)
     return s_param_list(symlist, func_def);
 }
 
-int s_body(symtableList symlist)
+int s_body(symtableList symlist, FuncItemData *func_ptr)
 {
     Symtable new_table;
-    symtable_init(&new_table);
+    symtable_init(&new_table); //TODO inject func parameters
     sym_list_add(&symlist, &new_table);
+
+    // in case the body is body of the function, inject func params to symtable
+    if (func_ptr != NULL)
+    {
+        for (int i = 0; i < func_ptr->used_param; i++)
+        {
+            sym_list_add_to_last(symlist, func_ptr->param_names[i], func_ptr->param_types[i]);
+        }
+    }
 
     // {
     get_token(&curr_token);
     if (curr_token->tokentype != TOKEN_TYPE_OPENING_CURVY_BRACKET)
     {
+        sym_list_remove_last(&symlist);
         return ERR_BODY_START;
     }
 
     // eol
     if (!eol_required())
     {
+        sym_list_remove_last(&symlist);
         return ERR_EOL_EXPECTED;
     }
 
@@ -331,6 +361,7 @@ int s_body(symtableList symlist)
     get_token(&curr_token);
     if (curr_token->tokentype != TOKEN_TYPE_CLOSING_CURVY_BRACKET)
     {
+        sym_list_remove_last(&symlist);
         return ERR_BODY_START;
     }
 
@@ -617,7 +648,7 @@ int s_if(symtableList symlist)
     }
 
     // <body>
-    r_code = s_body(symlist);
+    r_code = s_body(symlist, NULL);
     if (r_code)
     {
         return r_code;
@@ -638,7 +669,7 @@ int s_else(symtableList symlist)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_RESERVED_KEYWORD) && curr_token->keyword == KEYWORD_ELSE)
     {
-        return s_body(symlist);
+        return s_body(symlist, NULL);
     }
     return_token(curr_token);
     return NO_ERR;
@@ -694,7 +725,7 @@ int s_for(symtableList symlist)
     }
 
     // <body>
-    return s_body(symlist);
+    return s_body(symlist, NULL);
 }
 
 int s_return(symtableList symlist)
@@ -785,7 +816,7 @@ int s_id_n(symtableList symlist, char *id)
             return ERR_ID_UNDEFINED;
         }
         // assignment copy to first value
-        memcpy(id_list, &curr_token, sizeof(TOKEN));
+        memcpy(id_list, already_defined, sizeof(Symtable_item));
         id_list_n++;
 
         return s_id_assign(symlist);
@@ -798,7 +829,7 @@ int s_id_n(symtableList symlist, char *id)
             return ERR_ID_UNDEFINED;
         }
         // assignment copy to first value
-        memcpy(id_list, &curr_token, sizeof(TOKEN));
+        memcpy(id_list, already_defined, sizeof(Symtable_item));
         id_list_n++;
 
         return s_id_list_assign(symlist);
@@ -855,12 +886,32 @@ int s_id_def_v(symtableList symlist)
 int s_id_list(symtableList symlist)
 {
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER) && TOKEN_IS_NOT(TOKEN_TYPE_UNDERSCORE))
+    Symtable_item *sym_item;
+    if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
     {
-        return ERR_ID_EXPECTED;
+        if (TOKEN_IS_NOT(TOKEN_TYPE_UNDERSCORE))
+        {
+            return ERR_ID_EXPECTED;
+        }
+        else
+        {
+            sym_item = was_it_defined(symlist, "_");
+            if (sym_item)
+            {
+                return ERR_ID_UNDEFINED;
+            }
+        }
+    }
+    else
+    {
+        sym_item = was_it_defined(symlist, curr_token->string->string);
+        if (sym_item)
+        {
+            return ERR_ID_UNDEFINED;
+        }
     }
 
-    memcpy(id_list + 1, &curr_token, sizeof(TOKEN));
+    memcpy(id_list + 1, sym_item, sizeof(Symtable_item));
     id_list_n++;
 
     return s_id_list_n(symlist);
@@ -877,16 +928,33 @@ int s_id_list_n(symtableList symlist)
 
     if (TOKEN_IS(TOKEN_TYPE_COMMA))
     {
-
-        get_token(&curr_token);
-        if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
+        Symtable_item *sym_item;
+        if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
         {
-            memcpy(id_list + id_list_n, &curr_token, sizeof(TOKEN));
-            id_list_n++;
-            return s_id_list_n(symlist);
+            if (TOKEN_IS_NOT(TOKEN_TYPE_UNDERSCORE))
+            {
+                return ERR_ID_EXPECTED;
+            }
+            else
+            {
+                sym_item = was_it_defined(symlist, "_");
+                if (sym_item)
+                {
+                    return ERR_ID_UNDEFINED;
+                }
+            }
+        }
+        else
+        {
+            sym_item = was_it_defined(symlist, curr_token->string->string);
+            if (sym_item)
+            {
+                return ERR_ID_UNDEFINED;
+            }
         }
 
-        return ERR_ID_EXPECTED;
+        memcpy(id_list + 1, sym_item, sizeof(Symtable_item));
+        id_list_n++;
     }
 
     return ERR_UNEXPECTED_TOKEN;
@@ -917,7 +985,13 @@ int s_id_assign(symtableList symlist)
     }
     else if (item->dataType == T_FUNC)
     {
-        return s_func_assign(symlist, item);
+
+        int r_code = s_func_assign(item);
+        if (r_code)
+        {
+            return r_code;
+        }
+        return s_f_call(symlist, item);
     }
 
     return_token(curr_token);
@@ -967,20 +1041,28 @@ int s_id_list_assign(symtableList symlist)
         return_token(curr_token);
         return s_expr_list(symlist);
     }
-
+    // it is identifier, but we don`t know if it is a function
     Symtable_item *item = was_it_defined(symlist, curr_token->string->string);
 
+    // it does not exist
     if (item == NULL)
     {
         return ERR_ID_UNDEFINED;
     }
+    // it is a function
     else if (item->dataType == T_FUNC)
     {
-        return s_func_assign(symlist, item);
+        return s_func_assign(item);
+    }
+    // it is not a function
+    else
+    {
+        return_token(curr_token);
+        return s_expr_list(symlist);
     }
 
     return_token(curr_token);
-    return s_expr_list(symlist);
+    return expr_list_assign(symlist);
 }
 
 int s_param_list(symtableList symlist, Symtable_item *func_def)
@@ -1086,32 +1168,23 @@ int s_type(DataType *type)
     }
 }
 
-int s_func_assign(symtableList symlist, Symtable_item *func_def)
+int s_func_assign(Symtable_item *func_def)
 {
     if (id_list_n != func_def->itemData.funcitemptr->used_return)
     {
         return ERR_WRONG_NUMBER_LVALUES;
     }
 
-    Symtable_item *item;
-
     for (int i = 0; i < id_list_n; i++)
     {
-        //check if underscore
-        if (id_list[i].tokentype == TOKEN_TYPE_UNDERSCORE)
-        {
-            continue;
-        }
-
-        // find id
-        item = was_it_defined(symlist, id_list[i].string->string);
-        if (item == NULL)
-        {
-            return ERR_ID_UNDEFINED;
-        }
+        //TODO check if underscore
+        // if (id_list[i].dataType == TOKEN_TYPE_UNDERSCORE)
+        // {
+        //     continue;
+        // }
 
         // check type
-        if (func_def->itemData.funcitemptr->return_types[i] != item->dataType)
+        if (func_def->itemData.funcitemptr->return_types[i] != id_list[i].dataType)
         {
             return ERR_WRONG_LVALUE_TYPE;
         }
@@ -1119,6 +1192,63 @@ int s_func_assign(symtableList symlist, Symtable_item *func_def)
 
     id_list_n = 0;
     return NO_ERR;
+}
+
+int expr_list_assign(symtableList symlist)
+{
+
+    get_token(&curr_token);
+
+    TermType type;
+    int r_code;
+
+    // <expr>
+    r_code = s_expr(symlist, &type);
+    if (r_code)
+    {
+        return r_code;
+    }
+    // check type
+    if (id_list_n > 0)
+    {
+        if (id_list->dataType == type)
+        {
+
+            return expr_list_assign_n(symlist, 1);
+        }
+    }
+    return ERR_TYPE_MISMATCH;
+}
+int expr_list_assign_n(symtableList symlist, int n)
+{
+    if (n == id_list_n)
+    {
+        return NO_ERR;
+    }
+
+    get_token(&curr_token);
+    if (TOKEN_IS_NOT(TOKEN_TYPE_COMMA))
+    {
+        return ERR_COMMA_EXPECTED;
+    }
+
+    TermType type;
+    int r_code;
+
+    // <expr>
+    r_code = s_expr(symlist, &type);
+    if (r_code)
+    {
+        return r_code;
+    }
+    // check type
+    if (id_list->dataType == type)
+    {
+
+        return expr_list_assign_n(symlist, n + 1);
+    }
+
+    return ERR_TYPE_MISMATCH;
 }
 
 // ############################# STATES END ###############################

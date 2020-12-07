@@ -45,7 +45,9 @@ typedef enum
     ERR_INVALID_MAIN_DEFINITION,
     ERR_INVALID_EXPRESSION,
     ERR_WRONG_NUMBER_LVALUES,
-    ERR_WRONG_LVALUE_TYPE
+    ERR_WRONG_LVALUE_TYPE,
+    ERR_SYMTABLE,
+    ERR_TYPE_MISMATCH
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################

@@ -41,7 +41,7 @@ extern unsigned int assign_list_expr_n;
  * @brief Temporary holding space for IDs on the left side of assignment.
  * 
  */
-extern TOKEN id_list[MAX_N_RET_VAL];
+extern Symtable_item id_list[MAX_N_RET_VAL];
 
 /**
  * @brief Number of elements in id_list
@@ -139,7 +139,7 @@ int s_f_call(symtableList symlist, Symtable_item *func_def);
  * 
  * @return int 
  */
-int s_body(symtableList symlist);
+int s_body(symtableList symlist, FuncItemData *func_ptr);
 
 /**
  * @brief List of function parameters - defining
@@ -343,11 +343,10 @@ int s_id_list_assign(symtableList symlist);
 /**
  * @brief Assigning values to id/s from function.
  * 
- * @param symlist List of symtables
  * @param func_def Function, from which we are assigning
  * @return int Return code (see syntax_common.h error_codes)
  */
-int s_func_assign(symtableList symlist, Symtable_item *func_def);
+int s_func_assign(Symtable_item *func_def);
 
 /**
  * @brief List of parameters of function call
@@ -389,7 +388,30 @@ int s_eols();
  */
 int s_type(DataType *type);
 
-//TODO
+/**
+ * @brief Right side of the value assignment if it is not a function
+ * 
+ * @param symlist List of symtables
+ * @return int Error code, 0 if ok
+ */
+int expr_list_assign(symtableList symlist);
+
+/**
+ * @brief Right side of the value assignment if it is not a function
+ * 
+ * @param symlist List of symtables
+ * @param n Position of id in list
+ * @return int Error code, 0 if ok
+ */
+int expr_list_assign_n(symtableList symlist, int n);
+
+/**
+ * @brief Evaluates expression and returns type in parameter type
+ * 
+ * @param TableList List of symtables
+ * @param type Pointer to variable in which type of expression will be stored
+ * @return int Error code, 0 if ok
+ */
 int s_expr(symtableList TableList, TermType *type); // compatibility
 // ############################# STATES END ###############################
 

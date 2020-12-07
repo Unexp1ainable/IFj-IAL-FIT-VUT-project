@@ -162,6 +162,14 @@ void describe_error(ERR_CODE_SYN err)
     case ERR_WRONG_LVALUE_TYPE:
         fprintf(stderr, "Line %li: Wrong type of lvalue/s.\n", line);
         break;
+    
+    case ERR_SYMTABLE:
+        fprintf(stderr, "Line %li: FUNC_INIT failure. Symtable error has occured.\n", line);
+        break;
+
+    case ERR_TYPE_MISMATCH:
+            fprintf(stderr, "Line %li: ID-term type mismatch.\n", line);
+            break;
 
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
