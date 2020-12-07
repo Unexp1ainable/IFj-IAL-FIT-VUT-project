@@ -207,15 +207,15 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type =  T_INT;
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
-                        fprintf(stderr,"Memory allocation failed\n");
-                        return INTERN_ERROR;
+                        return ERR_ALLOC_M;
+                        ;
                         }
                      int u = item->val.term.integer;
                     sprintf(interpret,"#INT#%d", u);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
-                        fprintf(stderr,"Memory allocation failed\n");
-                        return INTERN_ERROR;
+                        return ERR_ALLOC_M;
+                        ;
                     }
                     Result = T_INT;                         //uložíme dočasně co máme za term
                 break;
@@ -223,14 +223,14 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type = T_FLOAT;
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
-                        fprintf(stderr,"Memory allocation failed\n");
-                        return INTERN_ERROR;
+                        return ERR_ALLOC_M;
+                        ;
                         }
                     sprintf(interpret,"#FLOAT#%f",item->val.term.floater);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
-                        fprintf(stderr,"Memory allocation failed\n");
-                        return INTERN_ERROR;
+                        return ERR_ALLOC_M;
+                        ;
                     }
                     Result = T_FLOAT;
                 break;
@@ -238,8 +238,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     Result = T_STRING;
                     interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
                     if(interpret == NULL){
-                        fprintf(stderr,"Memory allocation failed\n");
-                        return INTERN_ERROR;
+                        return ERR_ALLOC_M;
+                        ;
                     }
                     strcpy(interpret,"#STRING#");
                     strcat(interpret,item->val.term.string->string);
@@ -248,14 +248,13 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 case TOKEN_TYPE_IDENTIFIER:
                     if(was_it_defined(TableList, item->val.term.string->string)== false){
                         free(item);
-                        fprintf(stderr,"Undefined identifier\n");
-                        return SEM_ERR_UNDEF;
+                        return ERR_UNDEF_ID;
                     }
                     else{
                         interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+5));
                             if(interpret == NULL){
-                                fprintf(stderr,"Memory allocation failed\n");
-                                return INTERN_ERROR;
+                                return ERR_ALLOC_M;
+                                ;
                             }
                         strcpy(interpret, "#ID#");
                         strcat(interpret, item->val.term.string->string);
@@ -267,16 +266,16 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 case TOKEN_TYPE_EMPTY:
                     interpret = malloc(sizeof(char)*7);
                         if(interpret == NULL){
-                            fprintf(stderr,"Memory allocation failed\n");
-                            return INTERN_ERROR;
+                            return ERR_ALLOC_M;
+                            ;
                         }
                     strcpy(interpret, "#NULL#");
                     type = T_EMPTY;
                     break;
                 default:
-                   fprintf(stderr,"Invalid expression\n");
                     free(item);
-                    return INTERN_ERROR;
+                    return ERR_ALLOC_M;
+                    ;
                 
             }
             item->type = IT_NONTERM;
@@ -341,15 +340,13 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
         break;
         case TOKEN_TYPE_SUBTRACT:           
@@ -357,15 +354,13 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
         break;
         case TOKEN_TYPE_MULTIPLY:
@@ -373,40 +368,33 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
         break;
         case TOKEN_TYPE_DIVIDE:
-            printf("dělím\n");
-            printf("dělím %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
             if(RightItem->val.term.integer == 0){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Dividing by zero is not valid\n");
-                return SEM_ERR_DIV_ZERO;
+                return ERR_TYPE_COMB;
             }
         break;
         case TOKEN_TYPE_EQUAL:
@@ -422,23 +410,20 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
+                return ERR_TYPE_COMB;
             }
         break;
         default:
             free(RightItem);
             free(LeftItem);
             free(item);
-            fprintf(stderr,"Unsupported combination of data types\n");
-            return SEM_ERR_NEW_VAR;
+            return ERR_TYPE_COMB;
     }
     
     free(RightItem);
@@ -490,15 +475,13 @@ int StartExpr(symtableList TableList, TermType *type){
                 }
                 Item New = malloc(sizeof(struct item));
                 if(New == NULL) {
-                    fprintf(stderr,"Memory allocation failed\n");
-                    return INTERN_ERROR;
+                    return ERR_ALLOC_M;
                 }
                 New->type = IT_OPEN;
                 stack->p[position] = New;
                 item = malloc(sizeof(struct item));
                 if(item == NULL) {
-                    fprintf(stderr,"Memory allocation failed\n");
-                    return INTERN_ERROR;
+                    return ERR_ALLOC_M;
                 }
                 item->type = IT_TERM;
                 item->val.term = *curr_token;
@@ -508,8 +491,7 @@ int StartExpr(symtableList TableList, TermType *type){
             case R_EQUAL:
                 item = malloc(sizeof(struct item));
                 if(item == NULL){
-                    fprintf(stderr,"Memory allocation failed\n");
-                    return INTERN_ERROR;
+                    return ERR_ALLOC_M;
                 }
                 item->type = IT_TERM;
                 item->val.term = *curr_token;
@@ -522,7 +504,6 @@ int StartExpr(symtableList TableList, TermType *type){
                         reading = 0; //konec výrazu
                     }
                     else{
-                        fprintf(stderr, "Line %li: Expression can not be empty\n", line);
                         reading = -3; //výraz nemůže být prázdný
                     }
                 }
@@ -534,18 +515,22 @@ int StartExpr(symtableList TableList, TermType *type){
                         }
                     }
                     else {
-                    fprintf(stderr, "Line %li: Expression isnt right\n", line); //some problem in exp
                     reading = -4;
                     }
                 }   
         }
     }
     if(reading == 0){
-   printf("%u\n", Result);
         *type = Result;
     }
     DisposeStack(&stack);
     return_token(curr_token);
+    if(reading == -3){
+        return ERR_EMPTY_EXP;
+    }
+    if(reading == -4){
+        return ERR_EXP_ORDER;
+    }
     return reading;             //stav v jakém skončilo převádění
 }
 
