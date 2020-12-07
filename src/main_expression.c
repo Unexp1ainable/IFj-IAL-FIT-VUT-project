@@ -4,10 +4,6 @@
 #include "symtable_list.h"
 #include "newscanner.h"
 
-
-
-
-
 int main()
 {
     // initialisation of the structures
@@ -24,36 +20,10 @@ int main()
     init_token_list(&tokens);
     load_tokens(&tokens);
 
-    // begin check
-    // first pass
-  //  do
-  // {
-        do
-        {
-            TermType type;
-             int r_code = StartExpr(symlist, &type);
-             if(r_code != 0){
-                 return 0;
-             }
-            if (curr_token->tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
-            {
-                if (curr_token->keyword == KEYWORD_FUNC)
-                {
-                    break;
-                }
-            }
-        } while (curr_token->tokentype != TOKEN_TYPE_EOF);
- //   
-  //      int r_code = s_func(symlist);
-   //     if (r_code)
-     //   {
-       //     return r_code;
-        //}
+    TermType type;
+    int r_code = StartExpr(symlist, &type);
 
-//    } while (curr_token->tokentype != TOKEN_TYPE_EOF);
-
- //   first_pass = false;
-
+    printf("Expression evaluation ended, return code: %i\n", r_code);
 
     // free all resources
     free(stringbuffer.string);
