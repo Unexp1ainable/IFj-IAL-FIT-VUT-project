@@ -18,7 +18,6 @@ void InitStack(MyStack *Stack){
     }
     else
     {
-        printf("hovno");
         *Stack = malloc(sizeof(struct TheStack));
         if((*Stack) == NULL){
             return;
@@ -27,7 +26,6 @@ void InitStack(MyStack *Stack){
         if(((*Stack)->p) == NULL){
             return;
         }
-        printf("hovno");
         (*Stack)->top = 0;
         (*Stack)->size = START_STACK_SIZE;
     }
@@ -208,6 +206,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
+                    Result = T_INT;
                 break;
                 case TOKEN_TYPE_FLOAT64:
                     type = T_FLOAT;
@@ -220,8 +219,10 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return INTERN_ERROR;
                     }
+                    Result = T_FLOAT;
                 break;
                 case TOKEN_TYPE_STRING:
+                    Result = T_STRING;
                     interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
                     if(interpret == NULL){
                         return INTERN_ERROR;
@@ -435,7 +436,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
     free(LeftItem);
     item->val.type = Result;
     item->type = IT_NONTERM;
-    printf("výsledek je %d\n", Result);
     if(OnlyOne == false){
         free(PopStack(stack));
     }
@@ -445,15 +445,10 @@ Relation PrecedenceTable(RelType First, RelType Second){
 }
 
 int StartExpr(symtableList TableList, TermType *type){
-    printf("start\n");
     get_token(&curr_token);
-    printf("start\n");
     int reading = 1;
-    printf("start\n");
     MyStack stack;
-    printf("start\n");
     InitStack(&stack);
-    printf("start\n");
     while(reading > 0){
         RelType curr;
         RelType new;
@@ -471,13 +466,11 @@ int StartExpr(symtableList TableList, TermType *type){
         switch (ResultRelation)
         {
             case R_CLOSE:
-                printf("jsem v close");
                 if(CheckWhileR_Close(stack,TableList) != 0){
                     reading = -1; //chyba už vypsaná z funkce
                 }
                 break;
             case R_OPEN:
-                printf("jsem v open");
                 PushStack(stack,NULL);
                 int position = FirstTermPosition + 1;
                 for(int i = stack->top-1; i >= position; i-- ){     //udělat místo a posunout
@@ -491,7 +484,6 @@ int StartExpr(symtableList TableList, TermType *type){
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = *curr_token;
-                *type = item->val.type;
                 PushStack(stack, item);
                 get_token(&curr_token);
                 break;
@@ -509,14 +501,14 @@ int StartExpr(symtableList TableList, TermType *type){
                         reading = 0; //konec výrazu
                     }
                     else{
-                        printf("výraz je prázdný");
+                        fprintf(stderr, "Expression can not be empty");
                         reading = -3; //výraz nemůže být prázdný
                     }
                 }
         }
     }
     if(reading == 0){
-        printf("%u", Result);
+  //      printf("%u\n", Result);
         *type = Result;
     }
     DisposeStack(&stack);
