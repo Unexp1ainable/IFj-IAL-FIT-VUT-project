@@ -1,7 +1,7 @@
 #include "newscanner.h"
 #include "dynamic_string.h"
 
-void print_token(TOKEN t, int code)
+void print_token(TOKEN t, int code, FILE *fptr)
 {
     const char *t_type_str[] = {
         "TOKEN_TYPE_ADD", "TOKEN_TYPE_SUBTRACT", "TOKEN_TYPE_MULTIPLY", "TOKEN_TYPE_DIVIDE", "TOKEN_TYPE_EQUAL",
@@ -16,62 +16,78 @@ void print_token(TOKEN t, int code)
         "KEYWORD_ELSE", "KEYWORD_FLOAT64", "KEYWORD_FOR", "KEYWORD_FUNC", "KEYWORD_IF", "KEYWORD_INT", "KEYWORD_PACKAGE",
         "KEYWORD_RETURN", "KEYWORD_STRING", "KEYWORD_NONE"};
 
-    printf("------New token------\n");
-    printf("Type: %s\n", t_type_str[t.tokentype]);
+    fprintf(fptr,"------New token------\n");
+    fprintf(fptr,"Type: %s\n", t_type_str[t.tokentype]);
 
     if (t.tokentype == TOKEN_TYPE_STRING)
     {
-        printf("Payload: %s\n", t.string->string);
+        fprintf(fptr,"Payload: %s\n", t.string->string);
     }
     else if (t.tokentype == TOKEN_TYPE_INTEGER)
     {
-        printf("Payload: %li\n", t.integer);
+        fprintf(fptr,"Payload: %li\n", t.integer);
     }
     else if (t.tokentype == TOKEN_TYPE_FLOAT64)
     {
-        printf("Payload: %f\n", t.floater);
+        fprintf(fptr,"Payload: %f\n", t.floater);
     }
     else if (t.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
     {
-        printf("Payload: %s\n", keyword_str[t.keyword]);
+        fprintf(fptr,"Payload: %s\n", keyword_str[t.keyword]);
     }
     else if (t.tokentype == TOKEN_TYPE_IDENTIFIER)
     {
-        printf("Payload: %s\n", t.string->string);
+        fprintf(fptr,"Payload: %s\n", t.string->string);
     }
-    printf("Return code: %i\n",code);
-    printf("---------------------\n");
+    fprintf(fptr,"Return code: %i\n",code);
+    fprintf(fptr,"---------------------\n");
 }
 
-int main(int argc, char *argv[])
+int main(/*int argc, char *argv[]*/)
 {
-    if (argc == 2)
-    {
-        fileptr = fopen(argv[1], "r");
-        if (fileptr == NULL)
-        {
-            fputs("File not found.\n", stderr);
-            return 1;
-        }
-    }
-    else
-    {
-        fileptr = stdin;
-    }
+    //if (argc == 2)
+    // {
+    //     fptr1 = fopen(argv[1], "r");
+    //     if (fptr1 == NULL)
+    //     {
+    //         fputs("File not found.\n", stderr);
+    //         return 1;
+    //     }
+    // }
+    // else
+    // {
+    //     fptr1 = stdin;
+    // }
+    FILE * fptr1 = fopen("output1.out","w");
 
+    FILE * fptr2 = fopen("output2.out","w");
+    if (!fptr2 || !fptr1){
+        fputs("File not found.\n", stderr);
+        return 1;
+    }
     dynamic_string_init(&stringbuffer);
 
-    TOKEN t = {TOKEN_TYPE_EMPTY, {0}};
-    int r_code;
+    TOKEN * t = malloc(sizeof(TOKEN));
+    t->tokentype = TOKEN_TYPE_EMPTY;
+    t->string = NULL;
+    TokenList  * list = malloc(sizeof(TokenList)); 
+    init_token_list(list);
+    int r_code = 0;
+    printf("lets start:\n");
     while (!end && !r_code)
     {
-        r_code = get_next_token(&t);
+        printf("\n\n->");
+        r_code = get_next_token(t,list);
         if(r_code == 0)
-            print_token(t, r_code);
+            print_token(*t, r_code,fptr1);
         else
             printf("LEX_ERROR\n");
     }
-
+    while(get_next_token_list(&t,list)){
+        print_token(*t,r_code,fptr2);
+    }
+    free_token_list(list);
+    free(list);
     free(stringbuffer.string);
     return r_code;
 }
