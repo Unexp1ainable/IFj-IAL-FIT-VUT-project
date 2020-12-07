@@ -277,11 +277,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
     TermType ResultType = RightType;
 
 
-    bool SomeUnknown;
-    if(ResultType != T_UNKNOWN){
-        SomeUnknown = false;
-    }
-    else SomeUnknown = true;
     bool OnlyOne;
     if(LeftItem->type != IT_OPEN){
         OnlyOne = false;
@@ -293,7 +288,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
 
     if(OnlyOne == false){
         if( (LeftType == T_UNKNOWN ) || (RightType == T_UNKNOWN) ){
-            SomeUnknown=true;
             Result = LeftType;
         }
         if(LeftType == RightType){
@@ -324,8 +318,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
 
     switch(Type){
         case TOKEN_TYPE_ADD:
-            printf("sčítám\n");
-            printf("sčítám %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_STRING && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
@@ -341,9 +333,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return SEM_ERR_NEW_VAR;
             }
         break;
-        case TOKEN_TYPE_SUBTRACT:
-                printf("odečítám\n");
-                printf("odčítám %u a %u\n", LeftItem->val.type, RightItem->val.type);
+        case TOKEN_TYPE_SUBTRACT:           
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
