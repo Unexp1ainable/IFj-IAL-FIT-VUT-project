@@ -195,7 +195,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
             TermType type = T_UNKNOWN;
             switch(item->val.term.tokentype){
                 case TOKEN_TYPE_INTEGER:
-                    printf("int\n");
                     type =  T_INT;
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
@@ -210,7 +209,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     Result = T_INT;
                 break;
                 case TOKEN_TYPE_FLOAT64:
-                printf("float\n");
                     type = T_FLOAT;
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
@@ -224,7 +222,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     Result = T_FLOAT;
                 break;
                 case TOKEN_TYPE_STRING:
-                printf("string\n");
                     Result = T_STRING;
                     interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
                     if(interpret == NULL){
@@ -235,9 +232,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type= T_STRING;
                     break;
                 case TOKEN_TYPE_IDENTIFIER:
-                    printf("id\n");
                     if(was_it_defined(TableList, item->val.term.string->string) == false){
-                        printf("%s\n", item->val.term.string->string );
                         free(item);
                         printf("neznám toto id\n");
                         return SEM_ERR_UNDEF;
@@ -458,8 +453,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
 }
 
 int StartExpr(symtableList TableList, TermType *type){
-    printf("start\n");
-    printf("JDU NA TO\n");
     get_token(&curr_token);
     int reading = 1;
     MyStack stack;
@@ -481,13 +474,11 @@ int StartExpr(symtableList TableList, TermType *type){
         switch (ResultRelation)
         {
             case R_CLOSE:
-                 printf("zavřená relace\n");
                 if(CheckWhileR_Close(stack,TableList) != 0){
                     reading = -1; //chyba už vypsaná z funkce
                 }
                 break;
             case R_OPEN:
-                printf("otevřená relace\n");
                 PushStack(stack,NULL);
                 int position = FirstTermPosition + 1;
                 for(int i = stack->top-1; i >= position; i-- ){     //udělat místo a posunout
@@ -501,12 +492,10 @@ int StartExpr(symtableList TableList, TermType *type){
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
                 item->val.term = *curr_token;
-                printf("Našel jsem %d\n", item->val.type);
                 PushStack(stack, item);
                 get_token(&curr_token);
                 break;
             case R_EQUAL:
-                 printf("rovná relace\n");
                 item = malloc(sizeof(struct item));
                 if(item == NULL) return INTERN_ERROR;
                 item->type = IT_TERM;
@@ -515,16 +504,28 @@ int StartExpr(symtableList TableList, TermType *type){
                 get_token(&curr_token);
                 break;
             case R_EMPTY:
-             printf("prázdná relace\n");
                 if(curr == new && curr == TR_$){   
                     if(stack->top != 0){
                         reading = 0; //konec výrazu
                     }
                     else{
-                        fprintf(stderr, "Expression can not be empty");
+                        fprintf(stderr, "Expression can not be empty\n");
                         reading = -3; //výraz nemůže být prázdný
                     }
                 }
+                else{
+                    if(stack->top == 1){
+                        if(new == TR_RBRACKET){
+                            printf("přebytečná závorka\n");
+                                reading = 0;
+                                return_token(curr_token);
+                        }
+                    }
+                    else {
+                    fprintf(stderr, "Expression isnt right\n"); //some problem in exp
+                    reading = -4;
+                    }
+                }   
         }
     }
     if(reading == 0){
