@@ -14,6 +14,15 @@
 typedef enum
 {
     NO_ERR,
+    SYNTAX_ERRORS,
+    SEM_ERR_UNDEFS,
+    SEM_ERR_NEW_VARS,
+    SEM_ERR_TYPE_COMPATS,
+    SEM_ERR_PAR_NUMS,
+    SEM_ERR_OTHERS,
+    SEM_ERR_DIV_ZEROS,
+    INTERN_ERRORS,
+
     ERR_PROLOG,       // prolog wrong or missing
     ERR_EOL_EXPECTED, // required eol missing
     ERR_EOF_EXPECTED,
