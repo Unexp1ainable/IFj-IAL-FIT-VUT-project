@@ -38,7 +38,7 @@ int initialise_predefined(Symtable *table)
     // func inputi() (int,int)
     if (!symtable_add_function_init(table, "inputi"))
         return INTERN_ERROR;
-    if (!Symtable_add_function_outparam(table, "inputi", T_STRING))
+    if (!Symtable_add_function_outparam(table, "inputi", T_INT))
         return INTERN_ERROR;
     if (!Symtable_add_function_outparam(table, "inputi", T_INT))
         return INTERN_ERROR;
@@ -310,6 +310,7 @@ int s_f_call(symtableList symlist, Symtable_item *func_def)
 {
     // param_def_list
     get_token(&curr_token);
+    return_token(curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CLASSIC_BRACKET))
     {
         return ERR_UNEXPECTED_TOKEN;
@@ -1052,7 +1053,12 @@ int s_id_list_assign(symtableList symlist)
     // it is a function
     else if (item->dataType == T_FUNC)
     {
-        return s_func_assign(item);
+        r_code = s_func_assign(item);
+        if (r_code)
+        {
+            return r_code;
+        }
+        return s_f_call(symlist, item);
     }
     // it is not a function
     else
@@ -1067,6 +1073,19 @@ int s_id_list_assign(symtableList symlist)
 
 int s_param_list(symtableList symlist, Symtable_item *func_def)
 {
+    get_token(&curr_token);
+    if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CLASSIC_BRACKET))
+    {
+        return ERR_UNEXPECTED_TOKEN;
+    }
+
+    get_token(&curr_token);
+    if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
+    {
+        return NO_ERR;
+    }
+    return_token(curr_token);
+
     TermType type;
     int r_code = s_expr(symlist, &type);
     if (r_code)
@@ -1176,6 +1195,10 @@ int s_func_assign(Symtable_item *func_def)
         // }
 
         // check type
+        if (strcmp(id_list[i].key, "_") == 0)
+        {
+            continue;
+        }
         if (func_def->itemData.funcitemptr->return_types[i] != id_list[i].dataType)
         {
             return ERR_WRONG_LVALUE_TYPE;
