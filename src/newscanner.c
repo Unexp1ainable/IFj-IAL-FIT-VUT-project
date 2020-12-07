@@ -403,6 +403,15 @@ bool get_next_token_list(TOKEN * token, TokenList * tokenlist){
         }
     }
     tokenlist->head++;
+    /*START OF A REQUIRED MESS AND DOUBLED CODE */
+    if (token->tokentype == TOKEN_TYPE_STRING || token->tokentype == TOKEN_TYPE_IDENTIFIER){
+        dynamic_string_free(token->string);
+        free(token->string);
+    }
+    /*END OF A REQUIRED MESS AND DOUBLED CODE*/
+    /*explanation: copy token doesnt work on well with uninitialised values
+    so i had to clear it myself and initialise it to empty*/
+    token->tokentype = TOKEN_TYPE_EMPTY;//so it is initialised value
     if(!copy_token(token,foundtokenitem->token)){return false;}
     return true;
 }
@@ -416,6 +425,7 @@ bool save_next_token(TokenList * tokenlist,TOKEN * token){
 
     TokenListItem * listitem = malloc(sizeof(TokenListItem));
     if (!listitem){free(newtoken);return false;}
+
     newtoken->tokentype = TOKEN_TYPE_EMPTY;//just so it is an initialised value. will get rewritten by copystring anyway
     if(!copy_token(newtoken,token)){free(newtoken);free(listitem);return false;}
     
@@ -448,8 +458,14 @@ void init_token_list(TokenList * tokenlist){
 
 
 bool dynamic_string_copy_string(TOKEN * dest, TOKEN * src){
-    if (dest->tokentype != TOKEN_TYPE_STRING   ||   src->tokentype != TOKEN_TYPE_STRING)
-        {return false;}
+    if (dest->tokentype == TOKEN_TYPE_STRING   ||   dest->tokentype == TOKEN_TYPE_IDENTIFIER){
+        if (src->tokentype == TOKEN_TYPE_STRING  ||  src->tokentype == TOKEN_TYPE_IDENTIFIER){}
+        else{
+            return false;
+        }
+    }
+    else {return false;}
+       
     if (dest->string == NULL || src->string == NULL){
         printf("uninitialised string");return false;
     }
@@ -479,8 +495,7 @@ bool copy_token(TOKEN * dest, TOKEN * src){
         }
     }
     dest->tokentype = src->tokentype;
-
-    if (src->tokentype == TOKEN_TYPE_STRING || TOKEN_TYPE_IDENTIFIER){
+    if (src->tokentype == TOKEN_TYPE_STRING || src->tokentype == TOKEN_TYPE_IDENTIFIER){
         Dynamic_string * newdynstring = malloc(sizeof(Dynamic_string));
         if (newdynstring ==NULL){return false;}
         if (!dynamic_string_init(newdynstring)){
@@ -509,7 +524,7 @@ void free_token_list(TokenList * tokenlist){
     while(current != NULL){
         previous = current;
         current = current ->next;
-        if (previous->token->tokentype == TOKEN_TYPE_STRING){
+        if (previous->token->tokentype == TOKEN_TYPE_STRING  ||  previous->token->tokentype == TOKEN_TYPE_IDENTIFIER){
             dynamic_string_free(previous->token->string);
             free(previous->token->string);
         }

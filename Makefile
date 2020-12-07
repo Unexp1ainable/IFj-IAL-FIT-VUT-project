@@ -82,6 +82,8 @@ hierarchy_memory: clean check_table_hierarchy_memory_tests
 
 tokenlist_valgrind: clean tokenlist_test
 	valgrind --leak-check=full ./tokenlist_test
+tokenlist: clean tokenlist_test
+	./tokenlist_test
 #############################   USE THESE UP    #######################################################################################################
 #####################################################################################################################################################
 coverage_report.html: test
