@@ -246,7 +246,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type= T_STRING;
                     break;
                 case TOKEN_TYPE_IDENTIFIER:
-                    if(was_it_defined(TableList, item->val.term.string->string) == false){
+                    if(was_it_defined(TableList, item->val.term.string->string)== false){
                         free(item);
                         fprintf(stderr,"Undefined identifier\n");
                         return SEM_ERR_UNDEF;
@@ -259,6 +259,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
                             }
                         strcpy(interpret, "#ID#");
                         strcat(interpret, item->val.term.string->string);
+                        Symtable_item *temp = was_it_defined(TableList, item->val.term.string->string);
+                        type = temp->dataType;
+                        Result = temp->dataType;
                         break;
                     }  
                 case TOKEN_TYPE_EMPTY:
@@ -409,13 +412,6 @@ Relation PrecedenceTable(RelType First, RelType Second){
         case TOKEN_TYPE_EQUAL:
         case TOKEN_TYPE_NOT_EQUAL:
             Result = T_BOOL;
-            if(OnlyOne == false){
-                free(RightItem);
-                free(LeftItem);
-                free(item);
-                fprintf(stderr,"Unsupported combination of data types\n");
-                return SEM_ERR_NEW_VAR;
-            }
         break;
         case TOKEN_TYPE_LOWER_THAN:
         case TOKEN_TYPE_GREATER_THAN:
@@ -545,7 +541,7 @@ int StartExpr(symtableList TableList, TermType *type){
         }
     }
     if(reading == 0){
- //   printf("%u\n", Result);
+   printf("%u\n", Result);
         *type = Result;
     }
     DisposeStack(&stack);
