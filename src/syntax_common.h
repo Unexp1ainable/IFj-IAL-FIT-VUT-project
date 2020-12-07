@@ -47,7 +47,12 @@ typedef enum
     ERR_WRONG_NUMBER_LVALUES,
     ERR_WRONG_LVALUE_TYPE,
     ERR_SYMTABLE,
-    ERR_TYPE_MISMATCH
+    ERR_TYPE_MISMATCH,
+    ERR_TYPE_COMB,
+    ERR_EXP_ORDER,
+    ERR_UNDEF_ID,
+    ERR_EMPTY_EXP,
+    ERR_ALLOC_M
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
