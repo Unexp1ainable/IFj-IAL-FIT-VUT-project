@@ -4,7 +4,6 @@
 #include "symtable_list.h"
 
 // ########################## global variables #########################
-bool main_defined = false;
 unsigned int assign_list_id_n = 1;
 unsigned int assign_list_expr_n = 0;
 Symtable_item id_list[MAX_N_RET_VAL];
@@ -220,15 +219,12 @@ int s_func(symtableList symlist)
         f_name = "main"; // TODO currently not needed I guess
         if (first_pass == true)
         {
-            if (main_defined)
+            if (was_it_defined(symlist, "main"))
             {
-                return ERR_MULTIPLE_MAIN_FUNC;
+                return ERR_FUNC_REDEFINITION;
             }
-            else
-            {
-                main_defined = true;
-            }
-            new_func = symtable_add_function_init(symlist->table, "main");
+
+            new_func = symtable_add_function_init(symlist->table, f_name);
             if (!new_func)
             {
                 return ERR_SYMTABLE;
@@ -240,6 +236,11 @@ int s_func(symtableList symlist)
         f_name = curr_token->string->string;
         if (first_pass == true)
         {
+            if (was_it_defined(symlist, f_name))
+            {
+                return ERR_FUNC_REDEFINITION;
+            }
+
             new_func = symtable_add_function_init(symlist->table, curr_token->string->string);
             if (!new_func)
             {

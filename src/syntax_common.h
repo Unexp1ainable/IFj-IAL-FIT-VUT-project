@@ -15,6 +15,11 @@ typedef enum
 {
     NO_ERR, // 0
     // =================================
+    LEXICAL_ERRORS, // 1
+    //----------------------------
+    ERR_LEX,                     // lexical error
+
+    // =================================
     SYNTAX_ERRORS, // 2
     //----------------------------
     ERR_PROLOG,                  // prolog wrong or missing
@@ -45,6 +50,7 @@ typedef enum
     // =================================
     SEM_ERR_UNDEFS, // 3
     //----------------------------
+    ERR_FUNC_REDEFINITION,        // function was already defined
     ERR_ID_REDEFINITION,         // id was already defined
     ERR_ID_UNDEFINED,            // id was not defined
     ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined

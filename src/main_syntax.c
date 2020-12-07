@@ -19,6 +19,13 @@ int main()
 
     int r_code = load_tokens(&tokens);
 
+    if (r_code)
+    {
+        // LEX error
+        r_code = ERR_LEX;
+        goto cleanup;
+    }
+
     // begin check
     // first pass - register all function fingerprints
 
@@ -32,32 +39,39 @@ int main()
                 int r_code = s_func(symlist);
                 if (r_code)
                 {
-                    return r_code;
+                    // first pass failed
+                    goto cleanup;
                 }
             }
         }
     } while (curr_token->tokentype != TOKEN_TYPE_EOF);
 
+    // prepare for second pass
     first_pass = false;
     reset_list_position(&tokens);
 
+    Symtable_item *main_f = was_it_defined(symlist, "main");
     // check if main() was defined
-    // TODO main_defined is redundant
-    if (!main_defined)
+    if (!main_f)
     {
-        return ERR_MAIN_MISSING;
+        r_code = ERR_MAIN_MISSING;
+        goto cleanup;
     }
     else
     {
-        Symtable_item *main_f = was_it_defined(symlist, "main");
+        // and if it has required parameters and return values (NONE)
         if (main_f->itemData.funcitemptr->used_param != 0 || main_f->itemData.funcitemptr->used_return != 0)
         {
-            return ERR_INVALID_MAIN_DEFINITION;
+            r_code = ERR_INVALID_MAIN_DEFINITION;
+            goto cleanup;
         }
     }
 
     // second pass
     r_code = s_prolog(symlist);
+
+// deallocate all structures in case of an error
+cleanup:
 
     describe_error(r_code);
 
@@ -67,5 +81,5 @@ int main()
     free(stringbuffer.string);
     free_token_list(&tokens);
 
-    return 0;
+    return map_err_code(r_code);
 }
