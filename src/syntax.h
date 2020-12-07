@@ -368,16 +368,6 @@ int s_param_list(symtableList symlist, Symtable_item *func_def);
 int s_param_list_n(symtableList symlist, Symtable_item *func_def, int n);
 
 /**
- * @brief List of eols
- * 
- * <eols> -> eol <eols>
- * <eols> -> e
- * 
- * @return int 
- */
-int s_eols();
-
-/**
  * @brief Variable type
  * 
  * <type> -> int

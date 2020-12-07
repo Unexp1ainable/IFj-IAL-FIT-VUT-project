@@ -27,6 +27,18 @@ void return_token(TOKEN *token)
     token_buffer = token;
 }
 
+int s_eols()
+{
+    do
+    {
+        get_token(&curr_token);
+        line++;
+    } while (TOKEN_IS(TOKEN_TYPE_EOL));
+    line--;
+    return_token(curr_token);
+    return NO_ERR;
+}
+
 void describe_error(ERR_CODE_SYN err)
 {
     switch (err)

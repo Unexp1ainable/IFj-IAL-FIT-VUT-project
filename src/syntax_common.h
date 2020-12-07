@@ -123,5 +123,12 @@ void describe_error(ERR_CODE_SYN err);
  */
 Symtable_item *was_it_defined(symtableList list, char *key);
 
+/**
+ * @brief Processes all sucessive eols
+ * 
+ * 
+ * @return int 
+ */
+int s_eols();
 
 #endif /* SYNTAX_COMMON */

@@ -1074,16 +1074,19 @@ int s_param_list(symtableList symlist, Symtable_item *func_def)
         return r_code;
     }
 
-    if (func_def->itemData.funcitemptr->used_param == 0)
+    if (!func_def->itemData.funcitemptr->var_param)
     {
-        if (type != T_UNKNOWN)
+        if (func_def->itemData.funcitemptr->used_param == 0)
+        {
+            if (type != T_UNKNOWN)
+            {
+                return ERR_WRONG_FUNC_PARAM;
+            }
+        }
+        else if (type != func_def->itemData.funcitemptr->param_types[0])
         {
             return ERR_WRONG_FUNC_PARAM;
         }
-    }
-    else if (type != func_def->itemData.funcitemptr->param_types[0])
-    {
-        return ERR_WRONG_FUNC_PARAM;
     }
 
     return s_param_list_n(symlist, func_def, 1);
@@ -1108,32 +1111,21 @@ int s_param_list_n(symtableList symlist, Symtable_item *func_def, int n)
     {
         return r_code;
     }
-
-    if (func_def->itemData.funcitemptr->used_param <= n)
+    if (!func_def->itemData.funcitemptr->var_param)
     {
-        if (type != T_UNKNOWN)
+        if (func_def->itemData.funcitemptr->used_param <= n)
+        {
+            if (type != T_UNKNOWN)
+            {
+                return ERR_WRONG_FUNC_PARAM;
+            }
+        }
+        else if (type != func_def->itemData.funcitemptr->param_types[n])
         {
             return ERR_WRONG_FUNC_PARAM;
         }
     }
-    else if (type != func_def->itemData.funcitemptr->param_types[n])
-    {
-        return ERR_WRONG_FUNC_PARAM;
-    }
-
     return s_param_list_n(symlist, func_def, n);
-}
-
-int s_eols()
-{
-    do
-    {
-        get_token(&curr_token);
-        line++;
-    } while (TOKEN_IS(TOKEN_TYPE_EOL));
-    line--;
-    return_token(curr_token);
-    return NO_ERR;
 }
 
 int s_type(DataType *type)
