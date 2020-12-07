@@ -62,8 +62,9 @@ int main()
     describe_error(r_code);
 
     // free all resources
+    symtable_free(symlist->table);
+    free(symlist);
     free(stringbuffer.string);
-    sym_list_dispose(&symlist);
     free_token_list(&tokens);
 
     return 0;

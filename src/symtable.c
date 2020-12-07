@@ -453,8 +453,10 @@ void symtable_free(Symtable *table)
                 dynamic_string_free(current->itemData.dynamicstring);
                 free(current->itemData.dynamicstring);
             }
+            
             free(current->key);
             free(current);
+            
             current = next;
         }
         (*table)[i] = NULL; //is it really needed?

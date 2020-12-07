@@ -50,7 +50,7 @@ Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TermType typ
     switch (type)
     {
     case T_INT:
-        return symtable_add_int(table, id, 1);  // TODO value does not have to be saved
+        return symtable_add_int(table, id, 1); // TODO value does not have to be saved
         break;
 
     case T_FLOAT:
@@ -65,7 +65,6 @@ Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TermType typ
         return NULL;
         break;
     }
-
 }
 
 void sym_list_remove_last(symtableList *list)

@@ -45,10 +45,28 @@ typedef enum
     ERR_INVALID_MAIN_DEFINITION,
     ERR_INVALID_EXPRESSION,
     ERR_WRONG_NUMBER_LVALUES,
-    ERR_WRONG_LVALUE_TYPE
+    ERR_WRONG_LVALUE_TYPE,
+    ERR_SYMTABLE,
+    ERR_TYPE_MISMATCH
 
 } ERR_CODE_SYN;
 // ################### end of error codes #################
+
+// ################### macros #################
+
+/**
+ * @brief Condition for checking tokentype, ==
+ * 
+ */
+#define TOKEN_IS(tt) (curr_token->tokentype == tt)
+
+/**
+ * @brief Condition for checking tokentype, !=
+ * 
+ */
+#define TOKEN_IS_NOT(tt) (curr_token->tokentype != tt)
+
+// ################### end of macros #################
 
 /**
  * @brief Maximum number of return values that can be returned from a function
@@ -121,5 +139,12 @@ void describe_error(ERR_CODE_SYN err);
  */
 Symtable_item *was_it_defined(symtableList list, char *key);
 
+/**
+ * @brief Processes all sucessive eols
+ * 
+ * 
+ * @return int 
+ */
+int s_eols();
 
 #endif /* SYNTAX_COMMON */

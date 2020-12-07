@@ -105,6 +105,14 @@ RelType TokenToTerm(TOKEN_TYPES token){
             return TR_VALUE;
         case TOKEN_TYPE_STRING:
             return TR_VALUE;
+        case TOKEN_TYPE_GREATER_EQUAL:
+            return TR_GT_LT;
+        case TOKEN_TYPE_GREATER_THAN:
+            return TR_GT_LT;
+        case TOKEN_TYPE_LOWER_EQUAL:
+            return TR_GT_LT;
+        case TOKEN_TYPE_LOWER_THAN:
+            return TR_GT_LT;
         default:
             return TR_$;
 
@@ -518,7 +526,7 @@ int StartExpr(symtableList TableList, TermType *type){
                         reading = 0; //konec výrazu
                     }
                     else{
-                        fprintf(stderr, "Expression can not be empty\n");
+                        fprintf(stderr, "Line %li: Expression can not be empty\n", line);
                         reading = -3; //výraz nemůže být prázdný
                     }
                 }
@@ -530,7 +538,7 @@ int StartExpr(symtableList TableList, TermType *type){
                         }
                     }
                     else {
-                    fprintf(stderr, "Expression isnt right\n"); //some problem in exp
+                    fprintf(stderr, "Line %li: Expression isnt right\n", line); //some problem in exp
                     reading = -4;
                     }
                 }   
@@ -541,6 +549,7 @@ int StartExpr(symtableList TableList, TermType *type){
         *type = Result;
     }
     DisposeStack(&stack);
+    return_token(curr_token);
     return reading;             //stav v jakém skončilo převádění
 }
 

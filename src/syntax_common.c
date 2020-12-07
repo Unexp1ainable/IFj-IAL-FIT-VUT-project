@@ -27,6 +27,18 @@ void return_token(TOKEN *token)
     token_buffer = token;
 }
 
+int s_eols()
+{
+    do
+    {
+        get_token(&curr_token);
+        line++;
+    } while (TOKEN_IS(TOKEN_TYPE_EOL));
+    line--;
+    return_token(curr_token);
+    return NO_ERR;
+}
+
 void describe_error(ERR_CODE_SYN err)
 {
     switch (err)
@@ -162,6 +174,14 @@ void describe_error(ERR_CODE_SYN err)
     case ERR_WRONG_LVALUE_TYPE:
         fprintf(stderr, "Line %li: Wrong type of lvalue/s.\n", line);
         break;
+    
+    case ERR_SYMTABLE:
+        fprintf(stderr, "Line %li: FUNC_INIT failure. Symtable error has occured.\n", line);
+        break;
+
+    case ERR_TYPE_MISMATCH:
+            fprintf(stderr, "Line %li: ID-term type mismatch.\n", line);
+            break;
 
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
