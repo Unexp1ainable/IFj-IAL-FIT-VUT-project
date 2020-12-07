@@ -20,6 +20,7 @@ void InitStack(MyStack *Stack){
     {
         *Stack = malloc(sizeof(struct TheStack));
         if((*Stack) == NULL){
+            fprintf(stderr,"Memory allocation failed\n");
             return;
         }
         (*Stack)->p = malloc((START_STACK_SIZE)*sizeof(Item));
@@ -182,8 +183,8 @@ Relation PrecedenceTable(RelType First, RelType Second){
     return R_EMPTY;
 }
  int CheckWhileR_Close(MyStack stack, symtableList TableList){
-    Item item = PopStack(stack);
-    if(item->type == IT_TERM){
+    Item item = PopStack(stack);            //vezmeme co máme na stacku
+    if(item->type == IT_TERM){             
         if(item->val.term.tokentype == TOKEN_TYPE_CLOSING_CLASSIC_BRACKET){
             free(item);
             item = PopStack(stack);
@@ -193,30 +194,34 @@ Relation PrecedenceTable(RelType First, RelType Second){
         else{
             char *interpret;
             TermType type = T_UNKNOWN;
-            switch(item->val.term.tokentype){
+            switch(item->val.term.tokentype){               //rozhodneme co za term máme
                 case TOKEN_TYPE_INTEGER:
                     type =  T_INT;
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
+                        fprintf(stderr,"Memory allocation failed\n");
                         return INTERN_ERROR;
                         }
                      int u = item->val.term.integer;
                     sprintf(interpret,"#INT#%d", u);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
+                        fprintf(stderr,"Memory allocation failed\n");
                         return INTERN_ERROR;
                     }
-                    Result = T_INT;
+                    Result = T_INT;                         //uložíme dočasně co máme za term
                 break;
                 case TOKEN_TYPE_FLOAT64:
                     type = T_FLOAT;
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
+                        fprintf(stderr,"Memory allocation failed\n");
                         return INTERN_ERROR;
                         }
                     sprintf(interpret,"#FLOAT#%f",item->val.term.floater);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
+                        fprintf(stderr,"Memory allocation failed\n");
                         return INTERN_ERROR;
                     }
                     Result = T_FLOAT;
@@ -225,6 +230,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     Result = T_STRING;
                     interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
                     if(interpret == NULL){
+                        fprintf(stderr,"Memory allocation failed\n");
                         return INTERN_ERROR;
                     }
                     strcpy(interpret,"#STRING#");
@@ -234,12 +240,13 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 case TOKEN_TYPE_IDENTIFIER:
                     if(was_it_defined(TableList, item->val.term.string->string) == false){
                         free(item);
-                        printf("neznám toto id\n");
+                        fprintf(stderr,"Undefined identifier\n");
                         return SEM_ERR_UNDEF;
                     }
                     else{
                         interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+5));
                             if(interpret == NULL){
+                                fprintf(stderr,"Memory allocation failed\n");
                                 return INTERN_ERROR;
                             }
                         strcpy(interpret, "#ID#");
@@ -249,13 +256,14 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 case TOKEN_TYPE_EMPTY:
                     interpret = malloc(sizeof(char)*7);
                         if(interpret == NULL){
-                                return INTERN_ERROR;
+                            fprintf(stderr,"Memory allocation failed\n");
+                            return INTERN_ERROR;
                         }
                     strcpy(interpret, "#NULL#");
                     type = T_EMPTY;
                     break;
                 default:
-                    printf("Chyba, špatná poslopnoust\n");
+                   fprintf(stderr,"Invalid expression\n");
                     free(item);
                     return INTERN_ERROR;
                 
@@ -268,7 +276,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
         PushStack(stack,item);
         return 0; //item na zásobník
     }
-    Item RightItem = item;
+    Item RightItem = item;          
     item  = PopStack(stack);
     Item  LeftItem = PopStack(stack);
 
@@ -283,7 +291,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
     }
     else OnlyOne = true;
     bool Same = false;
-
+    //rozhodování o druhu result typu
     TOKEN_TYPES Type = item->val.term.tokentype;  
 
     if(OnlyOne == false){
@@ -315,21 +323,21 @@ Relation PrecedenceTable(RelType First, RelType Second){
             Result = RightType;
         }
     }
-
+    //kontrola správnosti typů
     switch(Type){
         case TOKEN_TYPE_ADD:
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_STRING && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
@@ -338,32 +346,30 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
         case TOKEN_TYPE_MULTIPLY:
-            printf("násobím\n");
-            printf("násobím %u a %u\n", LeftItem->val.type, RightItem->val.type);
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
@@ -374,14 +380,14 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
             if(RightItem->val.term.integer == 0){
@@ -399,7 +405,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
@@ -412,14 +418,14 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
             if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                printf("Chyba typů\n");
+                fprintf(stderr,"Unsupported combination of data types\n");
                 return SEM_ERR_NEW_VAR;
             }
         break;
@@ -427,9 +433,10 @@ Relation PrecedenceTable(RelType First, RelType Second){
             free(RightItem);
             free(LeftItem);
             free(item);
-            printf("Chyba typů\n");
+            fprintf(stderr,"Unsupported combination of data types\n");
             return SEM_ERR_NEW_VAR;
     }
+    
     free(RightItem);
     free(LeftItem);
     item->val.type = Result;
@@ -460,26 +467,35 @@ int StartExpr(symtableList TableList, TermType *type){
             curr=TokenToTerm(stack->p[FirstTermPosition]->val.term.tokentype);
         }
         new = TokenToTerm(curr_token->tokentype);
+        //Podle precedenční tabulky rozhhodneme o realci
         Relation ResultRelation = PrecedenceTable(curr,new);
         switch (ResultRelation)
         {
             case R_CLOSE:
+                //v close se děje výpočet a kontrola
                 if(CheckWhileR_Close(stack,TableList) != 0){
                     reading = -1; //chyba už vypsaná z funkce
                 }
                 break;
             case R_OPEN:
+                //v open se pouze pushne na stack
                 PushStack(stack,NULL);
                 int position = FirstTermPosition + 1;
                 for(int i = stack->top-1; i >= position; i-- ){     //udělat místo a posunout
                     stack->p[i+1]=stack->p[i];
                 }
                 Item New = malloc(sizeof(struct item));
-                if(New == NULL) return INTERN_ERROR;
+                if(New == NULL) {
+                    fprintf(stderr,"Memory allocation failed\n");
+                    return INTERN_ERROR;
+                }
                 New->type = IT_OPEN;
                 stack->p[position] = New;
                 item = malloc(sizeof(struct item));
-                if(item == NULL) return INTERN_ERROR;
+                if(item == NULL) {
+                    fprintf(stderr,"Memory allocation failed\n");
+                    return INTERN_ERROR;
+                }
                 item->type = IT_TERM;
                 item->val.term = *curr_token;
                 PushStack(stack, item);
@@ -487,7 +503,10 @@ int StartExpr(symtableList TableList, TermType *type){
                 break;
             case R_EQUAL:
                 item = malloc(sizeof(struct item));
-                if(item == NULL) return INTERN_ERROR;
+                if(item == NULL){
+                    fprintf(stderr,"Memory allocation failed\n");
+                    return INTERN_ERROR;
+                }
                 item->type = IT_TERM;
                 item->val.term = *curr_token;
                 PushStack(stack,item);
@@ -506,7 +525,6 @@ int StartExpr(symtableList TableList, TermType *type){
                 else{
                     if(stack->top == 1){
                         if(new == TR_RBRACKET){
-                            printf("přebytečná závorka\n");
                                 reading = 0;
                                 return_token(curr_token);
                         }
@@ -519,7 +537,7 @@ int StartExpr(symtableList TableList, TermType *type){
         }
     }
     if(reading == 0){
-    printf("%u\n", Result);
+ //   printf("%u\n", Result);
         *type = Result;
     }
     DisposeStack(&stack);
