@@ -789,6 +789,7 @@ int s_id_n(symtableList symlist, char *id)
 {
     get_token(&curr_token);
     return_token(curr_token);
+    int r_code;
 
     Symtable_item *already_defined = was_it_defined(symlist, id);
 
@@ -813,7 +814,9 @@ int s_id_n(symtableList symlist, char *id)
         memcpy(id_list, already_defined, sizeof(Symtable_item));
         id_list_n++;
 
-        return s_id_assign(symlist);
+        r_code = s_id_assign(symlist);
+        id_list_n = 0;
+        return r_code;
         break;
 
     // ,
@@ -826,7 +829,9 @@ int s_id_n(symtableList symlist, char *id)
         memcpy(id_list, already_defined, sizeof(Symtable_item));
         id_list_n++;
 
-        return s_id_list_assign(symlist);
+        r_code = s_id_list_assign(symlist);
+        id_list_n = 0;
+        return r_code;
         break;
 
     // (
@@ -1198,7 +1203,6 @@ int s_func_assign(Symtable_item *func_def)
         }
     }
 
-    id_list_n = 0;
     return NO_ERR;
 }
 
