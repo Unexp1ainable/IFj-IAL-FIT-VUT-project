@@ -1002,6 +1002,7 @@ int s_id_assign_v(symtableList symlist)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_OPENING_CURVY_BRACKET))
     {
+        return_token(curr_token);
         return NO_ERR;
     }
 
