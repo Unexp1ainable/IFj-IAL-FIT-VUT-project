@@ -18,6 +18,7 @@ void InitStack(MyStack *Stack){
     }
     else
     {
+        printf("hovno");
         *Stack = malloc(sizeof(struct TheStack));
         if((*Stack) == NULL){
             return;
@@ -26,6 +27,7 @@ void InitStack(MyStack *Stack){
         if(((*Stack)->p) == NULL){
             return;
         }
+        printf("hovno");
         (*Stack)->top = 0;
         (*Stack)->size = START_STACK_SIZE;
     }
@@ -443,10 +445,15 @@ Relation PrecedenceTable(RelType First, RelType Second){
 }
 
 int StartExpr(symtableList TableList, TermType *type){
+    printf("start\n");
     get_token(&curr_token);
+    printf("start\n");
     int reading = 1;
+    printf("start\n");
     MyStack stack;
+    printf("start\n");
     InitStack(&stack);
+    printf("start\n");
     while(reading > 0){
         RelType curr;
         RelType new;
@@ -464,11 +471,13 @@ int StartExpr(symtableList TableList, TermType *type){
         switch (ResultRelation)
         {
             case R_CLOSE:
+                printf("jsem v close");
                 if(CheckWhileR_Close(stack,TableList) != 0){
                     reading = -1; //chyba už vypsaná z funkce
                 }
                 break;
             case R_OPEN:
+                printf("jsem v open");
                 PushStack(stack,NULL);
                 int position = FirstTermPosition + 1;
                 for(int i = stack->top-1; i >= position; i-- ){     //udělat místo a posunout
