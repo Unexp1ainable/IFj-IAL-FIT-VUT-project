@@ -137,18 +137,71 @@ typedef struct{
 ####################################################################################################################
 */
 
-
+/**
+ * @brief fill the tokenptr by next token in the file, also save copy in the list of tokens
+ * */
 int get_next_token      (TOKEN * tokenptr, TokenList * tokenlist);
+
+
+/**
+ * @brief fille the tokenptr by next saved token in the list of tokens
+ * */
 bool get_next_token_list(TOKEN ** tokenptr, TokenList * tokenlist);
+
+/**
+ * @brief assistive function. Set the scanner status. Best left untouched
+ * */
 void set_fsm_state      (FSM_STATES input);
+
+/**
+ * @brief create a token with float value
+ * */
 void make_token_float   (TOKEN * t,        char* num);
+
+
+/**
+ * @brief copy the dynamic string inside a token dynamic string
+ * */
 bool dynamic_string_copy(TOKEN * token,    Dynamic_string *dynamicstring);
+
+
+/**
+ * @brief save a token into a token list. Assistive function
+ * */
 bool save_next_token    (TokenList * tokenlist,TOKEN * token);
+
+
+/**
+ * @brief initialise the tokenlist values. Valgrind doesnt like uninitialised values. Make it happy
+ * */
 void init_token_list    (TokenList * tokenlist);
+
+
+/**
+ * @brief copy the data of src token to dest token
+ * */
 bool copy_token         (TOKEN * dest, TOKEN * src);
+
+
+/**
+ * @brief copy string from one token to another token
+ * */
 bool dynamic_string_copy_string (TOKEN * dest,TOKEN * src);
+
+
+/**
+ * @brief free all tokens saved in the list of tokens
+ * */
 void free_token_list    (TokenList * tokenlist);
+
+
+/**
+ * @brief set list position to 0
+ * */
 void reset_list_position(TokenList *t_list);
+
+
+
 int load_tokens(TokenList *t_list);
 
 // variables

@@ -368,15 +368,6 @@ int s_body(symtableList symlist, FuncItemData *func_ptr)
 
     sym_list_remove_last(&symlist);
 
-    // eol
-    if (!eol_required())
-    {
-        return ERR_EOL_EXPECTED;
-    }
-
-    // <eols>
-    s_eols();
-
     return NO_ERR;
 }
 
@@ -693,6 +684,7 @@ int s_for(symtableList symlist)
     }
 
     // ;
+    get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_SEMICOLON))
     {
         return ERR_SEMICOLON_EXPECTED;
@@ -713,6 +705,7 @@ int s_for(symtableList symlist)
     }
 
     // ;
+    get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_SEMICOLON))
     {
         return ERR_SEMICOLON_EXPECTED;
@@ -906,7 +899,7 @@ int s_id_list(symtableList symlist)
     else
     {
         sym_item = was_it_defined(symlist, curr_token->string->string);
-        if (sym_item)
+        if (!sym_item)
         {
             return ERR_ID_UNDEFINED;
         }
@@ -939,7 +932,7 @@ int s_id_list_n(symtableList symlist)
             else
             {
                 sym_item = was_it_defined(symlist, "_");
-                if (sym_item)
+                if (!sym_item)
                 {
                     return ERR_ID_UNDEFINED;
                 }
@@ -948,7 +941,7 @@ int s_id_list_n(symtableList symlist)
         else
         {
             sym_item = was_it_defined(symlist, curr_token->string->string);
-            if (sym_item)
+            if (!sym_item)
             {
                 return ERR_ID_UNDEFINED;
             }
