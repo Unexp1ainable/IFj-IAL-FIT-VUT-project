@@ -94,4 +94,6 @@ clean:
 	rm *.html 2> /dev/null || echo > /dev/null
 	rm *.gcda 2> /dev/null || echo > /dev/null
 	rm *.gcno 2> /dev/null || echo > /dev/null
+	rm *.gch  2> /dev/null || echo > /dev/null
+	rm src/*.gch 2> /dev/null || echo > /dev/null
 	rm check_symtable_tests 2> /dev/null || echo > /dev/null
