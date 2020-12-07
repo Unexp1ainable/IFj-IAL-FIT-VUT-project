@@ -248,7 +248,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 case TOKEN_TYPE_IDENTIFIER:
                     if(was_it_defined(TableList, item->val.term.string->string)== false){
                         free(item);
-                        return ERR_UNDEF_ID;
+                        return ERR_ID_UNDEFINED;
                     }
                     else{
                         interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+5));
@@ -394,7 +394,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
-                return ERR_TYPE_COMB;
+                return ERR_ZERO_DIVISION;
             }
         break;
         case TOKEN_TYPE_EQUAL:

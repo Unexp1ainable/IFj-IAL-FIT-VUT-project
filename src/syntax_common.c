@@ -10,7 +10,8 @@ void get_token(TOKEN **token)
 {
     if (token_buffer == NULL)
     {
-        if(!get_next_token_list(token, &tokens)){
+        if (!get_next_token_list(token, &tokens))
+        {
             fputs("Something went extremely wrong. Token list corrupted?\n", stderr);
             exit(1);
         }
@@ -171,22 +172,41 @@ void describe_error(ERR_CODE_SYN err)
         fprintf(stderr, "Line %li: Wrong number of lvalues.\n", line);
         break;
 
-    case ERR_WRONG_LVALUE_TYPE:
-        fprintf(stderr, "Line %li: Wrong type of lvalue/s.\n", line);
+    case ERR_TYPE_MISMATCH:
+        fprintf(stderr, "Line %li: ID-term type mismatch.\n", line);
         break;
-    
+
     case ERR_SYMTABLE:
         fprintf(stderr, "Line %li: FUNC_INIT failure. Symtable error has occured.\n", line);
         break;
-
-    case ERR_TYPE_MISMATCH:
-            fprintf(stderr, "Line %li: ID-term type mismatch.\n", line);
-            break;
 
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
         break;
     }
+}
+
+int map_err_code(int code)
+{
+    // I know that it is probably not the best solution, but I really like it
+    if (code == NO_ERR)
+        return 0;
+    if (code < SYNTAX_ERRORS)
+        return SYNTAX_ERROR;
+    if (code < SEM_ERR_UNDEFS)
+        return SEM_ERR_UNDEF;
+    if (code < SEM_ERR_NEW_VARS)
+        return SEM_ERR_NEW_VAR;
+    if (code < SEM_ERR_TYPE_COMPATS)
+        return SEM_ERR_TYPE_COMPAT;
+    if (code < SEM_ERR_PAR_NUMS)
+        return SEM_ERR_PAR_NUM;
+    if (code < SEM_ERR_OTHERS)
+        return SEM_ERR_OTHER;
+    if (code < SEM_ERR_DIV_ZEROS)
+        return SEM_ERR_DIV_ZERO;
+    else
+        return INTERN_ERROR;
 }
 
 Symtable_item *was_it_defined(symtableList list, char *key)

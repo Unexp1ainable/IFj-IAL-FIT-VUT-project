@@ -864,9 +864,13 @@ int s_id_def(symtableList symlist, char *id)
     {
         return r_code;
     }
-    sym_list_add_to_last(symlist, id, type);
 
-    return r_code;
+    if (type == T_STRING || type == T_INT || type == T_FLOAT)
+    {
+        sym_list_add_to_last(symlist, id, type);
+        return r_code;
+    }
+    return ERR_TYPE_UNDETERMINED;
 }
 
 int s_id_def_v(symtableList symlist)
@@ -1039,6 +1043,7 @@ int s_id_list_assign(symtableList symlist)
     if (curr_token->tokentype != TOKEN_TYPE_IDENTIFIER)
     {
         return_token(curr_token);
+        // TODO check validity and number of the asignees
         return s_expr_list(symlist);
     }
     // it is identifier, but we don`t know if it is a function
@@ -1200,7 +1205,7 @@ int s_func_assign(Symtable_item *func_def)
         }
         if (func_def->itemData.funcitemptr->return_types[i] != id_list[i].dataType)
         {
-            return ERR_WRONG_LVALUE_TYPE;
+            return ERR_TYPE_MISMATCH;
         }
     }
 
