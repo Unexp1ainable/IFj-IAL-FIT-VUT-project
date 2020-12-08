@@ -41,6 +41,12 @@ extern Symtable_item id_list[MAX_N_RET_VAL];
  * 
  */
 extern int id_list_n;
+
+/**
+ * @brief Body of which function is curently being analysed
+ * 
+ */
+extern char *curr_func;
 // ################### end of global variables #################
 
 // ############################# helper functions ###########################
@@ -58,6 +64,16 @@ bool eol_required();
  * @return int Error code, 0 if ok
  */
 int initialise_predefined(Symtable *table);
+
+/**
+ * @brief Copies return parameters from the curr_func to the id_list. 
+ * 
+ * Used in s_return()
+ * 
+ * @param symlist List of symtables
+ * @return int Error code, 0 if ok
+ */
+int copy_to_id(symtableList symlist);
 
 // ################### end of helper functions #################
 
@@ -236,7 +252,7 @@ int s_expr_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_expr_list_n(symtableList symlist);
+int s_expr_list_n(symtableList symlist, int n);
 
 /**
  * @brief Id was found in the statement - crossroads
@@ -315,7 +331,6 @@ int s_id_assign_v(symtableList symlist);
  * @return int
  */
 int s_id_list_assign(symtableList symlist);
-
 
 /**
  * @brief Assigning values to id/s from function.
