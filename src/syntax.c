@@ -130,6 +130,7 @@ int copy_to_id(SymtableStack *symlist)
     for (int i = 0; i < func->itemData.funcitemptr->used_return; i++)
     {
         id_list[i].dataType = func->itemData.funcitemptr->return_types[i]; // not ideal but whatever
+        id_list_n++;
     }
 
     return 0;
@@ -166,6 +167,9 @@ int s_prolog(SymtableStack *symlist)
 
     // <eols>
     s_eols();
+
+    if (first_pass)
+        return NO_ERR;
 
     // <f_list>
     int r_code = s_f_list(symlist);
@@ -660,15 +664,18 @@ int s_if(SymtableStack *symlist)
     TermType type;
     int r_code = s_expr(symlist, &type);
 
-    if (type != T_BOOL)
-    {
-        return ERR_INVALID_EXPRESSION;
-    }
-
     if (r_code)
     {
+        if (r_code == ERR_EMPTY_EXP)
+            return ERR_NO_EXPR;
         return r_code;
     }
+
+    if (type != T_BOOL)
+    {
+        return ERR_INVALID_EXPRESSION_IF;
+    }
+
 
     // <body>
     r_code = s_body(symlist, NULL);
@@ -731,6 +738,8 @@ int s_for(SymtableStack *symlist)
 
     if (r_code)
     {
+        if (r_code == ERR_EMPTY_EXP)
+            return ERR_NO_EXPR;
         return r_code;
     }
 
@@ -773,6 +782,7 @@ int s_expr_list(SymtableStack *symlist)
 
     if (TOKEN_IS(TOKEN_TYPE_EOL))
     {
+        id_list_n = 0;
         return NO_ERR;
     }
 
@@ -805,6 +815,7 @@ int s_expr_list_n(SymtableStack *symlist, int n)
             return ERR_NOT_ENOUGH_RVALUES;
         }
         return_token(curr_token);
+        id_list_n = 0;
         return NO_ERR;
     }
 
@@ -917,6 +928,8 @@ int s_id_def(SymtableStack *symlist, char *id)
 
     if (r_code)
     {
+        if (r_code == ERR_EMPTY_EXP)
+            return ERR_NO_EXPR;
         return r_code;
     }
 
@@ -1036,7 +1049,10 @@ int s_id_assign(SymtableStack *symlist)
     if (curr_token->tokentype != TOKEN_TYPE_IDENTIFIER)
     {
         return_token(curr_token);
-        return s_expr(symlist, &type);
+        int r_code = s_expr(symlist, &type);
+        if (r_code == ERR_EMPTY_EXP)
+            return ERR_NO_EXPR;
+        return r_code;
     }
 
     Symtable_item *item = was_it_defined(symlist, curr_token->string->string);

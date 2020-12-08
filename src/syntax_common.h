@@ -47,6 +47,8 @@ typedef enum
     ERR_ID_ASSIGN_EXPECTED,      // expected =
     ERR_TYPE_EXPECTED,           // expected type identifier
     ERR_MISSING_ELSE,            // if is without the else
+    ERR_INVALID_EXPRESSION_IF,   // if does not have valid condition
+    ERR_NO_EXPR,             // id definition does not have an expression
 
     // =================================
     SEM_ERR_UNDEFS, // 3

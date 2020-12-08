@@ -333,7 +333,6 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                 }
                 else if (!strcmp(stringbuffer.string, "float64"))
                 {
-                    printf("found float64.\n");
                     tokenptr->keyword = KEYWORD_FLOAT64;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
@@ -949,7 +948,7 @@ bool dynamic_string_copy_string(TOKEN *dest, TOKEN *src)
     if (((dest->tokentype != TOKEN_TYPE_STRING && dest->tokentype != TOKEN_TYPE_IDENTIFIER) &&
          ((src->tokentype != TOKEN_TYPE_STRING) && src->tokentype != TOKEN_TYPE_IDENTIFIER)))
     {
-        printf("AA\n");
+        //printf("AA\n");
         return false;
     }
     if (dest->string == NULL || src->string == NULL)

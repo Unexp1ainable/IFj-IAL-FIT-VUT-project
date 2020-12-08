@@ -29,6 +29,10 @@ int main()
     // begin check
     // first pass - register all function fingerprints
 
+    r_code = s_prolog(&symlist);
+    if (r_code)
+        goto cleanup;
+
     do
     {
         get_token(&curr_token);
@@ -42,7 +46,38 @@ int main()
                     // first pass failed
                     goto cleanup;
                 }
+
+                get_token(&curr_token);
+                if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CURVY_BRACKET))
+                {
+                    r_code = ERR_BODY_START;
+                    goto cleanup;
+                }
+                int bracket = 1;
+                do
+                {
+                    get_token(&curr_token);
+                    if (TOKEN_IS(TOKEN_TYPE_OPENING_CURVY_BRACKET)){
+                        bracket++;
+                    }
+                    if (TOKEN_IS(TOKEN_TYPE_CLOSING_CURVY_BRACKET)){
+                        bracket--;
+                    }
+
+                } while (bracket != 0 && TOKEN_IS_NOT(TOKEN_TYPE_EOF));
+
+                if (TOKEN_IS(TOKEN_TYPE_EOF))
+                {
+                    r_code = ERR_BODY_END;
+                    goto cleanup;
+                }
+                s_eols();
             }
+        }
+        else
+        {
+            r_code = ERR_FUNC_EXPECTED;
+            goto cleanup;
         }
     } while (curr_token->tokentype != TOKEN_TYPE_EOF);
 
@@ -50,6 +85,7 @@ int main()
     first_pass = false;
     line = 1;
     reset_list_position(&tokens);
+    token_buffer = NULL;
 
     Symtable_item *main_f = was_it_defined(&symlist, "main");
     // check if main() was defined

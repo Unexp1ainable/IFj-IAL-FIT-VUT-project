@@ -195,6 +195,14 @@ void describe_error(ERR_CODE_SYN err)
     case ERR_ID_IS_NOT_FUNC:
             fprintf(stderr, "Line %li: Trying to call a function, but defined id is not a function.\n", line);
             break;
+    
+    case ERR_INVALID_EXPRESSION_IF:
+            fprintf(stderr, "Line %li: Condition is not valid.\n", line);
+            break;
+
+    case ERR_NO_EXPR:
+            fprintf(stderr, "Line %li: Expression is empty.\n", line);
+            break;
 
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
