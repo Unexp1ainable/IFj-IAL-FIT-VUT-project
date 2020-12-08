@@ -190,7 +190,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
     }
     return R_EMPTY;
 }
- int CheckWhileR_Close(MyStack stack, symtableList TableList){
+ int CheckWhileR_Close(MyStack stack, SymtableStack *TableList){
     Item item = PopStack(stack);            //vezmeme co máme na stacku
     if(item->type == IT_TERM){             
         if(item->val.term.tokentype == TOKEN_TYPE_CLOSING_CLASSIC_BRACKET){
@@ -438,7 +438,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
     return 0;
 }
 
-int StartExpr(symtableList TableList, TermType *type){
+int StartExpr(SymtableStack *TableList, TermType *type){
     get_token(&curr_token);
     int reading = 1;
     MyStack stack;
@@ -538,6 +538,6 @@ int StartExpr(symtableList TableList, TermType *type){
     return reading;             //stav v jakém skončilo převádění
 }
 
-int s_expr(symtableList TableList, TermType *type){
+int s_expr(SymtableStack *TableList, TermType *type){
     return StartExpr(TableList, type);  // TODO not good
 }

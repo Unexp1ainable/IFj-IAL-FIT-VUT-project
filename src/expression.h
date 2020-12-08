@@ -11,7 +11,7 @@
 
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
-#include "symtable_list.h"
+#include "table_hierarchy.h"
 #include "symtable.h"
 #include "error.h"
 #include "newscanner.h"
@@ -81,8 +81,8 @@ RelType TokenToTerm(TOKEN_TYPES token);
 
 Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
 
-int CheckWhileR_Close(MyStack stack, symtableList TableList);
+int CheckWhileR_Close(MyStack stack, SymtableStack *TableList);
 
-int StartExpr(symtableList TableList, TermType *type); // added temporary function in order for gcc to shut up
+int StartExpr(SymtableStack *TableList, TermType *type); // added temporary function in order for gcc to shut up
 
 #endif /* EXPRESSION_H */

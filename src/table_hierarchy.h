@@ -14,6 +14,7 @@
  * The system of tables is implemented as a stack of Symtable structs, with dynamic allocation
  * */
 #include "symtable.h"
+#include "syntax_common.h"
 #ifndef TABLE_HIERARCHY_H
 #define TABLE_HIERARCHY_H
 #define DEFAULT_STACK_SIZE 2
@@ -68,5 +69,33 @@ Symtable * stackPop(SymtableStack * symtablestack);
  * @brief frees the stack and all of its contents
  * */
 void stackFree(SymtableStack * symtablestack);
+
+/**
+ * @brief Adds variable (not function) to the last symtable in the list
+ * 
+ * @note Expects list of symtables with at least 1 symtable
+ * 
+ * @param symlist List of symtables
+ * @param id Name of the variable
+ * @param var Token with the variable's value
+ * @return Symtable_item* Pointer to the item if succeeded, NULL otherwise
+ */
+Symtable_item *sym_list_add_to_last(SymtableStack *symlist, char *id, TermType type);//TODO rename
+
+/**
+ * @brief returns topmost table from the stack
+ * 
+ * @param symlist 
+ * @return Symtable* 
+ */
+Symtable *stackTop(SymtableStack *symlist);
+
+/**
+ * @brief returns bottomost table from the stack
+ * 
+ * @param symlist 
+ * @return Symtable* 
+ */
+Symtable *stackBottom(SymtableStack *symlist);
 
 #endif

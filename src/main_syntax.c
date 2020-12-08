@@ -1,19 +1,19 @@
 #include "syntax.h"
 #include "symtable.h"
-#include "symtable_list.h"
+#include "table_hierarchy.h"
 
 int main()
 {
     // initialisation of the structures
     dynamic_string_init(&stringbuffer);
 
-    symtableList symlist;
-    sym_list_init(&symlist);
+    SymtableStack symlist;
+    stackInit(&symlist);
 
     Symtable global;
     symtable_init(&global);
     initialise_predefined(&global);
-    sym_list_add(&symlist, &global);
+    stackPush(&symlist, &global);
 
     init_token_list(&tokens);
 
@@ -36,7 +36,7 @@ int main()
         {
             if (curr_token->keyword == KEYWORD_FUNC)
             {
-                r_code = s_func(symlist);
+                r_code = s_func(&symlist);
                 if (r_code)
                 {
                     // first pass failed
@@ -51,7 +51,7 @@ int main()
     line = 1;
     reset_list_position(&tokens);
 
-    Symtable_item *main_f = was_it_defined(symlist, "main");
+    Symtable_item *main_f = was_it_defined(&symlist, "main");
     // check if main() was defined
     if (!main_f)
     {
@@ -69,7 +69,7 @@ int main()
     }
 
     // second pass
-    r_code = s_prolog(symlist);
+    r_code = s_prolog(&symlist);
 
 // deallocate all structures in case of an error
 cleanup:
@@ -77,8 +77,7 @@ cleanup:
     describe_error(r_code);
 
     // free all resources
-    symtable_free(symlist->table);
-    free(symlist);
+    stackFree(&symlist);
     free(stringbuffer.string);
     free_token_list(&tokens);
 

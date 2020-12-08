@@ -45,17 +45,6 @@ void sym_list_init(symtableList *list);
  */
 symListItemPtr sym_list_add(symtableList *list, Symtable *table);
 
-/**
- * @brief Adds variable (not function) to the last symtable in the list
- * 
- * @note Expects list of symtables with at least 1 symtable
- * 
- * @param symlist List of symtables
- * @param id Name of the variable
- * @param var Token with the variable's value
- * @return Symtable_item* Pointer to the item if succeeded, NULL otherwise
- */
-Symtable_item *sym_list_add_to_last(symtableList symlist, char *id, TermType type);
 
 /**
  * @brief Remove last item from the list

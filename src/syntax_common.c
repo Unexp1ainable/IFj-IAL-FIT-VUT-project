@@ -184,6 +184,10 @@ void describe_error(ERR_CODE_SYN err)
             fprintf(stderr, "Line %li: Else is missing.\n", line);
             break;
 
+    case  ERR_TOO_MANY_RVALUES:
+            fprintf(stderr, "Line %li: Too many Rvalues.\n", line);
+            break;
+
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
         break;
@@ -215,27 +219,20 @@ int map_err_code(int code)
         return INTERN_ERROR;
 }
 
-Symtable_item *was_it_defined(symtableList list, char *key)
+Symtable_item *was_it_defined(SymtableStack *stack, char *key)
 {
-
-    symListItemPtr curr_list_item = list;
     Symtable_item *symbol = NULL;
 
-    if (list == NULL)
-    {
-        return false;
-    }
-
-    while (curr_list_item != NULL)
-    {
-        symbol = symtable_search(curr_list_item->table, key);
-
-        if (symbol != NULL)
-        {
+    for (int i = 0; i <= stack->top; i++){
+        symbol = symtable_search(stack->table[stack->top - i], key);
+        if(symbol)
             return symbol;
-        }
-
-        curr_list_item = curr_list_item->next;
     }
-    return symbol;
+
+    return NULL;
+}
+
+Symtable_item *was_it_defined_top(SymtableStack *stack, char *key)
+{
+    return symtable_search(stack->table[stack->top], key);
 }

@@ -2,7 +2,7 @@
 #define SYNTAX_COMMON
 
 #include "newscanner.h"
-#include "symtable_list.h"
+#include "table_hierarchy.h"
 #include "error.h"
 
 // ################### error codes #################
@@ -49,7 +49,6 @@ typedef enum
     ERR_MAIN_MISSING,            // main() function was not defined
     ERR_EMPTY_EXP,               // expression was empty
     ERR_MISSING_ELSE,            // if is without the else
-    ERR_INVALID_EXPRESSION,      // expected evaluation result to be bool
 
     // =================================
     SEM_ERR_UNDEFS, // 3
@@ -57,7 +56,6 @@ typedef enum
     ERR_FUNC_REDEFINITION,        // function was already defined
     ERR_ID_REDEFINITION,         // id was already defined
     ERR_ID_UNDEFINED,            // id was not defined
-    ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined
 
     // =================================
     SEM_ERR_NEW_VARS, // 4
@@ -67,6 +65,8 @@ typedef enum
     // =================================
     SEM_ERR_TYPE_COMPATS, // 5
     //----------------------------
+    ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined
+    ERR_INVALID_EXPRESSION,      // expected evaluation result to be bool
     ERR_TYPE_COMB,               // invalid expression
     ERR_EXP_ORDER,               // TODO idk invalid expression order 
 
@@ -80,6 +80,7 @@ typedef enum
     SEM_ERR_OTHERS, // 7
     //----------------------------
     ERR_INVALID_MAIN_DEFINITION, // main() function has defined parameters or return values
+    ERR_TOO_MANY_RVALUES,         // too many Rvalues
 
     // =================================
     SEM_ERR_DIV_ZEROS, // 9
@@ -185,15 +186,23 @@ void return_token(TOKEN *token);
 void describe_error(ERR_CODE_SYN err);
 
 /**
- * @brief Check if id is already in symtable
+ * @brief Check if id is already in one ofsymtables
  * 
- * @param list List of symtables
+ * @param stack Stack of symtables
  * @param key_t Id which to look for
  * 
- * @return true If it is in symtable
- * @return false If it is not in symtable
+ * @return Symtable_item* Pointer if found, otherwise NULL
  */
-Symtable_item *was_it_defined(symtableList list, char *key);
+Symtable_item *was_it_defined(SymtableStack *stack, char *key);
+
+/**
+ * @brief Check if id is already in topmost symtable
+ * 
+ * @param stack Stack of symtables
+ * @param key Id which to look for
+ * @return Symtable_item* Pointer if found, otherwise NULL
+ */
+Symtable_item *was_it_defined_top(SymtableStack *stack, char *key);
 
 /**
  * @brief Processes all sucessive eols
