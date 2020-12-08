@@ -399,6 +399,18 @@ Relation PrecedenceTable(RelType First, RelType Second){
         break;
         case TOKEN_TYPE_EQUAL:
         case TOKEN_TYPE_NOT_EQUAL:
+            if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_STRING && ResultType != T_UNKNOWN)){
+                free(RightItem);
+                free(LeftItem);
+                free(item);
+                return ERR_TYPE_COMB;
+            }
+            if(Same == false){
+                free(RightItem);
+                free(LeftItem);
+                free(item);
+                return ERR_TYPE_COMB;
+        }
             Result = T_BOOL;
         break;
         case TOKEN_TYPE_LOWER_THAN:
