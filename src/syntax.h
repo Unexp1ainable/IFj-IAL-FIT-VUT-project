@@ -385,7 +385,7 @@ int s_type(DataType *type);
  * @param symlist List of symtables
  * @return int Error code, 0 if ok
  */
-int expr_list_assign(SymtableStack *symlist);
+int s_expr_list_assign(SymtableStack *symlist);
 
 /**
  * @brief Right side of the value assignment if it is not a function
@@ -394,7 +394,7 @@ int expr_list_assign(SymtableStack *symlist);
  * @param n Position of id in list
  * @return int Error code, 0 if ok
  */
-int expr_list_assign_n(SymtableStack *symlist, int n);
+int s_expr_list_assign_n(SymtableStack *symlist, int n);
 
 /**
  * @brief Evaluates expression and returns type in parameter type

@@ -1163,7 +1163,7 @@ int s_id_list_assign(SymtableStack *symlist)
     }
 
     return_token(curr_token);
-    return expr_list_assign(symlist);
+    return s_expr_list_assign(symlist);
 }
 
 int s_param_list(SymtableStack *symlist, Symtable_item *func_def)
@@ -1303,7 +1303,7 @@ int s_func_assign(Symtable_item *func_def)
     return NO_ERR;
 }
 
-int expr_list_assign(SymtableStack *symlist)
+int s_expr_list_assign(SymtableStack *symlist)
 {
 
     get_token(&curr_token);
@@ -1323,12 +1323,12 @@ int expr_list_assign(SymtableStack *symlist)
         if (id_list->dataType == type)
         {
 
-            return expr_list_assign_n(symlist, 1);
+            return s_expr_list_assign_n(symlist, 1);
         }
     }
     return ERR_TYPE_MISMATCH;
 }
-int expr_list_assign_n(SymtableStack *symlist, int n)
+int s_expr_list_assign_n(SymtableStack *symlist, int n)
 {
     if (n == id_list_n)
     {
@@ -1354,7 +1354,7 @@ int expr_list_assign_n(SymtableStack *symlist, int n)
     if (id_list->dataType == type)
     {
 
-        return expr_list_assign_n(symlist, n + 1);
+        return s_expr_list_assign_n(symlist, n + 1);
     }
 
     return ERR_TYPE_MISMATCH;
