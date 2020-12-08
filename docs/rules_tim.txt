@@ -3,7 +3,7 @@
 2.	<f_list> -> func <func> <eols> <f_list>
 3.	<f_list> -> e
 ----------------------------------
-4.	<func> -> id   <f_init> <body>
+4.	<func> -> id <f_init> <body>
 5.	<func> -> main <f_init> <body>
 ----------------------------------
 6.	<f_init> -> (<param_def_list>) <ret_t_list> 
@@ -85,7 +85,7 @@
 54. <type> -> float64
 55. <type> -> string
 ----------------------------------
-56.	<id_assign_v> -> <expr>/**/
+56.	<id_assign_v> -> <expr>
 57.	<id_assign_v> -> e
 ----------------------------------
 58. <func_assign>
