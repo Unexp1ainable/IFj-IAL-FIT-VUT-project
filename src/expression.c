@@ -486,8 +486,18 @@ int StartExpr(SymtableStack *TableList, TermType *type){
         {
             case R_CLOSE:
                 //v close se děje výpočet a kontrola
-                if(CheckWhileR_Close(stack,TableList) != 0){
-                    reading = -1; //chyba už vypsaná z funkce
+                reading = CheckWhileR_Close(stack,TableList);
+                if(reading == ERR_ALLOC_M){
+                    return ERR_ALLOC_M;
+                }
+                else if(reading == ERR_ID_UNDEFINED){
+                    return ERR_ID_UNDEFINED;
+                }
+                else if(reading == ERR_TYPE_COMB){
+                    return ERR_TYPE_COMB;
+                }
+                else if(reading == ERR_ZERO_DIVISION){
+                    return ERR_ZERO_DIVISION;
                 }
                 break;
             case R_OPEN:
