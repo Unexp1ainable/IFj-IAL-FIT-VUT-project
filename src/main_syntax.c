@@ -20,6 +20,11 @@
 int main()
 {
     // initialisation of the structures
+    out_file = fopen("output.IFJcode20", "w");
+    if (!out_file){
+        fputs("Failed to open output file.\n", stderr);
+        return INTERN_ERROR;
+    }
     dynamic_string_init(&stringbuffer);
 
     SymtableStack symlist;
@@ -126,7 +131,7 @@ int main()
 cleanup:
 
     describe_error(r_code);
-
+    fclose(out_file);
     // free all resources
     stackFree(&symlist);
     free(stringbuffer.string);

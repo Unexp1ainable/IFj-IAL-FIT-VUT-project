@@ -22,6 +22,7 @@ unsigned int assign_list_expr_n = 0;
 Symtable_item id_list[MAX_N_RET_VAL];
 int id_list_n = 0;
 char *curr_func = NULL;
+FILE *out_file;
 
 // ############################# helper functions ###########################
 
@@ -211,7 +212,6 @@ int s_f_list(SymtableStack *symlist)
 {
     // eof
     get_token(&curr_token);
-    return_token(curr_token); // TODO this is weird
     if (curr_token->tokentype == TOKEN_TYPE_EOF)
     {
 
@@ -219,7 +219,6 @@ int s_f_list(SymtableStack *symlist)
     }
 
     // func
-    get_token(&curr_token);
     if (curr_token->tokentype != TOKEN_TYPE_RESERVED_KEYWORD ||
         curr_token->keyword != KEYWORD_FUNC)
     {
@@ -273,7 +272,7 @@ int s_func(SymtableStack *symlist)
                 return ERR_FUNC_REDEFINITION;
             }
 
-            new_func = symtable_add_function_init(stackBottom(symlist), curr_token->string->string);
+            new_func = symtable_add_function_init(stackBottom(symlist), curr_func);
             if (!new_func)
             {
                 return ERR_SYMTABLE;
@@ -284,6 +283,10 @@ int s_func(SymtableStack *symlist)
     {
         return ERR_FUNC_ID_EXPECTED;
     }
+
+    if (!first_pass)
+        fprintf(out_file, "LABEL %s\n", curr_func);
+
 
     int r_code = s_f_init(symlist, curr_func);
     if (r_code)

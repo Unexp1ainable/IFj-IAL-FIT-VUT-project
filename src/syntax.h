@@ -56,6 +56,12 @@ extern int id_list_n;
  * 
  */
 extern char *curr_func;
+
+/**
+ * @brief Output for IFJcode20
+ * 
+ */
+extern FILE *out_file;
 // ################### end of global variables #################
 
 // ############################# helper functions ###########################

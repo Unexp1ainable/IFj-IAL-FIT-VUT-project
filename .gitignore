@@ -56,3 +56,4 @@ src/main
 check_symtable_memory_tests
 src/ifj20
 src/test.txt
+src/output.IFJcode20
