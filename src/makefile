@@ -9,3 +9,7 @@ syntax: main_syntax.c symtable.c syntax_common.c symtable_list.c syntax.c expres
 	
 expr: main_expression.c symtable.c syntax_common.c symtable_list.c syntax.c expression.c dynamic_string.c pars_string.c newscanner.c 
 	gcc $^ -o main_expr.out $(CFLAGS)
+
+clean:
+	rm -f *.o
+	rm main

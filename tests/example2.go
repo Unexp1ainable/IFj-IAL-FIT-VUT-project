@@ -1,6 +1,14 @@
 // Program 2: Vypocet faktorialu (rekurzivne)
 package main
-
+else
+float64
+for
+func
+if 
+int 
+package 
+return 
+string
 func factorial(n int) (int) {
   dec_n := n - 1
   if n < 2 {

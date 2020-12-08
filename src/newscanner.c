@@ -163,6 +163,10 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
             {
                 fsm_state = FSM_EXCLAMATION;
             }
+            else if (c == '0'){
+                fsm_state = FSM_DECNUMBER_ZERO;
+                dynamic_string_add_char(&stringbuffer, c);
+            }
             else if (isdigit(c))
             { /*test*/
                 fsm_state = FSM_DECNUMBER;
@@ -302,11 +306,6 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                     tokenptr->keyword = KEYWORD_ELSE;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
-                else if (!strcmp(stringbuffer.string, "float64"))
-                {
-                    tokenptr->keyword = KEYWORD_FLOAT64;
-                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-                }
                 else if (!strcmp(stringbuffer.string, "for"))
                 {
                     tokenptr->keyword = KEYWORD_FOR;
@@ -322,19 +321,25 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                     tokenptr->keyword = KEYWORD_IF;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
-                else if (!strcmp(stringbuffer.string, "int"))
-                {
-                    tokenptr->keyword = KEYWORD_INTEGER;
-                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-                }
                 else if (!strcmp(stringbuffer.string, "package"))
                 {
                     tokenptr->keyword = KEYWORD_PACKAGE;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-                }
+                }               
                 else if (!strcmp(stringbuffer.string, "return"))
                 {
                     tokenptr->keyword = KEYWORD_RETURN;
+                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
+                }
+                else if (!strcmp(stringbuffer.string, "float64"))
+                {
+                    printf("found float64.\n");
+                    tokenptr->keyword = KEYWORD_FLOAT64;
+                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
+                }
+                else if (!strcmp(stringbuffer.string, "int"))
+                {
+                    tokenptr->keyword = KEYWORD_INTEGER;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
                 else if (!strcmp(stringbuffer.string, "string"))
@@ -356,6 +361,7 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                 {
                     return memoryerror;
                 }
+                //printf("the tokentype: %d, and the keyword %d,\n",tokenptr->tokentype,tokenptr->keyword);
                 return OK;
             }
             break;
@@ -614,11 +620,20 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                 //maketoken();
             }
             break;
-
+        case FSM_DECNUMBER_IGNORE_REST:
+            if (isdigit(c) || c == 'e' || c == 'E' || c == '.'){
+                /*ignore*/
+            }
+            else{
+                isbuff = true;buffedchar = c;
+                fsm_state = FSM_START;
+                return WTF;
+            }
+            break;
         case FSM_DECNUMBER_ZERO: //only point or exponent after first zero allowed
             if (isdigit(c))
             {
-                return WTF;
+                fsm_state = FSM_DECNUMBER_IGNORE_REST;
             }
             else if (c == 'E' || c == 'e')
             {
@@ -640,6 +655,10 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
             {
                 isbuff = true;
                 buffedchar = c; /*maketoken();number processing*/
+                tokenptr->tokentype = TOKEN_TYPE_INTEGER;
+                tokenptr->integer = 0;
+                if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                return OK;
             }
             break;
 
