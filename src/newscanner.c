@@ -371,10 +371,15 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
             {
                 fsm_state = FSM_BACKSLASH;
             }
+            else if (c == EOF){
+                isbuff = true; buffedchar = c;
+                return WTF;
+            }
             else if (c != '\"')
             {
                 dynamic_string_add_char(&stringbuffer, c);
             }
+            
             else
             {
                 tokenptr->tokentype = TOKEN_TYPE_STRING;
