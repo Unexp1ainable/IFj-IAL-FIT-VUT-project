@@ -46,12 +46,12 @@ typedef enum
     ERR_UNEXPECTED_TOKEN,        // unexpected token
     ERR_ID_ASSIGN_EXPECTED,      // expected =
     ERR_TYPE_EXPECTED,           // expected type identifier
-    ERR_MAIN_MISSING,            // main() function was not defined
     ERR_MISSING_ELSE,            // if is without the else
 
     // =================================
     SEM_ERR_UNDEFS, // 3
     //----------------------------
+    ERR_MAIN_MISSING,            // main() function was not defined
     ERR_FUNC_REDEFINITION,        // function was already defined
     ERR_ID_REDEFINITION,         // id was already defined
     ERR_ID_UNDEFINED,            // id was not defined
@@ -64,7 +64,6 @@ typedef enum
     // =================================
     SEM_ERR_TYPE_COMPATS, // 5
     //----------------------------
-    ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined
     ERR_INVALID_EXPRESSION,      // expected evaluation result to be bool
     ERR_TYPE_COMB,               // invalid expression
     ERR_EXP_ORDER,               // TODO idk invalid expression order 
@@ -72,14 +71,15 @@ typedef enum
     // =================================
     SEM_ERR_PAR_NUMS, // 6
     //----------------------------
+    ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined
     ERR_WRONG_FUNC_PARAM,        // given parameters are not of the type that is defined in function
     ERR_WRONG_NUMBER_LVALUES,    // too many ids on the left side of the assignment
+    ERR_INVALID_MAIN_DEFINITION, // main() function has defined parameters or return values
 
     // =================================
     SEM_ERR_OTHERS, // 7
     //----------------------------
     ERR_EMPTY_EXP,               // expression was empty
-    ERR_INVALID_MAIN_DEFINITION, // main() function has defined parameters or return values
     ERR_TOO_MANY_RVALUES,         // too many Rvalues
 
     // =================================
