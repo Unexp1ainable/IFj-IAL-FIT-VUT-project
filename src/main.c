@@ -121,14 +121,14 @@ int main(/*int argc, char *argv[]*/)
     printf("lets start:\n");
     fprintf(fptr1,"this is file containing tokens from original scanner.\n\n");
     fprintf(fptr2,"this is file containing tokens from saved token list.\n\n");
-    while (!end && !r_code)
+    while (!end )
     {
         //printf("\n\n->");
         r_code = get_next_token(t,list);
         if(r_code == 0)
             print_token(*t, r_code,fptr1);
         else
-            printf("LEX_ERROR\n");
+            fprintf(fptr1,"\n\nLEX_ERROR\n\n");
     }
     while(get_next_token_list(&t,list)){
         print_token(*t,r_code,fptr2);

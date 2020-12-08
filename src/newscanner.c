@@ -163,6 +163,10 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
             {
                 fsm_state = FSM_EXCLAMATION;
             }
+            else if (c == '0'){
+                fsm_state = FSM_DECNUMBER_ZERO;
+                dynamic_string_add_char(&stringbuffer, c);
+            }
             else if (isdigit(c))
             { /*test*/
                 fsm_state = FSM_DECNUMBER;
@@ -616,11 +620,20 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                 //maketoken();
             }
             break;
-
+        case FSM_DECNUMBER_IGNORE_REST:
+            if (isdigit(c) || c == 'e' || c == 'E' || c == '.'){
+                /*ignore*/
+            }
+            else{
+                isbuff = true;buffedchar = c;
+                fsm_state = FSM_START;
+                return WTF;
+            }
+            break;
         case FSM_DECNUMBER_ZERO: //only point or exponent after first zero allowed
             if (isdigit(c))
             {
-                return WTF;
+                fsm_state = FSM_DECNUMBER_IGNORE_REST;
             }
             else if (c == 'E' || c == 'e')
             {
@@ -642,6 +655,10 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
             {
                 isbuff = true;
                 buffedchar = c; /*maketoken();number processing*/
+                tokenptr->tokentype = TOKEN_TYPE_INTEGER;
+                tokenptr->integer = 0;
+                if(!save_next_token(tokenlist,tokenptr)){return memoryerror;}
+                return OK;
             }
             break;
 
