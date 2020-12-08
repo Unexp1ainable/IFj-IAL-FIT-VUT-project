@@ -324,12 +324,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
             Result = LeftType;
         }
         else if (LeftType == T_FLOAT && RightType == T_INT){
-            Same = true;
+            Same = false;
             Result = LeftType;
 
         }
         else if (LeftType == T_INT && RightType == T_FLOAT){
-            Same = true;
+            Same = false;
             Result = RightType;
         }
     }
@@ -431,6 +431,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
             if(Same == false){
+                free(RightItem);
+                free(LeftItem);
+                free(item);
+                return ERR_TYPE_COMB;
+            }
+             else if(LeftType != RightType){
                 free(RightItem);
                 free(LeftItem);
                 free(item);

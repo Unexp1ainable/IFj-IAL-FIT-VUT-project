@@ -14,7 +14,7 @@ int main()
     Symtable global;
     symtable_init(&global);
     initialise_predefined(&global);
-    stackPush(&symlist, global);
+    stackPush(&symlist, &global);
 
     init_token_list(&tokens);
 
