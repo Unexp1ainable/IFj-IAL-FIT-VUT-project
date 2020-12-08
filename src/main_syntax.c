@@ -48,6 +48,7 @@ int main()
 
     // prepare for second pass
     first_pass = false;
+    line = 1;
     reset_list_position(&tokens);
 
     Symtable_item *main_f = was_it_defined(symlist, "main");

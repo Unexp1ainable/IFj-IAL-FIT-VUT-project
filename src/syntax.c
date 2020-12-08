@@ -971,6 +971,8 @@ int s_id_list_n(symtableList symlist)
     if (TOKEN_IS(TOKEN_TYPE_COMMA))
     {
         Symtable_item *sym_item;
+
+        get_token(&curr_token);
         if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
         {
             if (TOKEN_IS_NOT(TOKEN_TYPE_UNDERSCORE))
@@ -995,8 +997,10 @@ int s_id_list_n(symtableList symlist)
             }
         }
 
-        memcpy(id_list + 1, sym_item, sizeof(Symtable_item));
+        memcpy(id_list + id_list_n, sym_item, sizeof(Symtable_item));
         id_list_n++;
+        
+        return NO_ERR;
     }
 
     return ERR_UNEXPECTED_TOKEN;
