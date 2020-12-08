@@ -214,7 +214,7 @@ int s_f_list(SymtableStack *symlist)
     get_token(&curr_token);
     if (curr_token->tokentype == TOKEN_TYPE_EOF)
     {
-
+        return_token(curr_token);
         return NO_ERR;
     }
 
