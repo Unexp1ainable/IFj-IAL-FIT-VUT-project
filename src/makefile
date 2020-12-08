@@ -11,5 +11,4 @@ expr: main_expression.c symtable.c syntax_common.c symtable_list.c syntax.c expr
 	gcc $^ -o main_expr.out $(CFLAGS)
 
 clean:
-	rm -f *.o
-	rm main
+	rm -f *.o *.h.gch *.out main ifj20
