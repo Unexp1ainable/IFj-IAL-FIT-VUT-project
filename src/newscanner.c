@@ -302,11 +302,6 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                     tokenptr->keyword = KEYWORD_ELSE;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
-                else if (!strcmp(stringbuffer.string, "float64"))
-                {
-                    tokenptr->keyword = KEYWORD_FLOAT64;
-                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-                }
                 else if (!strcmp(stringbuffer.string, "for"))
                 {
                     tokenptr->keyword = KEYWORD_FOR;
@@ -322,19 +317,25 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                     tokenptr->keyword = KEYWORD_IF;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
-                else if (!strcmp(stringbuffer.string, "int"))
-                {
-                    tokenptr->keyword = KEYWORD_INTEGER;
-                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-                }
                 else if (!strcmp(stringbuffer.string, "package"))
                 {
                     tokenptr->keyword = KEYWORD_PACKAGE;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
-                }
+                }               
                 else if (!strcmp(stringbuffer.string, "return"))
                 {
                     tokenptr->keyword = KEYWORD_RETURN;
+                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
+                }
+                else if (!strcmp(stringbuffer.string, "float64"))
+                {
+                    printf("found float64.\n");
+                    tokenptr->keyword = KEYWORD_FLOAT64;
+                    tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
+                }
+                else if (!strcmp(stringbuffer.string, "int"))
+                {
+                    tokenptr->keyword = KEYWORD_INTEGER;
                     tokenptr->tokentype = TOKEN_TYPE_RESERVED_KEYWORD;
                 }
                 else if (!strcmp(stringbuffer.string, "string"))
@@ -356,6 +357,7 @@ int get_next_token(TOKEN *tokenptr, TokenList *tokenlist)
                 {
                     return memoryerror;
                 }
+                //printf("the tokentype: %d, and the keyword %d,\n",tokenptr->tokentype,tokenptr->keyword);
                 return OK;
             }
             break;

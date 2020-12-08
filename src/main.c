@@ -36,19 +36,20 @@ void print_token(TOKEN t, int code, FILE *fptr)
         
         "TOKEN_TYPE_DEFINE", 
         "TOKEN_TYPE_ASSIGN", 
-        "TOKEN_TYPE_MAIN"};
+        "TOKEN_TYPE_MAIN",
+        "TOKEN_TYPE_EMPTY"};
 
     const char *keyword_str[] = {
-        "KEYWORD_ELSE", 
-        "KEYWORD_FOR", 
-        "KEYWORD_FUNC", 
-        "KEYWORD_IF", 
-        "KEYWORD_PACKAGE",
-        "KEYWORD_RETURN", 
-        "KEYWORD_NONE"
-        "KEYWORD_FLOAT64", 
-        "KEYWORD_INT", 
-        "KEYWORD_STRING", 
+        "KEYWORD_ELSE", //0
+        "KEYWORD_FOR", //1
+        "KEYWORD_FUNC", //2
+        "KEYWORD_IF", //3
+        "KEYWORD_PACKAGE",//4
+        "KEYWORD_RETURN", //5
+        "KEYWORD_NONE"//6
+        "KEYWORD_FLOAT64", //7
+        "KEYWORD_INTEGER", //8
+        "KEYWORD_STRING", //9
         };
 
     fprintf(fptr,"------New token------\n");
@@ -68,7 +69,16 @@ void print_token(TOKEN t, int code, FILE *fptr)
     }
     else if (t.tokentype == TOKEN_TYPE_RESERVED_KEYWORD)
     {
-        fprintf(fptr,"Payload: %s\n", keyword_str[t.keyword]);
+        if (t.keyword == 0)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_ELSE");
+        if (t.keyword == 1)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_FOR");
+        if (t.keyword == 2)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_FUNC");
+        if (t.keyword == 3)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_IF");
+        if (t.keyword == 4)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_PACKAGE");
+        if (t.keyword == 5)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_RETURN");
+        if (t.keyword == 6)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_NONE");
+        if (t.keyword == 7)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_FLOAT64");
+        if (t.keyword == 8)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_INTEGER");
+        if (t.keyword == 9)fprintf(fptr,"Payload %d: %s\n", t.keyword,"KEYWORD_STRING");
     }
     else if (t.tokentype == TOKEN_TYPE_IDENTIFIER)
     {
