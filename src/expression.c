@@ -285,6 +285,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
         free(PopStack(stack));
         PushStack(stack,item);
         return 0; //item na zásobník
+
     }
     Item RightItem = item;          
     item  = PopStack(stack);
@@ -349,7 +350,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
         break;
-        case TOKEN_TYPE_SUBTRACT:           
+        case TOKEN_TYPE_SUBTRACT:        
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
                 free(RightItem);
                 free(LeftItem);
@@ -482,21 +483,22 @@ int StartExpr(SymtableStack *TableList, TermType *type){
         new = TokenToTerm(curr_token->tokentype);
         //Podle precedenční tabulky rozhhodneme o realci
         Relation ResultRelation = PrecedenceTable(curr,new);
+        int temporary;
         switch (ResultRelation)
         {
             case R_CLOSE:
                 //v close se děje výpočet a kontrola
-                reading = CheckWhileR_Close(stack,TableList);
-                if(reading == ERR_ALLOC_M){
+                temporary = CheckWhileR_Close(stack,TableList);
+                if(temporary == ERR_ALLOC_M){
                     return ERR_ALLOC_M;
                 }
-                else if(reading == ERR_ID_UNDEFINED){
+                else if(temporary == ERR_ID_UNDEFINED){
                     return ERR_ID_UNDEFINED;
                 }
-                else if(reading == ERR_TYPE_COMB){
+                else if(temporary == ERR_TYPE_COMB){
                     return ERR_TYPE_COMB;
                 }
-                else if(reading == ERR_ZERO_DIVISION){
+                else if(temporary == ERR_ZERO_DIVISION){
                     return ERR_ZERO_DIVISION;
                 }
                 break;
