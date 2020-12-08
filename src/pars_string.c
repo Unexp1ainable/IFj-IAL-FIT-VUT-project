@@ -51,7 +51,6 @@ void backslash(Dynamic_string *sp) {
             sp->error = 1;
             break;
         case (int) 'x': // hex ascii code
-            backslash_x(sp);
             break;
         case (int) 'n':
             dynamic_string_add_char(sp, '\n');
@@ -69,9 +68,4 @@ void backslash(Dynamic_string *sp) {
             sp->error = 2;
             break;
     }
-}
-
-void backslash_x(Dynamic_string *sp) {
-    sp = sp; // so gcc will shut up
-    return;
 }
