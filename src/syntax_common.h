@@ -55,6 +55,7 @@ typedef enum
     ERR_FUNC_REDEFINITION,        // function was already defined
     ERR_ID_REDEFINITION,         // id was already defined
     ERR_ID_UNDEFINED,            // id was not defined
+    ERR_ID_IS_NOT_FUNC,
 
     // =================================
     SEM_ERR_NEW_VARS, // 4
@@ -67,11 +68,12 @@ typedef enum
     ERR_INVALID_EXPRESSION,      // expected evaluation result to be bool
     ERR_TYPE_COMB,               // invalid expression
     ERR_EXP_ORDER,               // TODO idk invalid expression order 
+    ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined
 
     // =================================
     SEM_ERR_PAR_NUMS, // 6
     //----------------------------
-    ERR_TYPE_MISMATCH,           // trying to assign different type to variable than is defined
+    ERR_INVALID_RETURN,          // return values are not matching with defined return values
     ERR_WRONG_FUNC_PARAM,        // given parameters are not of the type that is defined in function
     ERR_WRONG_NUMBER_LVALUES,    // too many ids on the left side of the assignment
     ERR_INVALID_MAIN_DEFINITION, // main() function has defined parameters or return values
@@ -80,7 +82,8 @@ typedef enum
     SEM_ERR_OTHERS, // 7
     //----------------------------
     ERR_EMPTY_EXP,               // expression was empty
-    ERR_TOO_MANY_RVALUES,         // too many Rvalues
+    ERR_TOO_MANY_RVALUES,        // too many Rvalues  
+    ERR_NOT_ENOUGH_RVALUES,      // not enough Rvalues
 
     // =================================
     SEM_ERR_DIV_ZEROS, // 9

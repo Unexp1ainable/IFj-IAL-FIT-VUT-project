@@ -602,7 +602,12 @@ int s_stat(SymtableStack *symlist)
     // <stat> -> <return>
     case KEYWORD_RETURN:
         return_token(curr_token);
-        return s_return(symlist);
+        int r_code = s_return(symlist);
+        if (r_code == ERR_TYPE_MISMATCH)
+        {
+            return ERR_INVALID_RETURN;
+        }
+        return r_code;
         break;
 
     default:
@@ -795,6 +800,10 @@ int s_expr_list_n(SymtableStack *symlist, int n)
     // e
     if (TOKEN_IS(TOKEN_TYPE_EOL))
     {
+        if (n != id_list_n)
+        {
+            return ERR_NOT_ENOUGH_RVALUES;
+        }
         return_token(curr_token);
         return NO_ERR;
     }
@@ -813,7 +822,8 @@ int s_expr_list_n(SymtableStack *symlist, int n)
         return r_code;
     }
 
-    if(n == id_list_n){
+    if (n == id_list_n)
+    {
         return ERR_TOO_MANY_RVALUES;
     }
 
@@ -880,6 +890,10 @@ int s_id_n(SymtableStack *symlist, char *id)
         if (!already_defined)
         {
             return ERR_ID_UNDEFINED;
+        }
+        else if (already_defined->dataType != T_FUNC)
+        {
+            return ERR_ID_IS_NOT_FUNC;
         }
         return s_f_call(symlist, already_defined);
         break;
@@ -1001,7 +1015,7 @@ int s_id_list_n(SymtableStack *symlist)
 
         memcpy(id_list + id_list_n, sym_item, sizeof(Symtable_item));
         id_list_n++;
-        
+
         return NO_ERR;
     }
 

@@ -181,11 +181,19 @@ void describe_error(ERR_CODE_SYN err)
         break;
 
     case ERR_MISSING_ELSE:
-            fprintf(stderr, "Line %li: Else is missing.\n", line);
-            break;
+        fprintf(stderr, "Line %li: Else is missing.\n", line);
+        break;
 
-    case  ERR_TOO_MANY_RVALUES:
-            fprintf(stderr, "Line %li: Too many Rvalues.\n", line);
+    case ERR_TOO_MANY_RVALUES:
+        fprintf(stderr, "Line %li: Too many Rvalues.\n", line);
+        break;
+
+    case ERR_NOT_ENOUGH_RVALUES:
+        fprintf(stderr, "Line %li: Not enough Rvalues.\n", line);
+        break;
+
+    case ERR_ID_IS_NOT_FUNC:
+            fprintf(stderr, "Line %li: Trying to call a function, but defined id is not a function.\n", line);
             break;
 
     default:
@@ -223,9 +231,10 @@ Symtable_item *was_it_defined(SymtableStack *stack, char *key)
 {
     Symtable_item *symbol = NULL;
 
-    for (int i = 0; i <= stack->top; i++){
+    for (int i = 0; i <= stack->top; i++)
+    {
         symbol = symtable_search(stack->table[stack->top - i], key);
-        if(symbol)
+        if (symbol)
             return symbol;
     }
 
