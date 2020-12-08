@@ -19,13 +19,6 @@
 // ########################## global variables #########################
 
 /**
- * @brief For checking if main was already defined.
- *
- */
-
-extern bool main_defined;
-
-/**
  * @brief Used for counting how many items are on the left of the list assignment
  * Initialised on 1 because id needs to pass 1 item before entering required state.
  */
