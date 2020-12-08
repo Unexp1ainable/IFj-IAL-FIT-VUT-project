@@ -279,7 +279,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     break;
                 default:
                     free(item);
-                    return ERR_ALLOC_M;
+                    return ERR_INVALID_EXPRESSION;
                     ;
                 
             }
@@ -505,6 +505,9 @@ int StartExpr(SymtableStack *TableList, TermType *type){
                 }
                 else if(temporary == ERR_ZERO_DIVISION){
                     return ERR_ZERO_DIVISION;
+                }
+                else if(temporary == ERR_INVALID_EXPRESSION){
+                    return ERR_INVALID_EXPRESSION;
                 }
                 break;
             case R_OPEN:
