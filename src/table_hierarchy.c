@@ -1,16 +1,18 @@
 /**
- * @file table_hierarchy.h
+ * @file table_hierarchy.c
  * 
- * @author Timotej Kamenský, xkamen24, +421 944 687 328
- * @author Michal Řezník,  xrezni28, +420731748122
- * @author Jiří Hofírek, xhofir06, +420774883191
- * @author Samuel Repka, xrepka07, +421907587090
+ * @brief implementation of hierarchical system of tables.
  * 
- * @version 0.1
- * @brief implementation of hierarchical system of tables, to deal with scope of variables.
- * @date 2020-11-25
- */
-
+ * @date 25.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #include <stdlib.h>
 #include "table_hierarchy.h"
 #include <stdio.h> //debug only
