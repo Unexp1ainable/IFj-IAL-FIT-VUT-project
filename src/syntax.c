@@ -470,6 +470,14 @@ int s_ret_t_list(symtableList symlist, char *func_id)
         return ERR_FUNC_DEF_RET_UNEXPECTED;
     }
 
+    get_token(&curr_token);
+    if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
+    {
+        return NO_ERR;
+    }
+
+    return_token(curr_token);
+
     // <type>
     DataType type;
     int r_code = s_type(&type);
@@ -507,7 +515,7 @@ int s_ret_t_list_n(symtableList symlist, char *func_id)
 
     // e
     get_token(&curr_token);
-    if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CLASSIC_BRACKET))
+    if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
     {
         return_token(curr_token);
         return NO_ERR;
@@ -554,6 +562,10 @@ int s_stat(symtableList symlist)
     if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
     {
         return s_id_n(symlist, curr_token->string->string);
+    }
+    if (TOKEN_IS(TOKEN_TYPE_UNDERSCORE))
+    {
+        return s_id_n(symlist, "_");
     }
     if (TOKEN_IS_NOT(TOKEN_TYPE_RESERVED_KEYWORD))
     {
@@ -664,8 +676,7 @@ int s_else(symtableList symlist)
     {
         return s_body(symlist, NULL);
     }
-    return_token(curr_token);
-    return NO_ERR;
+    return ERR_MISSING_ELSE;
 }
 
 int s_for(symtableList symlist)
@@ -879,8 +890,8 @@ int s_id_def_v(symtableList symlist)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
     {
-        get_token(&curr_token);
-        return s_id_def(symlist, curr_token->string->string);
+        char *id = curr_token->string->string;
+        return s_id_def(symlist, id);
     }
 
     return_token(curr_token);

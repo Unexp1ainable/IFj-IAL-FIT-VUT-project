@@ -180,6 +180,10 @@ void describe_error(ERR_CODE_SYN err)
         fprintf(stderr, "Line %li: FUNC_INIT failure. Symtable error has occured.\n", line);
         break;
 
+    case ERR_MISSING_ELSE:
+            fprintf(stderr, "Line %li: Else is missing.\n", line);
+            break;
+
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
         break;
@@ -189,21 +193,23 @@ void describe_error(ERR_CODE_SYN err)
 int map_err_code(int code)
 {
     // I know that it is probably not the best solution, but I really like it
-    if (code == NO_ERR)
+    if (code < LEXICAL_ERRORS)
         return 0;
     if (code < SYNTAX_ERRORS)
-        return SYNTAX_ERROR;
+        return LEXICAL_ERROR;
     if (code < SEM_ERR_UNDEFS)
-        return SEM_ERR_UNDEF;
+        return SYNTAX_ERROR;
     if (code < SEM_ERR_NEW_VARS)
-        return SEM_ERR_NEW_VAR;
+        return SEM_ERR_UNDEF;
     if (code < SEM_ERR_TYPE_COMPATS)
-        return SEM_ERR_TYPE_COMPAT;
+        return SEM_ERR_NEW_VAR;
     if (code < SEM_ERR_PAR_NUMS)
-        return SEM_ERR_PAR_NUM;
+        return SEM_ERR_TYPE_COMPAT;
     if (code < SEM_ERR_OTHERS)
-        return SEM_ERR_OTHER;
+        return SEM_ERR_PAR_NUM;
     if (code < SEM_ERR_DIV_ZEROS)
+        return SEM_ERR_OTHER;
+    if (code < INTERN_ERRORS)
         return SEM_ERR_DIV_ZERO;
     else
         return INTERN_ERROR;

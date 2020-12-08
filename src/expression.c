@@ -525,6 +525,10 @@ int StartExpr(symtableList TableList, TermType *type){
     }
     DisposeStack(&stack);
     return_token(curr_token);
+    if (reading == -1){
+        return ERR_INVALID_EXPRESSION;
+    }
+
     if(reading == -3){
         return ERR_EMPTY_EXP;
     }

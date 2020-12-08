@@ -36,7 +36,7 @@ int main()
         {
             if (curr_token->keyword == KEYWORD_FUNC)
             {
-                int r_code = s_func(symlist);
+                r_code = s_func(symlist);
                 if (r_code)
                 {
                     // first pass failed

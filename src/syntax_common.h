@@ -46,6 +46,10 @@ typedef enum
     ERR_UNEXPECTED_TOKEN,        // unexpected token
     ERR_ID_ASSIGN_EXPECTED,      // expected =
     ERR_TYPE_EXPECTED,           // expected type identifier
+    ERR_MAIN_MISSING,            // main() function was not defined
+    ERR_EMPTY_EXP,               // expression was empty
+    ERR_MISSING_ELSE,            // if is without the else
+    ERR_INVALID_EXPRESSION,      // expected evaluation result to be bool
 
     // =================================
     SEM_ERR_UNDEFS, // 3
@@ -64,7 +68,6 @@ typedef enum
     SEM_ERR_TYPE_COMPATS, // 5
     //----------------------------
     ERR_TYPE_COMB,               // invalid expression
-    ERR_INVALID_EXPRESSION,      // expected evaluation result to be bool
     ERR_EXP_ORDER,               // TODO idk invalid expression order 
 
     // =================================
@@ -76,9 +79,7 @@ typedef enum
     // =================================
     SEM_ERR_OTHERS, // 7
     //----------------------------
-    ERR_MAIN_MISSING,            // main() function was not defined
     ERR_INVALID_MAIN_DEFINITION, // main() function has defined parameters or return values
-    ERR_EMPTY_EXP,               // expression was empty
 
     // =================================
     SEM_ERR_DIV_ZEROS, // 9
