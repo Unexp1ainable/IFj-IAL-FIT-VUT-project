@@ -1,4 +1,19 @@
-/**TODO
+/**
+ * @file dynamic_string.h
+ * 
+ * @brief header file for dynamic string. Struct Dynamic_string is made of 
+ * a string and metadata, ensuring expandability and  of the string 
+ * using the given functions. 
+ * 
+ * @date 25.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
  * */
 #ifndef DYNAMIC_STRING
 #define DYNAMIC_STRING

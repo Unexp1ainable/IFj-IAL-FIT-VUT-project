@@ -1,11 +1,19 @@
 /**
  * @file symtable_list.h
- * @author Samuel Repka
- * @brief 
- * @version 0.1
- * @date 2020-12-02
  * 
- */
+ * @brief header file for single linked list of symbol tables
+ * 
+ * @date 2.12.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * 
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #ifndef SYMTABLE_LIST_H
 #define SYMTABLE_LIST_H
 

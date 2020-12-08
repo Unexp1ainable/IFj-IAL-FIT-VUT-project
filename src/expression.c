@@ -1,13 +1,18 @@
 /**
  * @file expression.c
  * 
- * @author Timotej Kamenský, xkamen24
- * @author Michal Řezník,  xrezni28
- * @author Jiří Hofírek, xhofir06
- * @author Samuel Repka, xrepka07
+ * @brief Processing of expressions by precedent analysis
  * 
- * @brief  Processing of expressions by precedent analysis
- */
+ * @date 28.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #include "expression.h"
 
 TermType Result;
