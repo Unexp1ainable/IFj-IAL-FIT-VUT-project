@@ -21,13 +21,13 @@ int main()
     load_tokens(&tokens);   // can fail
 
     TermType type;
-    int r_code = StartExpr(symlist, &type);
+    int r_code = StartExpr(&symlist, &type);
 
     printf("Expression evaluation ended, return code: %i\n", r_code);
 
     // free all resources
     free(stringbuffer.string);
-    sym_list_dispose(&symlist);
+    stackFree(&symlist);
     free_token_list(&tokens);
 
     return 0;

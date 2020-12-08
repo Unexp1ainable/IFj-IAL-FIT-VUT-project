@@ -47,7 +47,6 @@ typedef enum
     ERR_ID_ASSIGN_EXPECTED,      // expected =
     ERR_TYPE_EXPECTED,           // expected type identifier
     ERR_MAIN_MISSING,            // main() function was not defined
-    ERR_EMPTY_EXP,               // expression was empty
     ERR_MISSING_ELSE,            // if is without the else
 
     // =================================
@@ -79,6 +78,7 @@ typedef enum
     // =================================
     SEM_ERR_OTHERS, // 7
     //----------------------------
+    ERR_EMPTY_EXP,               // expression was empty
     ERR_INVALID_MAIN_DEFINITION, // main() function has defined parameters or return values
     ERR_TOO_MANY_RVALUES,         // too many Rvalues
 
