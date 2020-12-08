@@ -405,12 +405,18 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return ERR_TYPE_COMB;
             }
-            if(Same == false){
+            else if(Same == false){
                 free(RightItem);
                 free(LeftItem);
                 free(item);
                 return ERR_TYPE_COMB;
-        }
+            }
+            else if(LeftType != RightType){
+                free(RightItem);
+                free(LeftItem);
+                free(item);
+                return ERR_TYPE_COMB;
+            }
             Result = T_BOOL;
         break;
         case TOKEN_TYPE_LOWER_THAN:
