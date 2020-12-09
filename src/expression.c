@@ -322,7 +322,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     ;
                 
             }
-            printf("PUSHS %s\n",interpret);
+            fprintf(out_file,"PUSHS %s\n",interpret);
             item->type = IT_NONTERM;
             free(interpret);
             item->val.type = type;
@@ -398,14 +398,14 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
             if(LeftType == T_STRING && RightType == T_STRING){
-                printf("POPS LF@$tmp1\n");
-                printf("POPS LF@$tmp2\n");
-                printf("CONCATS LF@$tmp2 LF@$tmp2 LF@$tmp1\n");
-                printf("PUSHS LF@tmp1\n");
+                fprintf(out_file,"POPS LF@$tmp1\n");
+                fprintf(out_file,"POPS LF@$tmp2\n");
+                fprintf(out_file,"CONCATS LF@$tmp2 LF@$tmp2 LF@$tmp1\n");
+                fprintf(out_file,"PUSHS LF@tmp1\n");
             }
             else
             {
-                printf("ADDS\n");  
+                fprintf(out_file,"ADDS\n");  
            }
             
         break;
@@ -422,7 +422,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return ERR_TYPE_COMB;
             }
-            printf("SUBS\n");
+            fprintf(out_file,"SUBS\n");
         break;
         case TOKEN_TYPE_MULTIPLY:
             if(Same == false){
@@ -437,7 +437,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return ERR_TYPE_COMB;
             }
-            printf("MULS\n");
+            fprintf(out_file, "MULS\n");
         break;
         case TOKEN_TYPE_DIVIDE:
             if(Same == false){
@@ -460,11 +460,11 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
             if((LeftType == RightType) && (LeftType == T_FLOAT)){
                 Result = T_FLOAT;
-                printf("DIVS");
+                fprintf(out_file,"DIVS\n");
             }
             else if((LeftType == RightType) && (LeftType == T_INT)){
                 Result = T_INT;
-                printf("IDIVS");
+                fprintf(out_file,"IDIVS\n");
             }
         break;
         case TOKEN_TYPE_EQUAL:
@@ -488,9 +488,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
             Result = T_BOOL;
-            printf("EQS\n");
+            fprintf(out_file,"EQS\n");
             if(Type == TOKEN_TYPE_EQUAL){
-                printf("NOTS\n");
+                fprintf(out_file,"NOTS\n");
             }
         break;
         case TOKEN_TYPE_LOWER_THAN:
@@ -517,19 +517,19 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
             if(Type == TOKEN_TYPE_LOWER_THAN){
-                printf("LTS\n");
+                fprintf(out_file,"LTS\n");
             }
             else if(Type == TOKEN_TYPE_GREATER_THAN){
-                printf("GTS\n");
+                fprintf(out_file,"GTS\n");
             }
             else if(Type == TOKEN_TYPE_GREATER_EQUAL){
-                printf("LTS\n");
-                printf("NOTS");
+                fprintf(out_file,"LTS\n");
+                fprintf(out_file,"NOTS");
                 
             }
             else if(Type == TOKEN_TYPE_LOWER_EQUAL){
-                printf("GTS\n");
-                printf("NOTS");
+                fprintf(out_file,"GTS\n");
+                fprintf(out_file,"NOTS");
             }
         break;
         default:
@@ -664,9 +664,10 @@ int StartExpr(SymtableStack *TableList, TermType *type){
     }
     if(result_here == NULL){
         return reading;
-    }   
-    printf("POPS LF@$%s", result_here);
-
+    }  
+    if(Result != T_BOOL){ 
+    fprintf(out_file,"POPS LF@$%s", result_here);
+    }
     return reading;         //stav v jakém skončilo převádění
 }
 
