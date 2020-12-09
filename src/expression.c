@@ -304,7 +304,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         Symtable_item *temp = symstack_lookup(TableList, item->val.term.string->string);
                         type = temp->dataType;
                         Result = temp->dataType;
-                        strcpy(interpret, temp->codename);
+                //        strcpy(interpret, temp->codename);
                         break;
                     }  
                 case TOKEN_TYPE_EMPTY:
@@ -321,6 +321,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     return ERR_INVALID_EXPRESSION;
                     ;
                 
+            }
+            if(item->val.term.tokentype == TOKEN_TYPE_IDENTIFIER){
+                fprintf(out_file,"PUSHS LF@$%s\n",interpret);
             }
             fprintf(out_file,"PUSHS %s\n",interpret);
             item->type = IT_NONTERM;
@@ -666,7 +669,7 @@ int StartExpr(SymtableStack *TableList, TermType *type){
         return reading;
     }  
     if(Result != T_BOOL){ 
-    fprintf(out_file,"POPS %s\n", result_here);
+    fprintf(out_file,"POPS %s", result_here);
     }
     return reading;         //stav v jakém skončilo převádění
 }
