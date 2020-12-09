@@ -57,11 +57,6 @@ extern int id_list_n;
  */
 extern char *curr_func;
 
-/**
- * @brief Output for IFJcode20
- * 
- */
-extern FILE *out_file;
 // ################### end of global variables #################
 
 // ############################# helper functions ###########################
@@ -89,6 +84,12 @@ int initialise_predefined(Symtable *table);
  * @return int Error code, 0 if ok
  */
 int copy_to_id(SymtableStack *symlist);
+
+/**
+ * @brief Frees all strings allocated by copy_to_id()
+ * 
+ */
+void free_copied_id();
 
 // ################### end of helper functions #################
 

@@ -181,6 +181,12 @@ extern unsigned int postfix;
  * 
  */
 extern char *result_here;
+
+/**
+ * @brief Output for IFJcode20
+ * 
+ */
+extern FILE *out_file;
 // ################### end of global variables #################
 
 // ################### functions #################
