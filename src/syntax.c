@@ -198,16 +198,16 @@ int s_prolog(SymtableStack *symstack)
         return NO_ERR;
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,".IFJcode20\n");
-    fprintf(out_file,"CREATEFRAME\n");
-    fprintf(out_file,"JUMP main\n");
+    fprintf(out_file, ".IFJcode20\n");
+    fprintf(out_file, "CREATEFRAME\n");
+    fprintf(out_file, "JUMP main\n");
     // ------------------------------------------
 
     // <f_list>
     int r_code = s_f_list(symstack);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,"EXIT int@0\n");
+    fprintf(out_file, "EXIT int@0\n");
     // ------------------------------------------
     if (r_code)
     {
@@ -334,6 +334,14 @@ int s_func(SymtableStack *symstack)
         // ------------------------------------------
 
         r_code = s_body(symstack, new_func->itemData.funcitemptr);
+
+        if (strcmp("main", curr_func) != 0)
+        {
+            // ---------------- CODE-GEN ----------------
+            fprintf(out_file, "POPFRAME\n");
+            fprintf(out_file, "RETURN\n");
+            // ------------------------------------------
+        }
     }
     else
     {
@@ -743,7 +751,7 @@ int s_if(SymtableStack *symstack)
 
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "PUSHS bool@false\n");
-    fprintf(out_file, "JUMIFEQS else_%09i\n", postfix);
+    fprintf(out_file, "JUMPIFEQS else_%09i\n", postfix);
     // ------------------------------------------
 
     if (r_code)
@@ -921,7 +929,7 @@ int s_expr_list(SymtableStack *symstack)
     if (strcmp(id_list[0].key, "_") == 0)
         result_here[0] = '\0';
     else
-       sprintf(result_here, "LF@%s", id_list[0].codename); // if _ do not assign result
+        sprintf(result_here, "LF@%s", id_list[0].codename); // if _ do not assign result
     // ------------------------------------------
 
     // <expr>
@@ -967,7 +975,7 @@ int s_expr_list_n(SymtableStack *symstack, int n)
     if (strcmp(id_list[n].key, "_") == 0)
         result_here[0] = '\0';
     else
-       sprintf(result_here, "LF@%s", id_list[n].codename); // if _ do not assign result
+        sprintf(result_here, "LF@%s", id_list[n].codename); // if _ do not assign result
     // ------------------------------------------
 
     // <expr>
@@ -1218,7 +1226,10 @@ int s_id_assign(SymtableStack *symstack)
         return_token(curr_token);
 
         // ---------------- CODE-GEN ----------------
-        sprintf(result_here, "LF@%s", id_list[0].codename);
+        if (strcmp(id_list[0].key, "_") == 0)
+            result_here[0] = '\0';
+        else
+            sprintf(result_here, "LF@%s", id_list[0].codename);
         // ------------------------------------------
 
         int r_code = s_expr(symstack, &type);
@@ -1344,7 +1355,7 @@ int s_param_list(SymtableStack *symstack, Symtable_item *func_def)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
     {
-        fprintf(out_file, "DEFVAR TF@__param_n__\n");   // holds number of parameters
+        fprintf(out_file, "DEFVAR TF@__param_n__\n"); // holds number of parameters
         fprintf(out_file, "MOVE TF@__param_n__ int@%i\n", 0);
         return NO_ERR;
     }
@@ -1395,7 +1406,7 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
     {
-        fprintf(out_file, "DEFVAR TF@__param_n__\n");   // holds number of parameters
+        fprintf(out_file, "DEFVAR TF@__param_n__\n"); // holds number of parameters
         fprintf(out_file, "MOVE TF@__param_n__ int@%i\n", n);
         return NO_ERR;
     }
