@@ -22,7 +22,6 @@ unsigned int assign_list_expr_n = 0;
 Symtable_item id_list[MAX_N_RET_VAL];
 int id_list_n = 0;
 char *curr_func = NULL;
-FILE *out_file;
 
 // ############################# helper functions ###########################
 
@@ -730,10 +729,24 @@ int s_if(SymtableStack *symstack)
     {
         return ERR_IF_EXPECTED;
     }
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "# -------------- for loop -------------)\n\n");
+    char *control_var = make_codename("c_result_", postfix);
+    fprintf(out_file, "DEFVAR %s\n", control_var);
+    result_here = control_var;
+    fprintf(out_file, "LABEL for_%09i\n", postfix);
+    // ------------------------------------------
 
     // <expr>
     TermType type;
     int r_code = s_expr(symstack, &type);
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "JUMIFEQ endfor_%09i %s bool@false\n", postfix, control_var);
+    fprintf(out_file, "JUMP for_body_%09i\n", postfix);
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "/* FORMAT */\n");
+    // ------------------------------------------
 
     if (r_code)
     {
@@ -798,7 +811,7 @@ int s_for(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,"# -------------- for loop -------------)\n\n");
+    fprintf(out_file, "# -------------- for loop -------------)\n\n");
     char *control_var = make_codename("c_result_", postfix);
     fprintf(out_file, "DEFVAR %s\n", control_var);
     result_here = control_var;
@@ -810,8 +823,8 @@ int s_for(SymtableStack *symstack)
     r_code = s_expr(symstack, &type);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,"JUMIFEQ endfor_%09i %s bool@false\n", postfix, control_var);
-    fprintf(out_file,"JUMP for_body_%09i\n", postfix);
+    fprintf(out_file, "JUMIFEQ endfor_%09i %s bool@false\n", postfix, control_var);
+    fprintf(out_file, "JUMP for_body_%09i\n", postfix);
     // ------------------------------------------
 
     if (type != T_BOOL)
@@ -848,19 +861,18 @@ int s_for(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,"JUMP for_%09i\n", postfix);
+    fprintf(out_file, "JUMP for_%09i\n", postfix);
     fprintf(out_file, "LABEL for_body_%09i\n", postfix);
     // ------------------------------------------
 
     // <body>
-    r_code =  s_body(symstack, NULL);
+    r_code = s_body(symstack, NULL);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,"JUMP for_assign_%09i\n", postfix);
-    fprintf(out_file,"LABEL endfor_%09i\n", postfix);
-    fprintf(out_file,"# -------------- end for -------------)\n\n");
+    fprintf(out_file, "JUMP for_assign_%09i\n", postfix);
+    fprintf(out_file, "LABEL endfor_%09i\n", postfix);
+    fprintf(out_file, "# -------------- end for -------------)\n\n");
     // ------------------------------------------
-
 
     free(control_var);
     return r_code;
