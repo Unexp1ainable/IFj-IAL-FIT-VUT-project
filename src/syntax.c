@@ -1455,7 +1455,7 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
         // ------------------------------------------
     }
 
-    return s_param_list_n(symstack, func_def, n);
+    return s_param_list_n(symstack, func_def, n+1);
 }
 
 int s_type(DataType *type)
