@@ -664,17 +664,9 @@ int StartExpr(SymtableStack *TableList, TermType *type){
     }
     if(reading == -4){
         return ERR_EXP_ORDER;
-    }
-    if(result_here == NULL){
-        return reading;
-    }  
-<<<<<<< HEAD
-    if(*Result[] != '/0'){ 
-    fprintf(out_file,"POPS %s", result_here);
-=======
-    if(Result != T_BOOL){ 
+    } 
+    if(Result != T_BOOL || (result_here[0] != '\0')){ 
     fprintf(out_file,"POPS %s\n", result_here);
->>>>>>> a68ee28cb1bcf47a53442a286447dbf1c3a45ee3
     }
     return reading;         //stav v jakém skončilo převádění
 }
