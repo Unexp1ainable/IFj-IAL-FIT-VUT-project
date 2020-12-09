@@ -242,10 +242,10 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     int pos = 7;
                     int multip = 10;
                     interpret = calloc((size+50),(sizeof(char)));
-                    strcpy(interpret,"string@");
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
                     }
+                    strcpy(interpret,"string@");
                     for(int i =0; i< size; i++ ){
                         if(pos + 4 >= size){
                             multip += 100;
