@@ -20,6 +20,8 @@ TOKEN *curr_token;
 unsigned long int line = 1;
 TokenList tokens;
 bool first_pass = true;
+unsigned int postfix = 0;
+char *result_here = NULL;
 
 void get_token(TOKEN **token)
 {
@@ -264,7 +266,16 @@ Symtable_item *symstack_lookup(SymtableStack *stack, char *key)
     return NULL;
 }
 
-Symtable_item *was_it_defined_top(SymtableStack *stack, char *key)
+Symtable_item *symstack_lookup_top(SymtableStack *stack, char *key)
 {
     return symtable_search(stack->table[stack->top], key);
+}
+
+
+void postfix_next(){
+    postfix++;
+}
+
+void postfix_prev(){
+    postfix--;
 }

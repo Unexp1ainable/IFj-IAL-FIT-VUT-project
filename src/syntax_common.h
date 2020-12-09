@@ -170,6 +170,17 @@ extern TokenList tokens;
  */
 extern bool first_pass;
 
+/**
+ * @brief Postfix for generated variables
+ * 
+ */
+extern unsigned int postfix;
+
+/**
+ * @brief Variable for passing of the name of the target variable
+ * 
+ */
+extern char *result_here;
 // ################### end of global variables #################
 
 // ################### functions #################
@@ -222,7 +233,7 @@ Symtable_item *symstack_lookup(SymtableStack *stack, char *key);
  * @param key Id which to look for
  * @return Symtable_item* Pointer if found, otherwise NULL
  */
-Symtable_item *was_it_defined_top(SymtableStack *stack, char *key);
+Symtable_item *symstack_lookup_top(SymtableStack *stack, char *key);
 
 /**
  * @brief Processes all sucessive eols
@@ -231,6 +242,18 @@ Symtable_item *was_it_defined_top(SymtableStack *stack, char *key);
  * @return int 
  */
 int s_eols();
+
+/**
+ * @brief Generate next postfix
+ * 
+ */
+void postfix_next();
+
+/**
+ * @brief Generate previous postfix
+ * 
+ */
+void postfix_prev();
 
 // ################### end of functions #################
 
