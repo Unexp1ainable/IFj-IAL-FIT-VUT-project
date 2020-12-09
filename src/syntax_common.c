@@ -311,7 +311,7 @@ void print_builtins(){
     fputs(BUILT_IN_FUNC_FLOAT_2_INT, out_file);
     fputs(BUILT_IN_FUNC_INT_2_FLOAT, out_file);
     fputs(BUILT_IN_FUNC_INPUTF, out_file);
-    fputs(BUILT_IN_FUNC_INPUTI, out_file);
+    fputs(BUILT_IN_FUNC_INPUTS, out_file);
     fputs(BUILT_IN_FUNC_INPUTI, out_file);
     fputs(BUILT_IN_FUNC_PRINT, out_file);
     fputs(BUILT_IN_FUNC_LEN, out_file);

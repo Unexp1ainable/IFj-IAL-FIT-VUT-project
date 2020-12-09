@@ -148,42 +148,43 @@
 /*####    built in functions for reading of literals and print of terms    ###########################*/
 #define BUILT_IN_FUNC_INPUTI \
     "\nLABEL inputi \
-\nPUSH FRAME \
+   \nPUSHFRAME \
 \nDEFVAR LF@__ret_000__ \
-\nDEFVAR LF@__ret_000__ \
-\nREAD __ret_000__ int \
-\nJUMPIFEQ while_inputi_failed __ret_000__ nil@nil  \
+\nDEFVAR LF@__ret_001__ \
+\nREAD LF@__ret_000__ int \
+\nJUMPIFEQ while_inputi_failed LF@__ret_000__ nil@nil  \
 \nPOPFRAME \
 \nRETURN \
 \nLABEL while_inputi_failed \
-\nMOVE __ret_001___ 1 \
+\nMOVE LF@__ret_001___ int@1 \
 \nPOPFRAME \
 \nRETURN"
 
 #define BUILT_IN_FUNC_INPUTS \
-    "\nLABEL inputf \
-\nPUSH FRAME \
+    "\nLABEL inputs \
+\nPUSHFRAME \
 \nDEFVAR LF@__ret_000__ \
-\nDEFVAR LF@__ret_000__ \
-\nREAD __ret_000__ string \
-\nJUMPIFEQ while_inputs_failed __ret_000__ nil@nil  \
+\nDEFVAR LF@__ret_001__ \
+\nREAD LF@__ret_000__ string \
+\nJUMPIFEQ while_inputs_failed LF@__ret_000__ nil@nil  \
 \nPOPFRAME \
 \nRETURN \
 \nLABEL while_inputs_failed \
-\nMOVE __ret_001___ 1 \
+\nMOVE LF@__ret_001___ int@1 \
 \nPOPFRAME \
 \nRETURN"
 
 #define BUILT_IN_FUNC_INPUTF \
-    "\nLABEL inputf   \nPUSH FRAME \
+    "\nLABEL inputf   \
+    \nPUSHFRAME \
 \nDEFVAR LF@__ret_000__ \
-\nDEFVAR LF@__ret_000__ \
-\nREAD __ret_000__ float \
-\nJUMPIFEQ while_inputi_failed __ret_000__ nil @nil \
+\nDEFVAR LF@__ret_001__ \
+\nREAD LF@__ret_000__ float \
+\nJUMPIFEQ while_inputi_failed LF@__ret_000__ nil@nil \
 \nPOPFRAME \
 \nRETURN \
 \nLABEL while_inputf_failed \
-\nMOVE __ret_001___ 1 \
+\nMOVE LF@__ret_001___ int@1 \
 \nPOPFRAME \
 \nRETURN"
 
