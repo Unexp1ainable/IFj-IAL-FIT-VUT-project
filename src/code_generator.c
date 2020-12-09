@@ -23,7 +23,7 @@
 /**
  * @brief built-in strlen function. Page 10
 */
-#define BUILT_IN_FUNC_LEN                          \
+#define BUILT_IN_FUNC_LEN \
     "\n\n                                         \
     \n# built-in function for lenght of a string \
     \nLABEL len                                  \
@@ -37,7 +37,7 @@
  * @brief built-int function to return ASCII (ordinal)
  * value on a given index in string, else false. Page 10
  * */
-#define BUILT_IN_FUNC_ORD                                              \
+#define BUILT_IN_FUNC_ORD \
     "\n\n                                                             \
     \n#built-in function for ASCII value of the given sign in string \
     \nLABEL $ord                                                     \
@@ -60,7 +60,7 @@
  * @brief built-in function to return single-char
  * @note TODO v tejto funkcii aj v dalsich mam vratit hodnotu 1 ako chybu. AKO?
  * */
-#define BUILT_IN_FUNC_CHR                     \
+#define BUILT_IN_FUNC_CHR \
     "\n    LABEL   $chr                      \
     \nPUSHFRAME                             \
     \nDEFVAR   LF@returnvalue               \
@@ -95,7 +95,7 @@
 /**
  * @brief built in substr function. Page 10
  * */
-#define BUILT_IN_FUNC_SUBSTR                              \
+#define BUILT_IN_FUNC_SUBSTR \
     "\n    # substr                                      \
     \nLABEL   $substr                                   \
     \nPUSHFRAME                                         \
@@ -146,9 +146,46 @@
     \nRETURN "
 
 /*####    built in functions for reading of literals and print of terms    ###########################*/
-#define BUILT_IN_FUNC_INPUTS "" /*TODO*/
-#define BUILT_IN_FUNC_INPUTI "" /*TODO*/
-#define BUILT_IN_FUNC_INPUTF "" /*TODO*/
+#define BUILT_IN_FUNC_INPUTI \
+    "\nLABEL inputi \
+\nPUSH FRAME \
+\nDEFVAR LF@__ret_000__ \
+\nDEFVAR LF@__ret_000__ \
+\nREAD __ret_000__ int \
+\nJUMPIFEQ while_inputi_failed __ret_000__ nil@nil  \
+\nPOPFRAME \
+\nRETURN \
+\nLABEL while_inputi_failed \
+\nMOVE __ret_001___ 1 \
+\nPOPFRAME \
+\nRETURN"
+
+#define BUILT_IN_FUNC_INPUTS \
+    "\nLABEL inputf \
+\nPUSH FRAME \
+\nDEFVAR LF@__ret_000__ \
+\nDEFVAR LF@__ret_000__ \
+\nREAD __ret_000__ string \
+\nJUMPIFEQ while_inputs_failed __ret_000__ nil@nil  \
+\nPOPFRAME \
+\nRETURN \
+\nLABEL while_inputs_failed \
+\nMOVE __ret_001___ 1 \
+\nPOPFRAME \
+\nRETURN"
+
+#define BUILT_IN_FUNC_INPUTF \
+    "\nLABEL inputf   \nPUSH FRAME \
+\nDEFVAR LF@__ret_000__ \
+\nDEFVAR LF@__ret_000__ \
+\nREAD __ret_000__ float \
+\nJUMPIFEQ while_inputi_failed __ret_000__ nil @nil \
+\nPOPFRAME \
+\nRETURN \
+\nLABEL while_inputf_failed \
+\nMOVE __ret_001___ 1 \
+\nPOPFRAME \
+\nRETURN"
 
 /*built-in functions for conversion of number types*/
 #define BUILT_IN_FUNC_INT_2_FLOAT \
@@ -172,7 +209,7 @@
     \nRETURN"
 
 /*other built-in functions*/
-#define BUILT_IN_FUNC_PRINT                                \
+#define BUILT_IN_FUNC_PRINT \
     "\nLABEL print # SUPPORTS UP TO 15 VALUES!!!!!!!!!!!! \
     \nPUSHFRAME                                          \
     \nDEFVAR LF@__counter__                              \
