@@ -65,6 +65,7 @@ typedef struct htab_tabitem
     char *key;
     struct htab_tabitem *next;
     DataType dataType;
+    char *codename;
     ItemData itemData;
 
 } Symtable_item;

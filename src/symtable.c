@@ -83,6 +83,7 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror)
     (*table)[hash_index] = new_item;
     new_item->next = tmp;
     new_item->dataType = T_UNKNOWN;
+    new_item->codename = NULL;
     *noerror = true;
     return new_item;
 }
@@ -413,6 +414,8 @@ void symtable_remove(Symtable *table, char *key)
         free(current->itemData.dynamicstring);
     }
     free(current->key); //FREE
+    if (current->codename != NULL)
+        free(current->codename);
     free(current);      //FREE
     return;
 }

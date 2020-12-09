@@ -83,7 +83,7 @@ void stackFree(SymtableStack * symtablestack);
  * @param var Token with the variable's value
  * @return Symtable_item* Pointer to the item if succeeded, NULL otherwise
  */
-Symtable_item *sym_list_add_to_last(SymtableStack *symlist, char *id, TermType type);//TODO rename
+Symtable_item *symstack_add_to_last(SymtableStack *symlist, char *id, TermType type);//TODO rename
 
 /**
  * @brief returns topmost table from the stack

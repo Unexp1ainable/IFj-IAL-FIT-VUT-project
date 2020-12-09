@@ -236,6 +236,17 @@ Symtable_item *symstack_lookup(SymtableStack *stack, char *key);
 Symtable_item *symstack_lookup_top(SymtableStack *stack, char *key);
 
 /**
+ * @brief Adds codename to the latest matching symtable item.
+ * 
+ * @param stack Stack of the symtables
+ * @param key Key of the item
+ * @param codename String to be assigned as codename
+ * @return true Success
+ * @return false Item not found
+ */
+bool add_codename(SymtableStack *stack, char *key, char *codename);
+
+/**
  * @brief Processes all sucessive eols
  * 
  * 
@@ -254,6 +265,15 @@ void postfix_next();
  * 
  */
 void postfix_prev();
+
+/**
+ * @brief Allocates memory and copies required values, creating new variable name.
+ * 
+ * @param id Defined identifier
+ * @param postfix Postfix for the correct frame of reference
+ * @return char* Pointer to the new string, NULL if malloc failed.
+ */
+char *make_codename(char* id, unsigned int postfix);
 
 // ################### end of functions #################
 

@@ -210,16 +210,16 @@ void describe_error(ERR_CODE_SYN err)
         break;
 
     case ERR_ID_IS_NOT_FUNC:
-            fprintf(stderr, "Line %li: Trying to call a function, but defined id is not a function.\n", line);
-            break;
-    
+        fprintf(stderr, "Line %li: Trying to call a function, but defined id is not a function.\n", line);
+        break;
+
     case ERR_INVALID_EXPRESSION_IF:
-            fprintf(stderr, "Line %li: Condition is not valid.\n", line);
-            break;
+        fprintf(stderr, "Line %li: Condition is not valid.\n", line);
+        break;
 
     case ERR_NO_EXPR:
-            fprintf(stderr, "Line %li: Expression is empty.\n", line);
-            break;
+        fprintf(stderr, "Line %li: Expression is empty.\n", line);
+        break;
 
     default:
         fputs("Something is wrong, I can feel it.\n", stderr);
@@ -271,11 +271,36 @@ Symtable_item *symstack_lookup_top(SymtableStack *stack, char *key)
     return symtable_search(stack->table[stack->top], key);
 }
 
-
-void postfix_next(){
-    postfix++;
+void postfix_next()
+{
+    static unsigned int UID = 0;
+    postfix = ++UID;
 }
 
-void postfix_prev(){
+// TODO probably not used
+void postfix_prev()
+{
     postfix--;
+}
+
+char *make_codename(char *id, unsigned int postfix)
+{
+    char *n_name = calloc(sizeof(char), strlen(id) + 10); // 10 because 9 digits are for postfix and 1 for \0
+    if (!n_name)
+        return NULL;
+
+    sprintf(n_name, "%s_%09i", id, postfix); // null terminator is implicit because of calloc
+
+    return n_name;
+}
+
+bool add_codename(SymtableStack *stack, char *key, char *codename)
+{
+    Symtable_item *item = symstack_lookup(stack, key);
+    if (!item){
+        return false;
+    }
+
+    item->codename = codename;
+    return true;
 }
