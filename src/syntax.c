@@ -159,7 +159,7 @@ int copy_to_id(SymtableStack *symstack)
 
 void free_copied_id()
 {
-    for (int i; i < id_list_n; i++)
+    for (int i = 0; i < id_list_n; i++)
         free(id_list[i].codename);
 }
 
@@ -797,17 +797,32 @@ int s_for(SymtableStack *symstack)
         return ERR_SEMICOLON_EXPECTED;
     }
 
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file,"# -------------- for loop -------------)\n\n");
+    char *control_var = make_codename("c_result_", postfix);
+    fprintf(out_file, "DEFVAR %s\n", control_var);
+    result_here = control_var;
+    fprintf(out_file, "LABEL for_%09i\n", postfix);
+    // ------------------------------------------
+
     // <expr>
     TermType type;
     r_code = s_expr(symstack, &type);
 
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file,"JUMIFEQ endfor_%09i %s bool@false\n", postfix, control_var);
+    fprintf(out_file,"JUMP for_body_%09i\n", postfix);
+    // ------------------------------------------
+
     if (type != T_BOOL)
     {
+        free(control_var);
         return ERR_INVALID_EXPRESSION;
     }
 
     if (r_code)
     {
+        free(control_var);
         if (r_code == ERR_EMPTY_EXP)
             return ERR_NO_EXPR;
         return r_code;
@@ -817,8 +832,13 @@ int s_for(SymtableStack *symstack)
     get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_SEMICOLON))
     {
+        free(control_var);
         return ERR_SEMICOLON_EXPECTED;
     }
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "LABEL for_assign_%09i\n", postfix);
+    // ------------------------------------------
 
     // <id_assign_v>
     r_code = s_id_assign_v(symstack);
@@ -827,8 +847,23 @@ int s_for(SymtableStack *symstack)
         return r_code;
     }
 
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file,"JUMP for_%09i\n", postfix);
+    fprintf(out_file, "LABEL for_body_%09i\n", postfix);
+    // ------------------------------------------
+
     // <body>
-    return s_body(symstack, NULL);
+    r_code =  s_body(symstack, NULL);
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file,"JUMP for_assign_%09i\n", postfix);
+    fprintf(out_file,"LABEL endfor_%09i\n", postfix);
+    fprintf(out_file,"# -------------- end for -------------)\n\n");
+    // ------------------------------------------
+
+
+    free(control_var);
+    return r_code;
 }
 
 int s_return(SymtableStack *symstack)
