@@ -323,7 +323,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 
             }
             if(item->val.term.tokentype == TOKEN_TYPE_IDENTIFIER){
-                fprintf(out_file,"PUSHS LF@$%s\n",interpret);
+                fprintf(out_file,"PUSHS LF@%s\n",interpret);
             }
             fprintf(out_file,"PUSHS %s\n",interpret);
             item->type = IT_NONTERM;

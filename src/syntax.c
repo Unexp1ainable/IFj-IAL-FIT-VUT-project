@@ -207,7 +207,7 @@ int s_prolog(SymtableStack *symstack)
     int r_code = s_f_list(symstack);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file,"RETURN\n");
+    fprintf(out_file,"EXIT int@0\n");
     // ------------------------------------------
     if (r_code)
     {
@@ -330,7 +330,7 @@ int s_func(SymtableStack *symstack)
         fprintf(out_file, "LABEL %s\n", curr_func);
         fprintf(out_file, "PUSHFRAME\n");
         for (int i = 0; i < new_func->itemData.funcitemptr->used_return; i++)
-            fprintf(out_file, "DEFVAR __ret_%03i__\n\n", i);
+            fprintf(out_file, "DEFVAR LF@__ret_%03i__\n\n", i);
         // ------------------------------------------
 
         r_code = s_body(symstack, new_func->itemData.funcitemptr);
@@ -829,7 +829,7 @@ int s_for(SymtableStack *symstack)
 
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "PUSHS bool@false\n");
-    fprintf(out_file, "JUMIFEQS endfor_%09i\n", postfix);
+    fprintf(out_file, "JUMPIFEQS endfor_%09i\n", postfix);
     fprintf(out_file, "JUMP for_body_%09i\n", postfix);
     // ------------------------------------------
 
