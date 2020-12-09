@@ -241,13 +241,56 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 break;
                 case TOKEN_TYPE_STRING:
                     Result = T_STRING;
-                    interpret = malloc(sizeof(char)*(strlen(item->val.term.string->string)+10));
+                    int size = strlen(item->val.term.string->string);
+                    int pos = 7;
+                    int multip = 10;
+                    interpret = malloc(sizeof(char)*(size+20));
+                    strcpy(interpret,"string@");
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
-                        ;
                     }
-                    strcpy(interpret,"#STRING#");
-                    strcat(interpret,item->val.term.string->string);
+                    for(int i =0; i< size; i++ ){
+                        if(pos + 4 >= size){
+                            multip += 100;
+                            interpret = realloc(interpret, sizeof(char)*multip);
+                            if(interpret == NULL){
+                                return ERR_ALLOC_M;
+                            }
+                        }
+                        if(item->val.term.string->string[i] == ' '){ //mezera ve stringu
+                            interpret[pos] = 92;   
+                            interpret[pos+1] = '0';
+                            interpret[pos+2] = '3';
+                            interpret[pos+3] = '2';
+                            pos+=4;
+                        }
+                        else if(item->val.term.string->string[i] == '\\'){  //backslash
+                            interpret[pos] = 92; 
+                            interpret[pos+1] = '0';
+                            interpret[pos+2] = '9';
+                            interpret[pos+3] = '2';
+                            pos+=4;
+                        }
+                        else if(item->val.term.string->string[i] == '\n'){  //eol ve stringu
+                            interpret[pos] = 92; 
+                            interpret[pos+1] = '0';
+                            interpret[pos+2] = '1';
+                            interpret[pos+3] = '0';
+                            pos+=4;
+                        }
+                        else if(item->val.term.string->string[i] == '#' ){ //hashtag
+                            interpret[pos] = 92; 
+                            interpret[pos+1] = '0';
+                            interpret[pos+2] = '3';
+                            interpret[pos+3] = '5';
+                            pos+=4;
+                        }
+                        else {
+                            interpret[pos] = item->val.term.string->string[i];
+                            pos++;
+                        }
+
+                    }
                     type= T_STRING;
                     break;
                 case TOKEN_TYPE_IDENTIFIER:
