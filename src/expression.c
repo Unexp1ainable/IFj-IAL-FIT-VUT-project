@@ -459,9 +459,11 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_ZERO_DIVISION;
             }
             if((LeftType == RightType) && (LeftType == T_FLOAT)){
+                Result = T_FLOAT;
                 printf("DIVS");
             }
             else if((LeftType == RightType) && (LeftType == T_INT)){
+                Result = T_INT;
                 printf("IDIVS");
             }
         break;
