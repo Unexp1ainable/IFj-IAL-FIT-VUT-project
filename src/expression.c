@@ -304,7 +304,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                         Symtable_item *temp = symstack_lookup(TableList, item->val.term.string->string);
                         type = temp->dataType;
                         Result = temp->dataType;
-                //        strcpy(interpret, temp->codename);
+                        strcpy(interpret, temp->codename);
                         break;
                     }  
                 case TOKEN_TYPE_EMPTY:
