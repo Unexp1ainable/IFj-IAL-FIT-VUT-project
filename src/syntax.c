@@ -311,7 +311,7 @@ int s_func(SymtableStack *symstack)
         fprintf(out_file, "LABEL %s\n", curr_func);
         fprintf(out_file, "PUSHFRAME\n");
         for (int i = 0; i < new_func->itemData.funcitemptr->used_return; i++)
-            fprintf(out_file, "DEFVAR ret_%i\n\n", i);
+            fprintf(out_file, "DEFVAR __ret_%i__\n\n", i);
         // ------------------------------------------
 
         r_code = s_body(symstack, new_func->itemData.funcitemptr);
@@ -364,11 +364,25 @@ int s_f_call(SymtableStack *symstack, Symtable_item *func_def)
     // param_def_list
     get_token(&curr_token);
     return_token(curr_token);
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "# ---------- function call ----------\n");
+    fprintf(out_file, "CREATEFRAME\n");
+    // ------------------------------------------
+
     if (TOKEN_IS_NOT(TOKEN_TYPE_OPENING_CLASSIC_BRACKET))
     {
         return ERR_UNEXPECTED_TOKEN;
     }
-    return s_param_list(symstack, func_def);
+    int r_code = s_param_list(symstack, func_def);
+    if (r_code)
+        return r_code;
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "CALL %s\n", func_def->key);
+    fprintf(out_file, "# -------- end function call --------\n");
+    // ------------------------------------------
+
+    return NO_ERR;
 }
 
 int s_body(SymtableStack *symstack, FuncItemData *func_ptr)
@@ -378,12 +392,18 @@ int s_body(SymtableStack *symstack, FuncItemData *func_ptr)
     symtable_init(&new_table);
     stackPush(symstack, &new_table);
 
+    // ---------------- CODE-GEN ----------------
+    // save old and generate new postfix
+    unsigned int old_postfix = postfix;
+    postfix_next();
+    // ------------------------------------------
+
     // in case the body is the body of the function, inject func params to the symtable
     if (func_ptr != NULL)
     {
         for (int i = 0; i < func_ptr->used_param; i++)
         {
-            sym_list_add_to_last(symstack, func_ptr->param_names[i], func_ptr->param_types[i]);
+            symstack_add_to_last(symstack, func_ptr->param_names[i], func_ptr->param_types[i]);
         }
     }
 
@@ -423,6 +443,11 @@ int s_body(SymtableStack *symstack, FuncItemData *func_ptr)
 
     // free last symtable
     symtable_free(stackPop(symstack));
+
+    // ---------------- CODE-GEN ----------------
+    // restore old postfix
+    postfix = old_postfix;
+    // ------------------------------------------
 
     return NO_ERR;
 }
@@ -566,9 +591,6 @@ int s_ret_t_list(SymtableStack *symstack, char *func_id)
 
 int s_ret_t_list_n(SymtableStack *symstack, char *func_id)
 {
-    //     <ret_t_list_n> -> , <type> <ret_t_list_n>
-    // <ret_t_list_n> -> e
-
     // e
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
@@ -960,24 +982,30 @@ int s_id_def(SymtableStack *symstack, char *id)
     {
         return ERR_ID_DEF_EXPECTED;
     }
-    
+
+    char *new_var = make_codename(id, postfix);
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "DEFVAR %s_%i\n", id, postfix);
+    fprintf(out_file, "DEFVAR LF@%s\n", new_var);
+    // pass target variable
+    result_here = new_var;
     // ------------------------------------------
 
     TermType type;
     int r_code = s_expr(symstack, &type);
-
+    // check if expression evaluation succeeded
     if (r_code)
     {
+        // determine correct error code
         if (r_code == ERR_EMPTY_EXP)
             return ERR_NO_EXPR;
         return r_code;
     }
 
+    // add var to symtable
     if (type == T_STRING || type == T_INT || type == T_FLOAT)
     {
-        sym_list_add_to_last(symstack, id, type);
+        symstack_add_to_last(symstack, id, type);
+        add_codename(symstack, id, new_var);
         return r_code;
     }
     return ERR_TYPE_UNDETERMINED;
@@ -985,6 +1013,7 @@ int s_id_def(SymtableStack *symstack, char *id)
 
 int s_id_def_v(SymtableStack *symstack)
 {
+    // <id_def>
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_IDENTIFIER))
     {
@@ -992,6 +1021,7 @@ int s_id_def_v(SymtableStack *symstack)
         return s_id_def(symstack, id);
     }
 
+    // e
     return_token(curr_token);
     return NO_ERR;
 }
@@ -1000,6 +1030,8 @@ int s_id_list(SymtableStack *symstack)
 {
     get_token(&curr_token);
     Symtable_item *sym_item;
+
+    // id || _
     if (TOKEN_IS_NOT(TOKEN_TYPE_IDENTIFIER))
     {
         if (TOKEN_IS_NOT(TOKEN_TYPE_UNDERSCORE))
@@ -1007,6 +1039,7 @@ int s_id_list(SymtableStack *symstack)
             return ERR_ID_EXPECTED;
         }
         else
+        // _
         {
             sym_item = symstack_lookup(symstack, "_");
             if (!sym_item)
@@ -1016,6 +1049,7 @@ int s_id_list(SymtableStack *symstack)
         }
     }
     else
+    // id
     {
         sym_item = symstack_lookup(symstack, curr_token->string->string);
         if (!sym_item)
@@ -1024,6 +1058,7 @@ int s_id_list(SymtableStack *symstack)
         }
     }
 
+    // copy value to id_list
     memcpy(id_list + 1, sym_item, sizeof(Symtable_item));
     id_list_n++;
 
@@ -1031,14 +1066,16 @@ int s_id_list(SymtableStack *symstack)
 }
 
 int s_id_list_n(SymtableStack *symstack)
-{ //e
+{
+    // e
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_ASSIGN))
     {
         return_token(curr_token);
         return NO_ERR;
     }
-    //,
+
+    // ,
     if (TOKEN_IS(TOKEN_TYPE_COMMA))
     {
         Symtable_item *sym_item;
@@ -1051,6 +1088,7 @@ int s_id_list_n(SymtableStack *symstack)
                 return ERR_ID_EXPECTED;
             }
             else
+            // _
             {
                 sym_item = symstack_lookup(symstack, "_");
                 if (!sym_item)
@@ -1059,7 +1097,8 @@ int s_id_list_n(SymtableStack *symstack)
                 }
             }
         }
-        else //id
+        else
+        // id
         {
             sym_item = symstack_lookup(symstack, curr_token->string->string);
             if (!sym_item)
@@ -1068,6 +1107,7 @@ int s_id_list_n(SymtableStack *symstack)
             }
         }
 
+        // copy value to id_list
         memcpy(id_list + id_list_n, sym_item, sizeof(Symtable_item));
         id_list_n++;
 
@@ -1208,12 +1248,30 @@ int s_param_list(SymtableStack *symstack, Symtable_item *func_def)
     return_token(curr_token);
 
     TermType type;
+    // ---------------- CODE-GEN ----------------
+    char *param_name;
+    if (func_def->itemData.funcitemptr->var_param)
+    {
+        char tmp[11];
+        sprintf(tmp, "__par%03d__", 0);
+        param_name = tmp;
+    }
+    else
+        param_name = func_def->itemData.funcitemptr->param_names[0];
+
+    fprintf(out_file, "DEFVAR TF@%s\n", param_name);
+    result_here = param_name;
+    // ------------------------------------------
     int r_code = s_expr(symstack, &type);
     if (r_code)
     {
         return r_code;
     }
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "PUSHS TF@%s\n", param_name);
+    // ------------------------------------------
 
+    // check if parameter is matching with the function fingerprint
     if (!func_def->itemData.funcitemptr->var_param)
     {
         if (func_def->itemData.funcitemptr->used_param == 0)
@@ -1264,7 +1322,11 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
         {
             return ERR_WRONG_FUNC_PARAM;
         }
+        // ---------------- CODE-GEN ----------------
+        fprintf(out_file, "PUSHS TF@%s\n", func_def->itemData.funcitemptr->param_names[n]);
+        // ------------------------------------------
     }
+
     return s_param_list_n(symstack, func_def, n);
 }
 

@@ -141,7 +141,7 @@ Symtable *stackBottom(SymtableStack *symlist)
 
 
 
-Symtable_item *sym_list_add_to_last(SymtableStack *symlist, char *id, TermType type)
+Symtable_item *symstack_add_to_last(SymtableStack *symlist, char *id, TermType type)
 {
     Symtable *table = stackTop(symlist);
     if (table == NULL){
