@@ -369,7 +369,7 @@ int s_f_call(SymtableStack *symstack, Symtable_item *func_def)
     return_token(curr_token);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "\n\n\n# ---------- function call ----------\n");
+    fprintf(out_file, "\n# ---------- function call ----------\n");
     fprintf(out_file, "CREATEFRAME\n");
     // ------------------------------------------
 
@@ -1348,9 +1348,6 @@ int s_param_list(SymtableStack *symstack, Symtable_item *func_def)
     {
         return r_code;
     }
-    // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "PUSHS TF@%s\n", param_name);
-    // ------------------------------------------
 
     // check if parameter is matching with the function fingerprint
     if (!func_def->itemData.funcitemptr->var_param)
