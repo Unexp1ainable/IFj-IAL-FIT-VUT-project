@@ -43,17 +43,17 @@
 "\n #built-in function for ASCII value of the given sign in string" \
 "\n LABEL $ord"                                                     \
 "\n PUSHFRAME"                                                      \
-"\n DEFVAR LF@strlen"                                               \
-"\n STRLEN LF@strlen"                                               \
-"\n JMPIFEQ $ord_end LF@strlen int@0"                               \
-"\n DEFVAR LF@bool1"                                                \
-"\n GT LF@bool1 LF@i LF@strlen "                                    \
+"\n DEFVAR   LF@strlen"                                             \
+"\n STRLEN   LF@strlen"                                             \
+"\n JUMPIFEQ $ord_end LF@strlen int@0"                              \
+"\n DEFVAR   LF@bool1"                                              \
+"\n GT       LF@bool1 LF@i LF@strlen "                              \
 "\n JUMPIFEQ $ord_end LF@bool1 bool@true"                           \
-"\n LT LF@bool1 LF@i int@0"                                         \
+"\n LT       LF@bool1 LF@i int@0"                                   \
 "\n JUMPIFEQ $ord_end LF@bool1 bool@true"                           \
-"\n DEFVAR LF@$return"                                              \
-"\n STR2INT LF@$return LF@return LF@s LF@i"                         \
-"\nLABEL $ord_end "                                                 \
+"\n DEFVAR   LF@$return"                                            \
+"\n STR2INT  LF@$return LF@return LF@s LF@i"                        \
+"\nLABEL     $ord_end "                                             \
 "\n POPFRAME"                                                       \
 "\n RETURN"
 
@@ -64,18 +64,18 @@
 #define BUILT_IN_FUNC_CHR                                           \
 "\n\n"                                                              \
 "\n #built-in function to return sign of the given ascii value"     \
-"\n LABEL $chr"                                                     \
+"\n LABEL   $chr"                                                   \
 "\n PUSHFRAME"                                                      \
-"\n DEFVAR LF@returnvalue"                                          \
-"\n MOVE LF@returnvalue string@"                                    \
-"\n DEFVAR LF@bool1"                                                \
-"\n DEFVAR LF@bool2"                                                \
-"\n LT LF@bool1 LF@i  int@256"                                      \
-"\n GT LF@bool2 LF@i  int@-1"                                       \
-"\n AND LF@bool1 LF@bool1 LF@bool2"                                 \
+"\n DEFVAR   LF@returnvalue"                                        \
+"\n MOVE     LF@returnvalue string@"                                \
+"\n DEFVAR   LF@bool1"                                              \
+"\n DEFVAR   LF@bool2"                                              \
+"\n LT       LF@bool1 LF@i  int@256"                                \
+"\n GT       LF@bool2 LF@i  int@-1"                                 \
+"\n AND      LF@bool1 LF@bool1 LF@bool2"                            \
 "\n JUMPIFNEQ $chr_end LF@bool1 bool@true"                          \
 "\n INT2CHAR LF@returnvalue LF@i"                                   \
-"\n LABEL $chr_end"                                                 \
+"\n LABEL    $chr_end"                                              \
 "\n POPFRAME"                                                       \
 "\n RETURN"
 
