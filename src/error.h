@@ -1,11 +1,19 @@
 /**
  * @file error.h
- * @author Michal Reznik
- * @brief Compiler error codes
- * @date 2020-11-27
  * 
- */
-
+ * @brief Compiler error codes. Header file
+ * 
+ * @date 27.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 
 
 /**

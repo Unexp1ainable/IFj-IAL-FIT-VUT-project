@@ -1,17 +1,18 @@
 /**
  * @file symtable.c
  * 
- * @author Timotej Kamenský, xkamen24, +421 944 687 328
- * @author Michal Řezník,  xrezni28, +420731748122
- * @author Jiří Hofírek, xhofir06, +420774883191
- * @author Samuel Repka, xrepka07, +421907587090
+ * @brief implementation of symbol table
  * 
- * @version 0.1
- * @note first draft of symtable implementation
- * @brief implementation of symtable
- * @date 2020-11-20
- */
-
+ * @date 20.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #include <string.h>
 #include <stdlib.h>
 #include "symtable.h"
@@ -82,6 +83,7 @@ Symtable_item *symtable_add(Symtable *table, char *key, bool *noerror)
     (*table)[hash_index] = new_item;
     new_item->next = tmp;
     new_item->dataType = T_UNKNOWN;
+    new_item->codename = NULL;
     *noerror = true;
     return new_item;
 }
@@ -412,6 +414,8 @@ void symtable_remove(Symtable *table, char *key)
         free(current->itemData.dynamicstring);
     }
     free(current->key); //FREE
+    if (current->codename != NULL)
+        free(current->codename);
     free(current);      //FREE
     return;
 }
@@ -453,8 +457,10 @@ void symtable_free(Symtable *table)
                 dynamic_string_free(current->itemData.dynamicstring);
                 free(current->itemData.dynamicstring);
             }
+            
             free(current->key);
             free(current);
+            
             current = next;
         }
         (*table)[i] = NULL; //is it really needed?

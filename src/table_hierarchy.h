@@ -1,19 +1,23 @@
 /**
  * @file table_hierarchy.h
  * 
- * @author Timotej Kamenský, xkamen24, +421 944 687 328
- * @author Michal Řezník,  xrezni28, +420731748122
- * @author Jiří Hofírek, xhofir06, +420774883191
- * @author Samuel Repka, xrepka07, +421907587090
+ * @brief header file for hierarchical system of tables.
  * 
- * @version 0.1
- * @brief header file for hierarchical system of tables, to deal with scope of variables.
- * @date 2020-11-25
- */
+ * @date 25.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 /**
  * The system of tables is implemented as a stack of Symtable structs, with dynamic allocation
  * */
 #include "symtable.h"
+#include "syntax_common.h"
 #ifndef TABLE_HIERARCHY_H
 #define TABLE_HIERARCHY_H
 #define DEFAULT_STACK_SIZE 2
@@ -68,5 +72,33 @@ Symtable * stackPop(SymtableStack * symtablestack);
  * @brief frees the stack and all of its contents
  * */
 void stackFree(SymtableStack * symtablestack);
+
+/**
+ * @brief Adds variable (not function) to the last symtable in the list
+ * 
+ * @note Expects list of symtables with at least 1 symtable
+ * 
+ * @param symlist List of symtables
+ * @param id Name of the variable
+ * @param var Token with the variable's value
+ * @return Symtable_item* Pointer to the item if succeeded, NULL otherwise
+ */
+Symtable_item *symstack_add_to_last(SymtableStack *symlist, char *id, TermType type);//TODO rename
+
+/**
+ * @brief returns topmost table from the stack
+ * 
+ * @param symlist 
+ * @return Symtable* 
+ */
+Symtable *stackTop(SymtableStack *symlist);
+
+/**
+ * @brief returns bottomost table from the stack
+ * 
+ * @param symlist 
+ * @return Symtable* 
+ */
+Symtable *stackBottom(SymtableStack *symlist);
 
 #endif

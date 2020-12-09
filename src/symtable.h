@@ -1,15 +1,18 @@
 /**
  * @file symtable.h
  * 
- * @author Timotej Kamenský, xkamen24, +421 944 687 328
- * @author Michal Řezník,  xrezni28, +420731748122
- * @author Jiří Hofírek, xhofir06, +420774883191
- * @author Samuel Repka, xrepka07, +421907587090
+ * @brief header file for the symbol table
  * 
- * @brief Header for symbol hash table
+ * @date 20.11.2020
  * 
- * @date 2020-11-20
- */
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #include <stdbool.h>
 #include "dynamic_string.h"
 #ifndef SYMTABLE_H
@@ -62,6 +65,7 @@ typedef struct htab_tabitem
     char *key;
     struct htab_tabitem *next;
     DataType dataType;
+    char *codename;
     ItemData itemData;
 
 } Symtable_item;

@@ -1,17 +1,21 @@
 /**
  * @file expression.h
  * 
- * @author Timotej Kamenský, xkamen24
- * @author Michal Řezník,  xrezni28
- * @author Jiří Hofírek, xhofir06
- * @author Samuel Repka, xrepka07
+ * @brief Header file for processing of expressions, using precedent analysis
  * 
- * @brief Processing of expressions by precedent analysis
- */
-
+ * @date 28.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
-#include "symtable_list.h"
+#include "table_hierarchy.h"
 #include "symtable.h"
 #include "error.h"
 #include "newscanner.h"
@@ -81,8 +85,8 @@ RelType TokenToTerm(TOKEN_TYPES token);
 
 Relation PrecedenceTable(RelType First, RelType Second);  //with precedence table return relation
 
-int CheckWhileR_Close(MyStack stack, symtableList TableList);
+int CheckWhileR_Close(MyStack stack, SymtableStack *TableList);
 
-int StartExpr(symtableList TableList, TermType *type); // added temporary function in order for gcc to shut up
+int StartExpr(SymtableStack *TableList, TermType *type); // added temporary function in order for gcc to shut up
 
 #endif /* EXPRESSION_H */

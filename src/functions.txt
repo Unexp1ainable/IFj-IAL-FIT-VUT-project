@@ -1,0 +1,44 @@
+//inputi
+fprintf(out_file,"LABEL inputi\n");
+fprintf(out_file,"PUSH FRAME\n");
+fprintf(out_file,"DEFVAR LF@__ret_000__\n");
+fprintf(out_file,"DEFVAR LF@__ret_000__\n");
+
+fprintf(out_file,"READ __ret_000__ int\n");
+fprintf(out_file,"JUMPIFEQ while_inputi_failed __ret_000__ "nil@nil" \n");
+
+fprintf(out_file,"POPFRAME\n");
+fprintf(out_file,"RETURN\n");
+
+fprintf(out_file,"LABEL while_inputi_failed\n");
+fprintf(out_file,"MOVE __ret_001___ 1\n");
+fprintf(out_file,"POPFRAME\n");
+fprintf(out_file,"RETURN\n");
+
+
+//inputf
+fprintf(out_file,"LABEL inputi\n");
+fprintf(out_file,"PUSH FRAME\n");
+fprintf(out_file,"DEFVAR LF@__ret_000__,LF@__ret_001___\n");
+
+fprintf(out_file,"READ __ret_000__ int\n");
+fprintf(out_file,"JUMPIFEQ while_inputi_failed __ret_000__ "nil@nil" \n");
+
+fprintf(out_file,"POPFRAME\n");
+fprintf(out_file,"RETURN\n");
+
+fprintf(out_file,"LABEL while_inputi_failed\n");
+fprintf(out_file,"MOVE __ret_001___ 1\n");
+fprintf(out_file,"POPFRAME\n");
+fprintf(out_file,"RETURN\n");
+
+//inputs
+fprintf(out_file,"LABEL inputs\n");
+fprintf(out_file,"PUSH FRAME\n");
+fprintf(out_file,"DEFVAR LF@__ret_000__,__ret_001___\n");
+
+fprintf(out_file,"READ __ret_000__ string\n");
+
+
+fprintf(out_file,"POPFRAME\n");
+fprintf(out_file,"RETURN\n");

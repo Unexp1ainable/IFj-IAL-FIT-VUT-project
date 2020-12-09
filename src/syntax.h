@@ -1,11 +1,19 @@
 /**
- * @brief file syntax.h
- * author Samuel Repka
- * Header file for syntax checker
- * version 0.1
- * date 2020-11-26
+ * @file syntax.h
  * 
- */
+ * @brief Header file for syntax analysis
+ * 
+ * @date 26.11.2020
+ * 
+ * @copyright Brno University of Technology, Czech Republic
+ * 
+ * @author Samuel Repka,     xrepka07, +421 907 587 090
+ * 
+ * @author Michal Reznik,    xrezni28, +420 731 748 122
+ * @author Jiri Hofirek,     xhofir06, +420 774 883 191
+ * @author Timotej Kamensky  xkamen24, +421 944 687 328
+ * 
+ * */
 #ifndef SYNTAX_H
 #define SYNTAX_H
 // ---------------------------------------------------------------------------------------------
@@ -13,17 +21,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "newscanner.h"
-#include "symtable_list.h"
+#include "expression.h"
 #include "symtable.h"
 #include "syntax_common.h"
+#include "table_hierarchy.h"
 // ########################## global variables #########################
-
-/**
- * @brief For checking if main was already defined.
- *
- */
-
-extern bool main_defined;
 
 /**
  * @brief Used for counting how many items are on the left of the list assignment
@@ -41,13 +43,20 @@ extern unsigned int assign_list_expr_n;
  * @brief Temporary holding space for IDs on the left side of assignment.
  * 
  */
-extern TOKEN id_list[MAX_N_RET_VAL];
+extern Symtable_item id_list[MAX_N_RET_VAL];
 
 /**
  * @brief Number of elements in id_list
  * 
  */
 extern int id_list_n;
+
+/**
+ * @brief Body of which function is curently being analysed
+ * 
+ */
+extern char *curr_func;
+
 // ################### end of global variables #################
 
 // ############################# helper functions ###########################
@@ -66,23 +75,23 @@ bool eol_required();
  */
 int initialise_predefined(Symtable *table);
 
+/**
+ * @brief Copies return parameters from the curr_func to the id_list. 
+ * 
+ * Used in s_return()
+ * 
+ * @param symlist List of symtables
+ * @return int Error code, 0 if ok
+ */
+int copy_to_id(SymtableStack *symlist);
+
+/**
+ * @brief Frees all strings allocated by copy_to_id()
+ * 
+ */
+void free_copied_id();
+
 // ################### end of helper functions #################
-
-// ################### macros #################
-
-/**
- * @brief Condition for checking tokentype, ==
- * 
- */
-#define TOKEN_IS(tt) (curr_token.tokentype == tt)
-
-/**
- * @brief Condition for checking tokentype, !=
- * 
- */
-#define TOKEN_IS_NOT(tt) (curr_token.tokentype != tt)
-
-// ################### end of macros #################
 
 // ############################# STATES ##################################
 /**
@@ -92,7 +101,7 @@ int initialise_predefined(Symtable *table);
  * 
  * @return int 
  */
-int s_prolog(symtableList symlist);
+int s_prolog(SymtableStack *symlist);
 
 /**
  * @brief List of functions
@@ -102,7 +111,7 @@ int s_prolog(symtableList symlist);
  * 
  * @return int 
  */
-int s_f_list(symtableList symlist);
+int s_f_list(SymtableStack *symlist);
 
 /**
  * @brief Function
@@ -112,7 +121,7 @@ int s_f_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_func(symtableList symlist);
+int s_func(SymtableStack *symlist);
 
 /**
  * @brief Lists defining function parameters and return types
@@ -121,7 +130,7 @@ int s_func(symtableList symlist);
  * 
  * @return int 
  */
-int s_f_init(symtableList symlist, char *func_id);
+int s_f_init(SymtableStack *symlist, char *func_id);
 
 /**
  * @brief Function call
@@ -130,7 +139,7 @@ int s_f_init(symtableList symlist, char *func_id);
  * 
  * @return int 
  */
-int s_f_call(symtableList symlist, Symtable_item *func_def);
+int s_f_call(SymtableStack *symlist, Symtable_item *func_def);
 
 /**
  * @brief Body of the function/loop/condition
@@ -139,7 +148,7 @@ int s_f_call(symtableList symlist, Symtable_item *func_def);
  * 
  * @return int 
  */
-int s_body(symtableList symlist);
+int s_body(SymtableStack *symlist, FuncItemData *func_ptr);
 
 /**
  * @brief List of function parameters - defining
@@ -149,7 +158,7 @@ int s_body(symtableList symlist);
  * 
  * @return int
  */
-int s_param_def_list(symtableList symlist, char *func_id);
+int s_param_def_list(SymtableStack *symlist, char *func_id);
 
 /**
  * @brief Multi-parameter list continuation - definition
@@ -159,7 +168,7 @@ int s_param_def_list(symtableList symlist, char *func_id);
  *
  * @return int 
  */
-int s_param_def_list_n(symtableList symlist, char *func_id);
+int s_param_def_list_n(SymtableStack *symlist, char *func_id);
 
 /**
  * @brief List of function return parameters
@@ -169,7 +178,7 @@ int s_param_def_list_n(symtableList symlist, char *func_id);
  * 
  * @return int 
  */
-int s_ret_t_list(symtableList symlist, char *func_id);
+int s_ret_t_list(SymtableStack *symlist, char *func_id);
 
 /**
  * @brief Multi-return values list continuation - definition
@@ -179,7 +188,7 @@ int s_ret_t_list(symtableList symlist, char *func_id);
  *
  * @return int 
  */
-int s_ret_t_list_n(symtableList symlist, char *func_id);
+int s_ret_t_list_n(SymtableStack *symlist, char *func_id);
 
 /**
  * @brief Statement: f_call/id_n/for/if
@@ -192,7 +201,7 @@ int s_ret_t_list_n(symtableList symlist, char *func_id);
  * 
  * @return int 
  */
-int s_stat(symtableList symlist);
+int s_stat(SymtableStack *symlist);
 
 /**
  * @brief List of statements
@@ -202,7 +211,7 @@ int s_stat(symtableList symlist);
  * 
  * @return int 
  */
-int s_stat_list(symtableList symlist);
+int s_stat_list(SymtableStack *symlist);
 
 /**
  * @brief Condition
@@ -211,7 +220,7 @@ int s_stat_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_if(symtableList symlist);
+int s_if(SymtableStack *symlist);
 
 /**
  * @brief Else statement after condition
@@ -221,7 +230,7 @@ int s_if(symtableList symlist);
  * 
  * @return int 
  */
-int s_else(symtableList symlist);
+int s_else(SymtableStack *symlist);
 
 /**
  * @brief For loop
@@ -230,7 +239,7 @@ int s_else(symtableList symlist);
  * 
  * @return int 
  */
-int s_for(symtableList symlist);
+int s_for(SymtableStack *symlist);
 
 /**
  * @brief Return statement
@@ -239,7 +248,7 @@ int s_for(symtableList symlist);
  * 
  * @return int 
  */
-int s_return(symtableList symlist);
+int s_return(SymtableStack *symlist);
 
 /**
  * @brief List of expressions
@@ -249,7 +258,7 @@ int s_return(symtableList symlist);
  * 
  * @return int 
  */
-int s_expr_list(symtableList symlist);
+int s_expr_list(SymtableStack *symlist);
 
 /**
  * @brief Continuation of expression list
@@ -259,7 +268,7 @@ int s_expr_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_expr_list_n(symtableList symlist);
+int s_expr_list_n(SymtableStack *symlist, int n);
 
 /**
  * @brief Id was found in the statement - crossroads
@@ -271,7 +280,7 @@ int s_expr_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_n(symtableList symlist, char *id);
+int s_id_n(SymtableStack *symlist, char *id);
 
 /**
  * @brief Variable definition
@@ -280,7 +289,7 @@ int s_id_n(symtableList symlist, char *id);
  * 
  * @return int 
  */
-int s_id_def(symtableList symlist, char *id);
+int s_id_def(SymtableStack *symlist, char *id);
 
 /**
  * @brief Voluntary variable definition
@@ -290,7 +299,7 @@ int s_id_def(symtableList symlist, char *id);
  * 
  * @return int 
  */
-int s_id_def_v(symtableList symlist);
+int s_id_def_v(SymtableStack *symlist);
 
 /**
  * @brief List of IDs, must be assignment
@@ -299,7 +308,7 @@ int s_id_def_v(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_list(symtableList symlist);
+int s_id_list(SymtableStack *symlist);
 
 /**
  * @brief Continuation of ID list
@@ -309,7 +318,7 @@ int s_id_list(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_list_n(symtableList symlist);
+int s_id_list_n(SymtableStack *symlist);
 
 /**
  * @brief Assignment of the ID/s
@@ -318,7 +327,7 @@ int s_id_list_n(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_assign(symtableList symlist);
+int s_id_assign(SymtableStack *symlist);
 
 /**
  * @brief Voluntary assignment of the ID
@@ -328,7 +337,7 @@ int s_id_assign(symtableList symlist);
  * 
  * @return int 
  */
-int s_id_assign_v(symtableList symlist);
+int s_id_assign_v(SymtableStack *symlist);
 
 /**
  * @brief Assignment of list to list
@@ -337,17 +346,15 @@ int s_id_assign_v(symtableList symlist);
  * 
  * @return int
  */
-int s_id_list_assign(symtableList symlist);
-
+int s_id_list_assign(SymtableStack *symlist);
 
 /**
  * @brief Assigning values to id/s from function.
  * 
- * @param symlist List of symtables
  * @param func_def Function, from which we are assigning
  * @return int Return code (see syntax_common.h error_codes)
  */
-int s_func_assign(symtableList symlist, Symtable_item *func_def);
+int s_func_assign(Symtable_item *func_def);
 
 /**
  * @brief List of parameters of function call
@@ -356,7 +363,7 @@ int s_func_assign(symtableList symlist, Symtable_item *func_def);
  * 
  * @return int 
  */
-int s_param_list(symtableList symlist, Symtable_item *func_def);
+int s_param_list(SymtableStack *symlist, Symtable_item *func_def);
 
 /**
  * @brief Continuation of function call parameters
@@ -366,17 +373,7 @@ int s_param_list(symtableList symlist, Symtable_item *func_def);
  * 
  * @return int 
  */
-int s_param_list_n(symtableList symlist, Symtable_item *func_def, int n);
-
-/**
- * @brief List of eols
- * 
- * <eols> -> eol <eols>
- * <eols> -> e
- * 
- * @return int 
- */
-int s_eols();
+int s_param_list_n(SymtableStack *symlist, Symtable_item *func_def, int n);
 
 /**
  * @brief Variable type
@@ -389,8 +386,31 @@ int s_eols();
  */
 int s_type(DataType *type);
 
-//TODO
-int s_expr(symtableList TableList, TermType *type); // compatibility
+/**
+ * @brief Right side of the value assignment if it is not a function
+ * 
+ * @param symlist List of symtables
+ * @return int Error code, 0 if ok
+ */
+int s_expr_list_assign(SymtableStack *symlist);
+
+/**
+ * @brief Right side of the value assignment if it is not a function
+ * 
+ * @param symlist List of symtables
+ * @param n Position of id in list
+ * @return int Error code, 0 if ok
+ */
+int s_expr_list_assign_n(SymtableStack *symlist, int n);
+
+/**
+ * @brief Evaluates expression and returns type in parameter type
+ * 
+ * @param TableList List of symtables
+ * @param type Pointer to variable in which type of expression will be stored
+ * @return int Error code, 0 if ok
+ */
+int s_expr(SymtableStack *TableList, TermType *type); // compatibility
 // ############################# STATES END ###############################
 
 #endif /* SYNTAX_H */
