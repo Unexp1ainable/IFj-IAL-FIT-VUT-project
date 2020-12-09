@@ -19,12 +19,13 @@
 
 int main()
 {
-    // initialisation of the structures
+    //initialisation of the structures
     out_file = fopen("output.IFJcode20", "w");
     if (!out_file){
         fputs("Failed to open output file.\n", stderr);
         return INTERN_ERROR;
     }
+    //out_file = stdout;
     dynamic_string_init(&stringbuffer);
 
     SymtableStack symlist;
@@ -126,6 +127,10 @@ int main()
 
     // second pass
     r_code = s_prolog(&symlist);
+
+    //TODO uncomment
+    // if(!r_code)
+    //     print_builtins();
 
 // deallocate all structures in case of an error
 cleanup:

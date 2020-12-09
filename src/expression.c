@@ -323,7 +323,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 
             }
             if(item->val.term.tokentype == TOKEN_TYPE_IDENTIFIER){
-                fprintf(out_file,"PUSHS LF@$%s\n",interpret);
+                fprintf(out_file,"PUSHS LF@%s\n",interpret);
             }
             else fprintf(out_file,"PUSHS %s\n",interpret);
             item->type = IT_NONTERM;
@@ -668,8 +668,13 @@ int StartExpr(SymtableStack *TableList, TermType *type){
     if(result_here == NULL){
         return reading;
     }  
+<<<<<<< HEAD
     if(*Result[] != '/0'){ 
     fprintf(out_file,"POPS %s", result_here);
+=======
+    if(Result != T_BOOL){ 
+    fprintf(out_file,"POPS %s\n", result_here);
+>>>>>>> a68ee28cb1bcf47a53442a286447dbf1c3a45ee3
     }
     return reading;         //stav v jakém skončilo převádění
 }

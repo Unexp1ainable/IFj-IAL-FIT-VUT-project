@@ -19,6 +19,7 @@
 #include "newscanner.h"
 #include "table_hierarchy.h"
 #include "error.h"
+#include "code_generator.c"
 
 // ################### error codes #################
 
@@ -280,6 +281,12 @@ void postfix_prev();
  * @return char* Pointer to the new string, NULL if malloc failed.
  */
 char *make_codename(char* id, unsigned int postfix);
+
+/**
+ * @brief Prints built-in functions to the out_file
+ * 
+ */
+void print_builtins();
 
 // ################### end of functions #################
 

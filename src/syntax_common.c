@@ -305,3 +305,16 @@ bool add_codename(SymtableStack *stack, char *key, char *codename)
     item->codename = codename;
     return true;
 }
+
+void print_builtins(){
+    fputs(BUILT_IN_FUNC_CHR, out_file);
+    fputs(BUILT_IN_FUNC_FLOAT_2_INT, out_file);
+    fputs(BUILT_IN_FUNC_INT_2_FLOAT, out_file);
+    fputs(BUILT_IN_FUNC_INPUTF, out_file);
+    fputs(BUILT_IN_FUNC_INPUTI, out_file);
+    fputs(BUILT_IN_FUNC_INPUTI, out_file);
+    fputs(BUILT_IN_FUNC_PRINT, out_file);
+    fputs(BUILT_IN_FUNC_LEN, out_file);
+    fputs(BUILT_IN_FUNC_SUBSTR, out_file);
+    fputs(BUILT_IN_FUNC_ORD, out_file);
+}
