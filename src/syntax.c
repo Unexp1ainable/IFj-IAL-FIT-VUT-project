@@ -964,7 +964,10 @@ int s_expr_list_n(SymtableStack *symstack, int n)
     }
 
     // ---------------- CODE-GEN ----------------
-    sprintf(result_here, "LF@%s", strcmp(id_list[n].key, "_") ? id_list[n].codename : NULL); // if _ do not assign result
+    if (strcmp(id_list[n].key, "_") == 0)
+        result_here[0] = '\0';
+    else
+       sprintf(result_here, "LF@%s", id_list[n].codename); // if _ do not assign result
     // ------------------------------------------
 
     // <expr>
