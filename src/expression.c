@@ -213,14 +213,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
-                        ;
                         }
                      int u = item->val.term.integer;
-                    sprintf(interpret,"#INT#%d", u);
+                    sprintf(interpret,"int@%d", u);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
-                        ;
                     }
                     Result = T_INT;                         //uložíme dočasně co máme za term
                 break;
@@ -229,13 +227,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     interpret = malloc(sizeof(char) * 60);
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
-                        ;
                         }
-                    sprintf(interpret,"#FLOAT#%f",item->val.term.floater);
+                    sprintf(interpret,"float@%f",item->val.term.floater);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
-                        ;
+                        
                     }
                     Result = T_FLOAT;
                 break;
@@ -304,11 +301,10 @@ Relation PrecedenceTable(RelType First, RelType Second){
                                 return ERR_ALLOC_M;
                                 ;
                             }
-                        strcpy(interpret, "#ID#");
-                        strcat(interpret, item->val.term.string->string);
                         Symtable_item *temp = symstack_lookup(TableList, item->val.term.string->string);
                         type = temp->dataType;
                         Result = temp->dataType;
+                //        strcpy(interpret, temp->codename);
                         break;
                     }  
                 case TOKEN_TYPE_EMPTY:
@@ -317,7 +313,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                             return ERR_ALLOC_M;
                             ;
                         }
-                    strcpy(interpret, "#NULL#");
+                    strcpy(interpret, "nil@nil");
                     type = T_EMPTY;
                     break;
                 default:
@@ -326,6 +322,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     ;
                 
             }
+            printf("PUSHS %s\n",interpret);
             item->type = IT_NONTERM;
             free(interpret);
             item->val.type = type;
@@ -390,6 +387,9 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(LeftItem);
                 free(item);
                 return ERR_TYPE_COMB;
+                if(LeftType == RightType){
+
+                }
             }
             if(Same == false && OnlyOne == false){
                 free(RightItem);
@@ -397,6 +397,17 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return ERR_TYPE_COMB;
             }
+            if(LeftType == T_STRING && RightType == T_STRING){
+                printf("POPS LF@$tmp1\n");
+                printf("POPS LF@$tmp2\n");
+                printf("CONCATS LF@$tmp2 LF@$tmp2 LF@$tmp1\n");
+                printf("PUSHS LF@tmp1\n");
+            }
+            else
+            {
+                printf("ADDS\n");  
+           }
+            
         break;
         case TOKEN_TYPE_SUBTRACT:        
             if((ResultType != T_FLOAT && ResultType != T_INT && ResultType != T_UNKNOWN)){
@@ -411,6 +422,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return ERR_TYPE_COMB;
             }
+            printf("SUBS\n");
         break;
         case TOKEN_TYPE_MULTIPLY:
             if(Same == false){
@@ -425,6 +437,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(item);
                 return ERR_TYPE_COMB;
             }
+            printf("MULS\n");
         break;
         case TOKEN_TYPE_DIVIDE:
             if(Same == false){
@@ -444,6 +457,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(LeftItem);
                 free(item);
                 return ERR_ZERO_DIVISION;
+            }
+            if((LeftType == RightType) && (LeftType == T_FLOAT)){
+                printf("DIVS");
+            }
+            else if((LeftType == RightType) && (LeftType == T_INT)){
+                printf("IDIVS");
             }
         break;
         case TOKEN_TYPE_EQUAL:
@@ -467,6 +486,10 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
             Result = T_BOOL;
+            printf("EQS\n");
+            if(Type == TOKEN_TYPE_EQUAL){
+                printf("NOTS\n");
+            }
         break;
         case TOKEN_TYPE_LOWER_THAN:
         case TOKEN_TYPE_GREATER_THAN:
@@ -490,6 +513,21 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 free(LeftItem);
                 free(item);
                 return ERR_TYPE_COMB;
+            }
+            if(Type == TOKEN_TYPE_LOWER_THAN){
+                printf("LTS\n");
+            }
+            else if(Type == TOKEN_TYPE_GREATER_THAN){
+                printf("GTS\n");
+            }
+            else if(Type == TOKEN_TYPE_GREATER_EQUAL){
+                printf("LTS\n");
+                printf("NOTS");
+                
+            }
+            else if(Type == TOKEN_TYPE_LOWER_EQUAL){
+                printf("GTS\n");
+                printf("NOTS");
             }
         break;
         default:
@@ -622,7 +660,12 @@ int StartExpr(SymtableStack *TableList, TermType *type){
     if(reading == -4){
         return ERR_EXP_ORDER;
     }
-    return reading;             //stav v jakém skončilo převádění
+    if(result_here == NULL){
+        return reading;
+    }   
+    printf("POPS LF@$%s", result_here);
+
+    return reading;         //stav v jakém skončilo převádění
 }
 
 int s_expr(SymtableStack *TableList, TermType *type){
