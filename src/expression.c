@@ -201,7 +201,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
         if(item->val.term.tokentype == TOKEN_TYPE_CLOSING_CLASSIC_BRACKET){
             free(item);
             item = PopStack(stack);
-            Item leftbracket = PopStack(stack);    //<expression> => ( <expression> )
+            Item leftbracket = PopStack(stack);   
             free(leftbracket);
          }
         else{
@@ -325,7 +325,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
             if(item->val.term.tokentype == TOKEN_TYPE_IDENTIFIER){
                 fprintf(out_file,"PUSHS LF@$%s\n",interpret);
             }
-            fprintf(out_file,"PUSHS %s\n",interpret);
+            else fprintf(out_file,"PUSHS %s\n",interpret);
             item->type = IT_NONTERM;
             free(interpret);
             item->val.type = type;
@@ -492,7 +492,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
             Result = T_BOOL;
             fprintf(out_file,"EQS\n");
-            if(Type == TOKEN_TYPE_EQUAL){
+            if(Type != TOKEN_TYPE_EQUAL){
                 fprintf(out_file,"NOTS\n");
             }
         break;
@@ -668,7 +668,7 @@ int StartExpr(SymtableStack *TableList, TermType *type){
     if(result_here == NULL){
         return reading;
     }  
-    if(Result != T_BOOL){ 
+    if(*Result[] != '/0'){ 
     fprintf(out_file,"POPS %s", result_here);
     }
     return reading;         //stav v jakém skončilo převádění
