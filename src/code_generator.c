@@ -54,21 +54,22 @@
 
 /**
  * @brief built-in function to return single-char
+ * @note TODO v tejto funkcii aj v dalsich mam vratit hodnotu 1 ako chybu. AKO?
  * */
 #define BUILT_IN_FUNC_CHR                                           \
 "\n\n"                                                              \
 "\n #built-in function to return sign of the given ascii value"     \
 "\n LABEL $chr"                                                     \
 "\n PUSHFRAME"                                                      \
-"\n DEFVAR LF@%returnvalue"                                         \
-"\n MOVE LF@%returnvalue string@"                                   \
-"\n DEFVAR LF@%bool1"                                               \
-"\n DEFVAR LF@%bool2"                                               \
-"\n LT LF@bool1 LF@%0 int@0"                                        \
-"\n GT LF@bool2 LF@%0 int@255"                                      \
+"\n DEFVAR LF@returnvalue"                                          \
+"\n MOVE LF@returnvalue string@"                                    \
+"\n DEFVAR LF@bool1"                                                \
+"\n DEFVAR LF@bool2"                                                \
+"\n LT LF@bool1 LF@i  int@256"                                      \
+"\n GT LF@bool2 LF@i  int@-1"                                       \
 "\n AND LF@bool1 LF@bool1 LF@bool2"                                 \
 "\n JUMPIFNEQ $chr_end LF@bool1 bool@true"                          \
-"\n INT2CHAR LF@%returnvalue LF@%0"                                 \
+"\n INT2CHAR LF@returnvalue LF@i"                                   \
 "\n LABEL $chr_end"                                                 \
 "\n POPFRAME"                                                       \
 "\n RETURN"
@@ -108,14 +109,14 @@
 "\nLABEL   $substr_long_short  "                   /*prepare while cycle*/      \
 "\n DEFVAR LF@letter "                                                          \
 "\n DEFVAR LF@index "                                                           \
-"\n MOVE LF@index LF@i"                                                         \
-"\nLABEL $substr_while_start  "                    /*actual while cycle*/       \
+"\n MOVE   LF@index LF@i"                                                       \
+"\nLABEL   $substr_while_start  "                    /*actual while cycle*/     \
 "\n GETCHAR LF@letter LF@s LF@index "                                           \
 "\n CONCAT LF@newstring LF@newstring LF@letter "                                \
-"\n ADD LF@index LF@index int@1 "                                               \
-"\n SUB LF@newstr_len LF@newstr_len int@1 "                                     \
+"\n ADD    LF@index LF@index int@1 "                                            \
+"\n SUB    LF@newstr_len LF@newstr_len int@1 "                                  \
 "\n JUMPIFNEQ $substr_while_start LF@newstr_len int@1"                          \
-"\nLABEL $substr_end "                                                          \
+"\nLABEL   $substr_end "                                                        \
 "\n POPFRAME "                                                                  \
 "\n RETURN "                                                                    \
 "\n  "                                                                          \
