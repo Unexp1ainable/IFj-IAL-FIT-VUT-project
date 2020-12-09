@@ -228,7 +228,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
                         }
-                    sprintf(interpret,"float@%f",item->val.term.floater);
+                    sprintf(interpret,"float@%a",item->val.term.floater);
                     interpret = realloc(interpret, strlen(interpret));
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
@@ -401,10 +401,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
                 return ERR_TYPE_COMB;
             }
             if(LeftType == T_STRING && RightType == T_STRING){
+                fprintf(out_file,"DEFVAR LF@$tmp1\n");
+                fprintf(out_file,"DEFVAR LF@$tmp2\n");
                 fprintf(out_file,"POPS LF@$tmp1\n");
                 fprintf(out_file,"POPS LF@$tmp2\n");
-                fprintf(out_file,"CONCATS LF@$tmp2 LF@$tmp2 LF@$tmp1\n");
-                fprintf(out_file,"PUSHS LF@tmp1\n");
+                fprintf(out_file,"CONCAT LF@$tmp2 LF@$tmp2 LF@$tmp1\n");
+                fprintf(out_file,"PUSHS LF@$tmp1\n");
             }
             else
             {
@@ -665,7 +667,7 @@ int StartExpr(SymtableStack *TableList, TermType *type){
     if(reading == -4){
         return ERR_EXP_ORDER;
     } 
-    if(Result != T_BOOL || (result_here[0] != '\0')){ 
+    if(Result != T_BOOL && (result_here[0] != '\0')){ 
     fprintf(out_file,"POPS %s\n", result_here);
     }
     return reading;         //stav v jakém skončilo převádění
