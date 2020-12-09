@@ -90,6 +90,12 @@ int initialise_predefined(Symtable *table);
  */
 int copy_to_id(SymtableStack *symlist);
 
+/**
+ * @brief Frees all strings allocated by copy_to_id()
+ * 
+ */
+void free_copied_id();
+
 // ################### end of helper functions #################
 
 // ############################# STATES ##################################

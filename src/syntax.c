@@ -147,10 +147,20 @@ int copy_to_id(SymtableStack *symstack)
     for (int i = 0; i < func->itemData.funcitemptr->used_return; i++)
     {
         id_list[i].dataType = func->itemData.funcitemptr->return_types[i]; // not ideal but whatever
+        char *new_ret = calloc(12, sizeof(char));
+        sprintf(new_ret, "__ret_%03i__", i);
+        id_list[i].codename = new_ret;
+        id_list[i].key = new_ret;
         id_list_n++;
     }
 
     return 0;
+}
+
+void free_copied_id()
+{
+    for (int i; i < id_list_n; i++)
+        free(id_list[i].codename);
 }
 
 // ################### end of helper functions #################
@@ -311,7 +321,7 @@ int s_func(SymtableStack *symstack)
         fprintf(out_file, "LABEL %s\n", curr_func);
         fprintf(out_file, "PUSHFRAME\n");
         for (int i = 0; i < new_func->itemData.funcitemptr->used_return; i++)
-            fprintf(out_file, "DEFVAR __ret_%i__\n\n", i);
+            fprintf(out_file, "DEFVAR __ret_%03i__\n\n", i);
         // ------------------------------------------
 
         r_code = s_body(symstack, new_func->itemData.funcitemptr);
@@ -831,7 +841,9 @@ int s_return(SymtableStack *symstack)
 
     copy_to_id(symstack);
     //expr_list
-    return s_expr_list(symstack);
+    int r_code = s_expr_list(symstack);
+    free_copied_id();
+    return r_code;
 }
 
 int s_expr_list(SymtableStack *symstack)
@@ -847,6 +859,7 @@ int s_expr_list(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
+    printf("%i\n", strcmp(id_list[0].key, "_"));
     result_here = strcmp(id_list[0].key, "_") ? NULL : id_list[0].codename; // if _ do not assign result
     // ------------------------------------------
 
@@ -1169,7 +1182,7 @@ int s_id_assign(SymtableStack *symstack)
         // TODO get values from TF
         // ---------------- CODE-GEN ----------------
         for (int i = 0; i < item->itemData.funcitemptr->used_return; i++)
-            fprintf(out_file, "MOVE LF@%s TF@__ret_%i__\n", id_list[i].codename, i);
+            fprintf(out_file, "MOVE LF@%s TF@__ret_%03i__\n", id_list[i].codename, i);
         // ------------------------------------------
 
         return r_code;
