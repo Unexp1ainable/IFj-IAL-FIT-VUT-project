@@ -846,6 +846,10 @@ int s_expr_list(SymtableStack *symstack)
         return NO_ERR;
     }
 
+    // ---------------- CODE-GEN ----------------
+    result_here = strcmp(id_list[0].key, "_") ? NULL : id_list[0].codename; // if _ do not assign result
+    // ------------------------------------------
+
     // <expr>
     TermType type;
     int r_code = s_expr(symstack, &type);
@@ -854,12 +858,12 @@ int s_expr_list(SymtableStack *symstack)
         return r_code;
     }
 
-    if (type != id_list[0].dataType)
+    if (type != id_list[0].dataType && strcmp(id_list[0].key, "_") != 0)
     {
         return ERR_TYPE_MISMATCH;
     }
 
-    // <expr_list_n
+    // <expr_list_n>
     return s_expr_list_n(symstack, 1);
 }
 
@@ -885,6 +889,10 @@ int s_expr_list_n(SymtableStack *symstack, int n)
         return ERR_COMMA_EXPECTED;
     }
 
+    // ---------------- CODE-GEN ----------------
+    result_here = strcmp(id_list[0].key, "_") ? NULL : id_list[n].codename; // if _ do not assign result
+    // ------------------------------------------
+
     // <expr>
     TermType type;
     int r_code = s_expr(symstack, &type);
@@ -898,7 +906,7 @@ int s_expr_list_n(SymtableStack *symstack, int n)
         return ERR_TOO_MANY_RVALUES;
     }
 
-    if (type != id_list[n].dataType)
+    if (type != id_list[n].dataType && strcmp(id_list[0].key, "_") != 0)
     {
         return ERR_TYPE_MISMATCH;
     }
@@ -1131,6 +1139,11 @@ int s_id_assign(SymtableStack *symstack)
     if (curr_token->tokentype != TOKEN_TYPE_IDENTIFIER)
     {
         return_token(curr_token);
+
+        // ---------------- CODE-GEN ----------------
+        result_here = id_list[0].codename;
+        // ------------------------------------------
+
         int r_code = s_expr(symstack, &type);
         if (r_code == ERR_EMPTY_EXP)
             return ERR_NO_EXPR;
@@ -1151,10 +1164,21 @@ int s_id_assign(SymtableStack *symstack)
         {
             return r_code;
         }
-        return s_f_call(symstack, item);
+        r_code = s_f_call(symstack, item);
+
+        // TODO get values from TF
+        // ---------------- CODE-GEN ----------------
+        for (int i = 0; i < item->itemData.funcitemptr->used_return; i++)
+            fprintf(out_file, "MOVE LF@%s TF@__ret_%i__\n", id_list[i].codename, i);
+        // ------------------------------------------
+
+        return r_code;
     }
 
     return_token(curr_token);
+    // ---------------- CODE-GEN ----------------
+    result_here = id_list[0].codename;
+    // ------------------------------------------
     return s_expr(symstack, &type);
 }
 
