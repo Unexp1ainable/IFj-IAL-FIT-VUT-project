@@ -311,7 +311,7 @@ int s_func(SymtableStack *symstack)
         fprintf(out_file, "LABEL %s\n", curr_func);
         fprintf(out_file, "PUSHFRAME\n");
         for (int i = 0; i < new_func->itemData.funcitemptr->used_return; i++)
-            fprintf(out_file, "DEFVAR ret%i\n\n", i);
+            fprintf(out_file, "DEFVAR ret_%i\n\n", i);
         // ------------------------------------------
 
         r_code = s_body(symstack, new_func->itemData.funcitemptr);
@@ -681,7 +681,7 @@ int s_stat_list(SymtableStack *symstack)
     {
         return ERR_EOL_EXPECTED;
     }
-    //eols
+    // <eols>
     s_eols();
 
     // <stat-list>
@@ -897,7 +897,7 @@ int s_id_n(SymtableStack *symstack, char *id)
     {
     // :=
     case TOKEN_TYPE_DEFINE:
-        if (was_it_defined_top(symstack, id))
+        if (symstack_lookup_top(symstack, id))
         {
             return ERR_ID_REDEFINITION;
         }
@@ -960,6 +960,10 @@ int s_id_def(SymtableStack *symstack, char *id)
     {
         return ERR_ID_DEF_EXPECTED;
     }
+    
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "DEFVAR %s_%i\n", id, postfix);
+    // ------------------------------------------
 
     TermType type;
     int r_code = s_expr(symstack, &type);
