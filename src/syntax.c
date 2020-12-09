@@ -328,7 +328,7 @@ int s_func(SymtableStack *symstack)
         // ---------------- CODE-GEN ----------------
         fprintf(out_file, "\nPOPFRAME\n");
         fprintf(out_file, "RETURN\n");
-        fprintf(out_file, "# ---------- end func %s ----------\n\n\n", curr_func);
+        fprintf(out_file, "# ---------- end func %s ----------\n\n\n\n", curr_func);
         // ------------------------------------------
     }
     else
@@ -375,7 +375,7 @@ int s_f_call(SymtableStack *symstack, Symtable_item *func_def)
     return_token(curr_token);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "# ---------- function call ----------\n");
+    fprintf(out_file, "\n# ---------- function call ----------\n");
     fprintf(out_file, "CREATEFRAME\n");
     // ------------------------------------------
 
@@ -388,7 +388,7 @@ int s_f_call(SymtableStack *symstack, Symtable_item *func_def)
         return r_code;
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "CALL %s\n", func_def->key);
-    fprintf(out_file, "# -------- end function call --------\n");
+    fprintf(out_file, "# -------- end function call --------\n\n");
     // ------------------------------------------
 
     return NO_ERR;
@@ -413,6 +413,7 @@ int s_body(SymtableStack *symstack, FuncItemData *func_ptr)
         for (int i = 0; i < func_ptr->used_param; i++)
         {
             symstack_add_to_last(symstack, func_ptr->param_names[i], func_ptr->param_types[i]);
+            add_codename(symstack, func_ptr->param_names[i], func_ptr->param_names[i]);
         }
     }
 
@@ -730,22 +731,15 @@ int s_if(SymtableStack *symstack)
         return ERR_IF_EXPECTED;
     }
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "# -------------- for loop -------------)\n\n");
-    char *control_var = make_codename("c_result_", postfix);
-    fprintf(out_file, "DEFVAR %s\n", control_var);
-    result_here = control_var;
-    fprintf(out_file, "LABEL for_%09i\n", postfix);
-    // ------------------------------------------
+    fprintf(out_file, "\n# -------------- if -------------\n");
 
     // <expr>
     TermType type;
     int r_code = s_expr(symstack, &type);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "JUMIFEQ endfor_%09i %s bool@false\n", postfix, control_var);
-    fprintf(out_file, "JUMP for_body_%09i\n", postfix);
-    // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "/* FORMAT */\n");
+    fprintf(out_file, "PUSHS bool@false\n");
+    fprintf(out_file, "JUMIFEQS else_%09i\n", postfix);
     // ------------------------------------------
 
     if (r_code)
@@ -767,8 +761,18 @@ int s_if(SymtableStack *symstack)
         return r_code;
     }
 
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "JUMP endif_%09i\n", postfix);
+    fprintf(out_file, "LABEL else_%09i\n", postfix);
+    // ------------------------------------------
+
     // <else>
     r_code = s_else(symstack);
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "LABEL endif_%09i\n", postfix);
+    fprintf(out_file, "# -------------- end if -------------\n\n");
+
     if (r_code)
     {
         return r_code;
@@ -811,10 +815,7 @@ int s_for(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "# -------------- for loop -------------)\n\n");
-    char *control_var = make_codename("c_result_", postfix);
-    fprintf(out_file, "DEFVAR %s\n", control_var);
-    result_here = control_var;
+    fprintf(out_file, "\n# -------------- for loop -------------)\n");
     fprintf(out_file, "LABEL for_%09i\n", postfix);
     // ------------------------------------------
 
@@ -823,19 +824,18 @@ int s_for(SymtableStack *symstack)
     r_code = s_expr(symstack, &type);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "JUMIFEQ endfor_%09i %s bool@false\n", postfix, control_var);
+    fprintf(out_file, "PUSHS bool@false\n");
+    fprintf(out_file, "JUMIFEQS endfor_%09i\n", postfix);
     fprintf(out_file, "JUMP for_body_%09i\n", postfix);
     // ------------------------------------------
 
     if (type != T_BOOL)
     {
-        free(control_var);
         return ERR_INVALID_EXPRESSION;
     }
 
     if (r_code)
     {
-        free(control_var);
         if (r_code == ERR_EMPTY_EXP)
             return ERR_NO_EXPR;
         return r_code;
@@ -845,7 +845,6 @@ int s_for(SymtableStack *symstack)
     get_token(&curr_token);
     if (TOKEN_IS_NOT(TOKEN_TYPE_SEMICOLON))
     {
-        free(control_var);
         return ERR_SEMICOLON_EXPECTED;
     }
 
@@ -871,10 +870,8 @@ int s_for(SymtableStack *symstack)
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "JUMP for_assign_%09i\n", postfix);
     fprintf(out_file, "LABEL endfor_%09i\n", postfix);
-    fprintf(out_file, "# -------------- end for -------------)\n\n");
+    fprintf(out_file, "\n# -------------- end for -------------)\n\n");
     // ------------------------------------------
-
-    free(control_var);
     return r_code;
 }
 
@@ -906,7 +903,6 @@ int s_expr_list(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    printf("%i\n", strcmp(id_list[0].key, "_"));
     result_here = strcmp(id_list[0].key, "_") ? NULL : id_list[0].codename; // if _ do not assign result
     // ------------------------------------------
 
@@ -1387,6 +1383,21 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
         return ERR_UNEXPECTED_TOKEN;
     }
 
+    // ---------------- CODE-GEN ----------------
+    char *param_name;
+    if (func_def->itemData.funcitemptr->var_param)
+    {
+        char tmp[11];
+        sprintf(tmp, "__par%03d__", n);
+        param_name = tmp;
+    }
+    else
+        param_name = func_def->itemData.funcitemptr->param_names[n];
+
+    fprintf(out_file, "DEFVAR TF@%s\n", param_name);
+    result_here = param_name;
+    // ------------------------------------------
+
     TermType type;
     int r_code = s_expr(symstack, &type);
     if (r_code)
@@ -1484,6 +1495,10 @@ int s_expr_list_assign(SymtableStack *symstack)
     int r_code;
 
     // <expr>
+    // ---------------- CODE-GEN ----------------
+    result_here = id_list[0].codename;
+    // ------------------------------------------
+
     r_code = s_expr(symstack, &type);
     if (r_code)
     {
@@ -1512,6 +1527,10 @@ int s_expr_list_assign_n(SymtableStack *symstack, int n)
     {
         return ERR_COMMA_EXPECTED;
     }
+
+    // ---------------- CODE-GEN ----------------
+    result_here = id_list[n].codename;
+    // ------------------------------------------
 
     TermType type;
     int r_code;
