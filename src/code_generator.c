@@ -43,14 +43,19 @@
 "\n #built-in function for ASCII value of the given sign in string" \
 "\n LABEL $ord"                                                     \
 "\n PUSHFRAME"                                                      \
-"\n "\
-"\n "\
-"\n "\
-"\n "\
-"\n "\
-"\n "\
-"\n "\
-"\n "\
+"\n DEFVAR LF@strlen"                                               \
+"\n STRLEN LF@strlen"                                               \
+"\n JMPIFEQ $ord_end LF@strlen int@0"                               \
+"\n DEFVAR LF@bool1"                                                \
+"\n GT LF@bool1 LF@i LF@strlen "                                    \
+"\n JUMPIFEQ $ord_end LF@bool1 bool@true"                           \
+"\n LT LF@bool1 LF@i int@0"                                         \
+"\n JUMPIFEQ $ord_end LF@bool1 bool@true"                           \
+"\n DEFVAR LF@$return"                                              \
+"\n STR2INT LF@$return LF@return LF@s LF@i"                         \
+"\nLABEL $ord_end "                                                 \
+"\n POPFRAME"                                                       \
+"\n RETURN"
 
 /**
  * @brief built-in function to return single-char
@@ -118,21 +123,19 @@
 "\n JUMPIFNEQ $substr_while_start LF@newstr_len int@1"                          \
 "\nLABEL   $substr_end "                                                        \
 "\n POPFRAME "                                                                  \
-"\n RETURN "                                                                    \
-"\n  "                                                                          \
-"\n  "                      
+"\n RETURN "
 
 
 
 
 /*####    built in functions for reading of literals and print of terms    ###########################*/
-#define BUILT_IN_FUNC_INPUTS
-#define BUILT_IN_FUNC_INPUTI
-#define BUILT_IN_FUNC_INPUTF
+#define BUILT_IN_FUNC_INPUTS /*TODO*/
+#define BUILT_IN_FUNC_INPUTI /*TODO*/
+#define BUILT_IN_FUNC_INPUTF /*TODO*/
 
 /*built-in functions for conversion of number types*/
-#define BUILT_IN_FUNC_INT_2_FLOAT
-#define BUILT_IN_FUNC_FLOAT_2_INT
+#define BUILT_IN_FUNC_INT_2_FLOAT /*TODO*/
+#define BUILT_IN_FUNC_FLOAT_2_INT /*TODO*/
 
 /*other built-in functions*/
-#define BUILT_IN_FUNC_PRINT
+#define BUILT_IN_FUNC_PRINT /*TODO*/
