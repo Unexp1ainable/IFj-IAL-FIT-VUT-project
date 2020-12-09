@@ -21,7 +21,7 @@ unsigned long int line = 1;
 TokenList tokens;
 bool first_pass = true;
 unsigned int postfix = 0;
-char *result_here = NULL;
+char result_here[200];
 FILE *out_file;
 
 void get_token(TOKEN **token)

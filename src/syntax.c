@@ -324,12 +324,6 @@ int s_func(SymtableStack *symstack)
         // ------------------------------------------
 
         r_code = s_body(symstack, new_func->itemData.funcitemptr);
-
-        // ---------------- CODE-GEN ----------------
-        fprintf(out_file, "\nPOPFRAME\n");
-        fprintf(out_file, "RETURN\n");
-        fprintf(out_file, "# ---------- end func %s ----------\n\n\n\n", curr_func);
-        // ------------------------------------------
     }
     else
     {
@@ -375,7 +369,7 @@ int s_f_call(SymtableStack *symstack, Symtable_item *func_def)
     return_token(curr_token);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "\n# ---------- function call ----------\n");
+    fprintf(out_file, "\n\n\n# ---------- function call ----------\n");
     fprintf(out_file, "CREATEFRAME\n");
     // ------------------------------------------
 
@@ -886,6 +880,13 @@ int s_return(SymtableStack *symstack)
     copy_to_id(symstack);
     //expr_list
     int r_code = s_expr_list(symstack);
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file, "\nPOPFRAME\n");
+    fprintf(out_file, "RETURN\n");
+    fprintf(out_file, "# ---------- end func %s ----------\n", curr_func);
+    // ------------------------------------------
+
     free_copied_id();
     return r_code;
 }
@@ -903,7 +904,7 @@ int s_expr_list(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    result_here = strcmp(id_list[0].key, "_") ? NULL : id_list[0].codename; // if _ do not assign result
+    sprintf(result_here, "LF@%s", strcmp(id_list[0].key, "_") ? id_list[0].codename : NULL); // if _ do not assign result
     // ------------------------------------------
 
     // <expr>
@@ -946,7 +947,7 @@ int s_expr_list_n(SymtableStack *symstack, int n)
     }
 
     // ---------------- CODE-GEN ----------------
-    result_here = strcmp(id_list[0].key, "_") ? NULL : id_list[n].codename; // if _ do not assign result
+    sprintf(result_here, "LF@%s", strcmp(id_list[n].key, "_") ? id_list[n].codename : NULL); // if _ do not assign result
     // ------------------------------------------
 
     // <expr>
@@ -1051,7 +1052,7 @@ int s_id_def(SymtableStack *symstack, char *id)
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "DEFVAR LF@%s\n", new_var);
     // pass target variable
-    result_here = new_var;
+    sprintf(result_here, "LF@%s", new_var);
     // ------------------------------------------
 
     TermType type;
@@ -1197,7 +1198,7 @@ int s_id_assign(SymtableStack *symstack)
         return_token(curr_token);
 
         // ---------------- CODE-GEN ----------------
-        result_here = id_list[0].codename;
+        sprintf(result_here, "LF@%s", id_list[0].codename);
         // ------------------------------------------
 
         int r_code = s_expr(symstack, &type);
@@ -1233,7 +1234,7 @@ int s_id_assign(SymtableStack *symstack)
 
     return_token(curr_token);
     // ---------------- CODE-GEN ----------------
-    result_here = id_list[0].codename;
+    sprintf(result_here, "LF@%s", id_list[0].codename);
     // ------------------------------------------
     return s_expr(symstack, &type);
 }
@@ -1340,7 +1341,7 @@ int s_param_list(SymtableStack *symstack, Symtable_item *func_def)
         param_name = func_def->itemData.funcitemptr->param_names[0];
 
     fprintf(out_file, "DEFVAR TF@%s\n", param_name);
-    result_here = param_name;
+    sprintf(result_here, "TF@%s", param_name);
     // ------------------------------------------
     int r_code = s_expr(symstack, &type);
     if (r_code)
@@ -1395,7 +1396,7 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
         param_name = func_def->itemData.funcitemptr->param_names[n];
 
     fprintf(out_file, "DEFVAR TF@%s\n", param_name);
-    result_here = param_name;
+    sprintf(result_here, "TF@%s", param_name);
     // ------------------------------------------
 
     TermType type;
@@ -1496,7 +1497,7 @@ int s_expr_list_assign(SymtableStack *symstack)
 
     // <expr>
     // ---------------- CODE-GEN ----------------
-    result_here = id_list[0].codename;
+    sprintf(result_here, "LF@%s", id_list[0].codename);
     // ------------------------------------------
 
     r_code = s_expr(symstack, &type);
@@ -1529,7 +1530,7 @@ int s_expr_list_assign_n(SymtableStack *symstack, int n)
     }
 
     // ---------------- CODE-GEN ----------------
-    result_here = id_list[n].codename;
+    sprintf(result_here, "LF@%s", id_list[n].codename);
     // ------------------------------------------
 
     TermType type;

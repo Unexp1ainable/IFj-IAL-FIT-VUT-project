@@ -180,7 +180,7 @@ extern unsigned int postfix;
  * @brief Variable for passing of the name of the target variable
  * 
  */
-extern char *result_here;
+extern char result_here[200];
 
 /**
  * @brief Output for IFJcode20
