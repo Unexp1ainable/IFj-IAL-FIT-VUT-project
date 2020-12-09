@@ -241,7 +241,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     int size = strlen(item->val.term.string->string);
                     int pos = 7;
                     int multip = 10;
-                    interpret = malloc(sizeof(char)*(size+20));
+                    interpret = calloc((size+50),(sizeof(char)));
                     strcpy(interpret,"string@");
                     if(interpret == NULL){
                         return ERR_ALLOC_M;
