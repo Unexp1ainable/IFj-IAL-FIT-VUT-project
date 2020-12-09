@@ -213,7 +213,7 @@ void describe_error(ERR_CODE_SYN err);
  * 
  * @return Symtable_item* Pointer if found, otherwise NULL
  */
-Symtable_item *was_it_defined(SymtableStack *stack, char *key);
+Symtable_item *symstack_lookup(SymtableStack *stack, char *key);
 
 /**
  * @brief Check if id is already in topmost symtable

@@ -251,7 +251,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                     type= T_STRING;
                     break;
                 case TOKEN_TYPE_IDENTIFIER:
-                    if(was_it_defined(TableList, item->val.term.string->string)== false){
+                    if(symstack_lookup(TableList, item->val.term.string->string)== false){
                         free(item);
                         return ERR_ID_UNDEFINED;
                     }
@@ -263,7 +263,7 @@ Relation PrecedenceTable(RelType First, RelType Second){
                             }
                         strcpy(interpret, "#ID#");
                         strcat(interpret, item->val.term.string->string);
-                        Symtable_item *temp = was_it_defined(TableList, item->val.term.string->string);
+                        Symtable_item *temp = symstack_lookup(TableList, item->val.term.string->string);
                         type = temp->dataType;
                         Result = temp->dataType;
                         break;

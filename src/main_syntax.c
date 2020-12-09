@@ -107,7 +107,7 @@ int main()
     reset_list_position(&tokens);
     token_buffer = NULL;
 
-    Symtable_item *main_f = was_it_defined(&symlist, "main");
+    Symtable_item *main_f = symstack_lookup(&symlist, "main");
     // check if main() was defined
     if (!main_f)
     {

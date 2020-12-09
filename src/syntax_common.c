@@ -250,7 +250,7 @@ int map_err_code(int code)
         return INTERN_ERROR;
 }
 
-Symtable_item *was_it_defined(SymtableStack *stack, char *key)
+Symtable_item *symstack_lookup(SymtableStack *stack, char *key)
 {
     Symtable_item *symbol = NULL;
 
