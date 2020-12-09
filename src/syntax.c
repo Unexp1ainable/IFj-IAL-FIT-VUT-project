@@ -197,8 +197,18 @@ int s_prolog(SymtableStack *symstack)
     if (first_pass)
         return NO_ERR;
 
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file,".IFJcode20\n");
+    fprintf(out_file,"CREATEFRAME\n");
+    fprintf(out_file,"JUMP main\n");
+    // ------------------------------------------
+
     // <f_list>
     int r_code = s_f_list(symstack);
+
+    // ---------------- CODE-GEN ----------------
+    fprintf(out_file,"RETURN\n");
+    // ------------------------------------------
     if (r_code)
     {
         return r_code;
@@ -903,6 +913,10 @@ int s_expr_list(SymtableStack *symstack)
         return NO_ERR;
     }
 
+    // empty return
+    if (id_list_n == 0)
+        return NO_ERR;
+
     // ---------------- CODE-GEN ----------------
     sprintf(result_here, "LF@%s", strcmp(id_list[0].key, "_") ? id_list[0].codename : NULL); // if _ do not assign result
     // ------------------------------------------
@@ -1324,6 +1338,8 @@ int s_param_list(SymtableStack *symstack, Symtable_item *func_def)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
     {
+        fprintf(out_file, "DEFVAR TF@__param_n__\n");   // holds number of parameters
+        fprintf(out_file, "MOVE TF@__param_n__ int@%i\n", 0);
         return NO_ERR;
     }
     return_token(curr_token);
@@ -1373,6 +1389,8 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
     get_token(&curr_token);
     if (TOKEN_IS(TOKEN_TYPE_CLOSING_CLASSIC_BRACKET))
     {
+        fprintf(out_file, "DEFVAR TF@__param_n__\n");   // holds number of parameters
+        fprintf(out_file, "MOVE TF@__param_n__ int@%i\n", n);
         return NO_ERR;
     }
 
