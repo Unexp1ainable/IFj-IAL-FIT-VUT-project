@@ -529,12 +529,12 @@ Relation PrecedenceTable(RelType First, RelType Second){
             }
             else if(Type == TOKEN_TYPE_GREATER_EQUAL){
                 fprintf(out_file,"LTS\n");
-                fprintf(out_file,"NOTS");
+                fprintf(out_file,"NOTS\n");
                 
             }
             else if(Type == TOKEN_TYPE_LOWER_EQUAL){
                 fprintf(out_file,"GTS\n");
-                fprintf(out_file,"NOTS");
+                fprintf(out_file,"NOTS\n");
             }
         break;
         default:

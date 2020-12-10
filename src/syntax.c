@@ -22,6 +22,7 @@ unsigned int assign_list_expr_n = 0;
 Symtable_item id_list[MAX_N_RET_VAL];
 int id_list_n = 0;
 char *curr_func = NULL;
+int labelUn = 1;
 
 // ############################# helper functions ###########################
 
@@ -742,6 +743,8 @@ int s_if(SymtableStack *symstack)
     {
         return ERR_IF_EXPECTED;
     }
+
+    labelUn++;
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "\n# -------------- if -------------\n");
 
@@ -751,7 +754,7 @@ int s_if(SymtableStack *symstack)
 
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "PUSHS bool@false\n");
-    fprintf(out_file, "JUMPIFEQS else_%09i\n", postfix);
+    fprintf(out_file, "JUMPIFEQS else_%09i\n", postfix + labelUn);
     // ------------------------------------------
 
     if (r_code)
@@ -774,15 +777,15 @@ int s_if(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "JUMP endif_%09i\n", postfix);
-    fprintf(out_file, "LABEL else_%09i\n", postfix);
+    fprintf(out_file, "JUMP endif_%09i\n", postfix + labelUn);
+    fprintf(out_file, "LABEL else_%09i\n", postfix + labelUn);
     // ------------------------------------------
 
     // <else>
     r_code = s_else(symstack);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "LABEL endif_%09i\n", postfix);
+    fprintf(out_file, "LABEL endif_%09i\n", postfix + labelUn);
     fprintf(out_file, "# -------------- end if -------------\n\n");
 
     if (r_code)
@@ -826,9 +829,10 @@ int s_for(SymtableStack *symstack)
         return ERR_SEMICOLON_EXPECTED;
     }
 
+    labelUn++;
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "\n# -------------- for loop -------------)\n");
-    fprintf(out_file, "LABEL for_%09i\n", postfix);
+    fprintf(out_file, "LABEL for_%09i\n", postfix + labelUn);
     // ------------------------------------------
 
     // <expr>
@@ -837,8 +841,8 @@ int s_for(SymtableStack *symstack)
 
     // ---------------- CODE-GEN ----------------
     fprintf(out_file, "PUSHS bool@false\n");
-    fprintf(out_file, "JUMPIFEQS endfor_%09i\n", postfix);
-    fprintf(out_file, "JUMP for_body_%09i\n", postfix);
+    fprintf(out_file, "JUMPIFEQS endfor_%09i\n", postfix + labelUn);
+    fprintf(out_file, "JUMP for_body_%09i\n", postfix + labelUn);
     // ------------------------------------------
 
     if (type != T_BOOL)
@@ -861,7 +865,7 @@ int s_for(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "LABEL for_assign_%09i\n", postfix);
+    fprintf(out_file, "LABEL for_assign_%09i\n", postfix + labelUn);
     // ------------------------------------------
 
     // <id_assign_v>
@@ -872,16 +876,16 @@ int s_for(SymtableStack *symstack)
     }
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "JUMP for_%09i\n", postfix);
-    fprintf(out_file, "LABEL for_body_%09i\n", postfix);
+    fprintf(out_file, "JUMP for_%09i\n", postfix + labelUn);
+    fprintf(out_file, "LABEL for_body_%09i\n", postfix + labelUn);
     // ------------------------------------------
 
     // <body>
     r_code = s_body(symstack, NULL);
 
     // ---------------- CODE-GEN ----------------
-    fprintf(out_file, "JUMP for_assign_%09i\n", postfix);
-    fprintf(out_file, "LABEL endfor_%09i\n", postfix);
+    fprintf(out_file, "JUMP for_assign_%09i\n", postfix + labelUn);
+    fprintf(out_file, "LABEL endfor_%09i\n", postfix + labelUn);
     fprintf(out_file, "\n# -------------- end for -------------)\n\n");
     // ------------------------------------------
     return r_code;
@@ -1284,6 +1288,11 @@ int s_id_assign_v(SymtableStack *symstack)
         return ERR_ID_ASSIGN_EXPECTED;
     }
 
+    Symtable_item *item = symstack_lookup(symstack, curr_token->string->string);
+    if (!item)
+        return ERR_ID_UNDEFINED;
+
+    memcpy(id_list, item, sizeof(Symtable_item));
     return s_id_assign(symstack);
 }
 
@@ -1331,7 +1340,15 @@ int s_id_list_assign(SymtableStack *symstack)
         {
             return r_code;
         }
-        return s_f_call(symstack, item);
+        r_code = s_f_call(symstack, item);
+        // ---------------- CODE-GEN ----------------
+        for (int i = 0; i < item->itemData.funcitemptr->used_return; i++)
+        {
+            if (strcmp(id_list[i].key, "_") != 0)
+                fprintf(out_file, "MOVE LF@%s TF@__ret_%03i__\n", id_list[i].codename, i);
+        }
+        // ------------------------------------------
+        return r_code;
     }
     // it is not a function
     else
@@ -1455,7 +1472,7 @@ int s_param_list_n(SymtableStack *symstack, Symtable_item *func_def, int n)
         // ------------------------------------------
     }
 
-    return s_param_list_n(symstack, func_def, n+1);
+    return s_param_list_n(symstack, func_def, n + 1);
 }
 
 int s_type(DataType *type)

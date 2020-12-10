@@ -153,10 +153,12 @@
 \nDEFVAR LF@__ret_001__ \
 \nREAD LF@__ret_000__ int \
 \nJUMPIFEQ while_inputi_failed LF@__ret_000__ nil@nil  \
+\nMOVE LF@__ret_001__ int@0 \
 \nPOPFRAME \
 \nRETURN \
 \nLABEL while_inputi_failed \
-\nMOVE LF@__ret_001___ int@1 \
+\nMOVE LF@__ret_000__ int@0 \
+\nMOVE LF@__ret_001__ int@1 \
 \nPOPFRAME \
 \nRETURN"
 
@@ -170,7 +172,7 @@
 \nPOPFRAME \
 \nRETURN \
 \nLABEL while_inputs_failed \
-\nMOVE LF@__ret_001___ int@1 \
+\nMOVE LF@__ret_001__ int@1 \
 \nPOPFRAME \
 \nRETURN"
 
@@ -184,7 +186,7 @@
 \nPOPFRAME \
 \nRETURN \
 \nLABEL while_inputf_failed \
-\nMOVE LF@__ret_001___ int@1 \
+\nMOVE LF@__ret_001__ int@1 \
 \nPOPFRAME \
 \nRETURN"
 
